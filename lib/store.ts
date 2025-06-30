@@ -110,6 +110,27 @@ export interface NewsItem {
   summary: string
 }
 
+export interface MarketIntel {
+  id: string
+  title: string
+  source: string
+  date: string
+  categoryTags: string[]
+  summary: string
+  relevanceToIB: string
+  coffeeChatNotes: string
+  screenshotUrl?: string
+  url?: string
+  isFlashcard: boolean
+  flashcardQuestion?: string
+  flashcardAnswer?: string
+  reviewStatus: 'Need to Review' | 'Solid' | 'Coffee Chat Ready'
+  weekNumber: number
+  year: number
+  createdAt: string
+  lastUpdated: string
+}
+
 // Store State
 interface AppState {
   // Firms
@@ -129,6 +150,9 @@ interface AppState {
   // Events & News
   networkingEvents: NetworkingEvent[]
   newsItems: NewsItem[]
+  
+  // Market Intelligence
+  marketIntel: MarketIntel[]
   
   // UI State
   activeTab: string
@@ -174,6 +198,10 @@ interface AppState {
   addNewsItem: (news: Omit<NewsItem, 'id'>) => void
   deleteNewsItem: (id: string) => void
   
+  addMarketIntel: (marketIntel: Omit<MarketIntel, 'id' | 'createdAt'>) => void
+  updateMarketIntel: (id: string, updates: Partial<MarketIntel>) => void
+  deleteMarketIntel: (id: string) => void
+  
   setActiveTab: (tab: string) => void
   setSidebarOpen: (open: boolean) => void
   
@@ -192,6 +220,7 @@ interface AppState {
     totalContacts: number
     totalNetworkingEvents: number
     totalNewsItems: number
+    totalMarketIntel: number
     lastUpdated: string
   }
 }
@@ -211,6 +240,7 @@ export const useAppStore = create<AppState>()(
       contacts: [],
       networkingEvents: [],
       newsItems: [],
+      marketIntel: [],
       activeTab: 'dashboard',
       sidebarOpen: true,
       
@@ -398,6 +428,25 @@ export const useAppStore = create<AppState>()(
         newsItems: state.newsItems.filter(news => news.id !== id)
       })),
       
+      // Market Intelligence Actions
+      addMarketIntel: (marketIntel) => set((state) => ({
+        marketIntel: [...state.marketIntel, {
+          ...marketIntel,
+          id: crypto.randomUUID(),
+          createdAt: new Date().toISOString(),
+        }]
+      })),
+      
+      updateMarketIntel: (id, updates) => set((state) => ({
+        marketIntel: state.marketIntel.map(mi => 
+          mi.id === id ? { ...mi, ...updates, lastUpdated: new Date().toISOString() } : mi
+        )
+      })),
+      
+      deleteMarketIntel: (id) => set((state) => ({
+        marketIntel: state.marketIntel.filter(mi => mi.id !== id)
+      })),
+      
       // UI Actions
       setActiveTab: (tab) => set({ activeTab: tab }),
       setSidebarOpen: (open) => set({ sidebarOpen: open }),
@@ -416,6 +465,7 @@ export const useAppStore = create<AppState>()(
           contacts: state.contacts,
           networkingEvents: state.networkingEvents,
           newsItems: state.newsItems,
+          marketIntel: state.marketIntel,
           exportDate: new Date().toISOString(),
           version: '1.0'
         }
@@ -445,6 +495,7 @@ export const useAppStore = create<AppState>()(
             contacts: data.contacts || [],
             networkingEvents: data.networkingEvents || [],
             newsItems: data.newsItems || [],
+            marketIntel: data.marketIntel || [],
           })
           return { success: true, message: 'Data imported successfully!' }
         } catch (error) {
@@ -465,6 +516,7 @@ export const useAppStore = create<AppState>()(
             contacts: [],
             networkingEvents: [],
             newsItems: [],
+            marketIntel: [],
           })
           return { success: true, message: 'All data cleared successfully!' }
         }
@@ -484,6 +536,7 @@ export const useAppStore = create<AppState>()(
           totalContacts: state.contacts.length,
           totalNetworkingEvents: state.networkingEvents.length,
           totalNewsItems: state.newsItems.length,
+          totalMarketIntel: state.marketIntel.length,
           lastUpdated: new Date().toISOString()
         }
       }
@@ -501,6 +554,7 @@ export const useAppStore = create<AppState>()(
         contacts: state.contacts,
         networkingEvents: state.networkingEvents,
         newsItems: state.newsItems,
+        marketIntel: state.marketIntel,
       }),
     }
   )

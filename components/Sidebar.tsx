@@ -10,7 +10,8 @@ import {
   NewspaperIcon,
   Bars3Icon,
   XMarkIcon,
-  DocumentTextIcon
+  DocumentTextIcon,
+  LightBulbIcon
 } from '@heroicons/react/24/outline'
 import { motion, AnimatePresence } from 'framer-motion'
 
@@ -20,7 +21,7 @@ const navigation = [
   { name: 'Interview Prep', href: 'interview-prep', icon: AcademicCapIcon, color: 'from-purple-500 to-indigo-600' },
   { name: 'Resource Library', href: 'resources', icon: BookOpenIcon, color: 'from-amber-500 to-orange-600' },
   { name: 'Live Markets', href: 'live-markets', icon: ChartBarIcon, color: 'from-rose-500 to-pink-600' },
-  { name: 'News Feed', href: 'news', icon: NewspaperIcon, color: 'from-indigo-500 to-purple-600' },
+  { name: 'Market Intel', href: 'news', icon: LightBulbIcon, color: 'from-indigo-500 to-purple-600' },
   { name: 'Data Management', href: 'data-management', icon: DocumentTextIcon, color: 'from-slate-500 to-gray-600' },
 ]
 

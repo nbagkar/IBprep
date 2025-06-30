@@ -137,11 +137,12 @@ export default function LiveMarketCoverage() {
         
         <div className="relative w-full h-[500px] bg-slate-100 rounded-xl overflow-hidden">
           <iframe
-            src="https://www.youtube.com/embed/live_stream?channel=UCJWh7F3AFyQ_x01VKJr9eyA"
-            title="Bloomberg Live Stream"
+            src="https://www.youtube.com/embed/iEpJwprxDdk"
+            title="Bloomberg Business News Live"
             className="w-full h-full rounded-xl"
             frameBorder="0"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            referrerPolicy="strict-origin-when-cross-origin"
             allowFullScreen
           />
         </div>
