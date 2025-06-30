@@ -8,9 +8,13 @@ import {
   TrashIcon, 
   EyeIcon,
   CalendarIcon,
-  UserIcon
+  UserIcon,
+  BuildingOfficeIcon,
+  MapPinIcon,
+  BriefcaseIcon
 } from '@heroicons/react/24/outline'
 import toast from 'react-hot-toast'
+import { motion, AnimatePresence } from 'framer-motion'
 
 export default function FirmTracker() {
   const { firms, coffeeChats, addFirm, updateFirm, deleteFirm, addCoffeeChat } = useAppStore()
@@ -124,26 +128,52 @@ export default function FirmTracker() {
   }
 
   return (
-    <div className="space-y-6">
+    <motion.div 
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6 }}
+      className="space-y-8"
+    >
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Firm Tracker</h1>
-          <p className="mt-2 text-gray-600">Track your applications and manage firm relationships</p>
+          <motion.h1 
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            className="text-4xl font-bold text-gradient"
+          >
+            Firm Tracker
+          </motion.h1>
+          <motion.p 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.2 }}
+            className="mt-2 text-lg text-slate-600"
+          >
+            Track your applications and manage firm relationships
+          </motion.p>
         </div>
-        <button
+        <motion.button
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 0.3 }}
           onClick={() => setShowAddModal(true)}
-          className="btn-primary flex items-center"
+          className="btn-primary flex items-center group"
         >
-          <PlusIcon className="w-5 h-5 mr-2" />
+          <PlusIcon className="w-5 h-5 mr-2 group-hover:scale-110 transition-transform duration-200" />
           Add Firm
-        </button>
+        </motion.button>
       </div>
 
       {/* Filters */}
-      <div className="card">
+      <motion.div 
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.4 }}
+        className="card"
+      >
         <div className="flex items-center space-x-4">
-          <label className="text-sm font-medium text-gray-700">Filter by Status:</label>
+          <label className="text-sm font-semibold text-slate-700">Filter by Status:</label>
           <select
             value={filterStatus}
             onChange={(e) => setFilterStatus(e.target.value)}
@@ -156,62 +186,78 @@ export default function FirmTracker() {
             <option value="Rejected">Rejected</option>
           </select>
         </div>
-      </div>
+      </motion.div>
 
       {/* Firms Table */}
-      <div className="card">
+      <motion.div 
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.5 }}
+        className="card"
+      >
         <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
+          <table className="table-modern">
+            <thead>
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Firm
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Division
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Location
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Status
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Deadline
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Actions
-                </th>
+                <th className="table-header">Firm</th>
+                <th className="table-header">Division</th>
+                <th className="table-header">Location</th>
+                <th className="table-header">Status</th>
+                <th className="table-header">Deadline</th>
+                <th className="table-header">Actions</th>
               </tr>
             </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {filteredFirms.map((firm) => (
-                <tr key={firm.id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div>
-                      <div className="text-sm font-medium text-gray-900">{firm.name}</div>
-                      <div className="text-sm text-gray-500">{firm.keyContacts}</div>
+            <tbody className="divide-y divide-slate-200">
+              {filteredFirms.map((firm, index) => (
+                <motion.tr 
+                  key={firm.id} 
+                  className="table-row"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.05 }}
+                >
+                  <td className="table-cell">
+                    <div className="flex items-center">
+                      <div className="w-10 h-10 bg-gradient-to-r from-blue-100 to-indigo-100 rounded-xl flex items-center justify-center mr-3">
+                        <BuildingOfficeIcon className="w-5 h-5 text-blue-600" />
+                      </div>
+                      <div>
+                        <div className="text-sm font-semibold text-slate-900">{firm.name}</div>
+                        <div className="text-sm text-slate-500">{firm.keyContacts}</div>
+                      </div>
                     </div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    {firm.division}
+                  <td className="table-cell">
+                    <div className="flex items-center">
+                      <BriefcaseIcon className="w-4 h-4 text-slate-400 mr-2" />
+                      <span className="text-sm text-slate-900">{firm.division}</span>
+                    </div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    {firm.location}
+                  <td className="table-cell">
+                    <div className="flex items-center">
+                      <MapPinIcon className="w-4 h-4 text-slate-400 mr-2" />
+                      <span className="text-sm text-slate-900">{firm.location}</span>
+                    </div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
+                  <td className="table-cell">
                     <span className={`status-badge ${getStatusColor(firm.status)}`}>
                       {firm.status}
                     </span>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    {firm.deadline ? new Date(firm.deadline).toLocaleDateString() : '-'}
+                  <td className="table-cell">
+                    <div className="flex items-center">
+                      <CalendarIcon className="w-4 h-4 text-slate-400 mr-2" />
+                      <span className="text-sm text-slate-900">
+                        {firm.deadline ? new Date(firm.deadline).toLocaleDateString() : '-'}
+                      </span>
+                    </div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                  <td className="table-cell">
                     <div className="flex items-center space-x-2">
                       <button
                         onClick={() => handleEdit(firm)}
-                        className="text-primary-600 hover:text-primary-900"
+                        className="p-2 text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded-lg transition-all duration-200"
+                        title="Edit Firm"
                       >
                         <PencilIcon className="w-4 h-4" />
                       </button>
@@ -220,76 +266,101 @@ export default function FirmTracker() {
                           setSelectedFirm(firm)
                           setShowChatModal(true)
                         }}
-                        className="text-green-600 hover:text-green-900"
+                        className="p-2 text-emerald-600 hover:text-emerald-800 hover:bg-emerald-50 rounded-lg transition-all duration-200"
                         title="Schedule Coffee Chat"
                       >
                         <UserIcon className="w-4 h-4" />
                       </button>
                       <button
                         onClick={() => handleDelete(firm.id)}
-                        className="text-red-600 hover:text-red-900"
+                        className="p-2 text-red-600 hover:text-red-800 hover:bg-red-50 rounded-lg transition-all duration-200"
+                        title="Delete Firm"
                       >
                         <TrashIcon className="w-4 h-4" />
                       </button>
                     </div>
                   </td>
-                </tr>
+                </motion.tr>
               ))}
             </tbody>
           </table>
           
           {filteredFirms.length === 0 && (
-            <div className="text-center py-12">
-              <p className="text-gray-500">No firms found. Add your first firm to get started!</p>
-            </div>
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="text-center py-16"
+            >
+              <div className="w-20 h-20 bg-gradient-to-r from-slate-100 to-blue-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                <BuildingOfficeIcon className="w-10 h-10 text-slate-400" />
+              </div>
+              <p className="text-slate-500 text-lg font-medium">No firms found</p>
+              <p className="text-slate-400 text-sm mt-2">Add your first firm to get started!</p>
+            </motion.div>
           )}
         </div>
-      </div>
+      </motion.div>
 
       {/* Add/Edit Firm Modal */}
-      {showAddModal && (
-        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
-          <div className="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
-            <div className="mt-3">
-              <h3 className="text-lg font-medium text-gray-900 mb-4">
-                {editingFirm ? 'Edit Firm' : 'Add New Firm'}
-              </h3>
-              <form onSubmit={handleSubmit} className="space-y-4">
+      <AnimatePresence>
+        {showAddModal && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="modal-overlay"
+          >
+            <motion.div 
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.8, opacity: 0 }}
+              className="modal-content"
+            >
+              <div className="mb-6">
+                <h3 className="text-2xl font-bold text-slate-900 mb-2">
+                  {editingFirm ? 'Edit Firm' : 'Add New Firm'}
+                </h3>
+                <p className="text-slate-600">Enter the firm details below</p>
+              </div>
+              <form onSubmit={handleSubmit} className="space-y-6">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">Firm Name</label>
+                  <label className="block text-sm font-semibold text-slate-700 mb-2">Firm Name</label>
                   <input
                     type="text"
                     required
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                     className="input-field"
+                    placeholder="e.g., Goldman Sachs"
                   />
                 </div>
                 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700">Division</label>
+                    <label className="block text-sm font-semibold text-slate-700 mb-2">Division</label>
                     <input
                       type="text"
                       value={formData.division}
                       onChange={(e) => setFormData({ ...formData, division: e.target.value })}
                       className="input-field"
+                      placeholder="e.g., Investment Banking"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700">Location</label>
+                    <label className="block text-sm font-semibold text-slate-700 mb-2">Location</label>
                     <input
                       type="text"
                       value={formData.location}
                       onChange={(e) => setFormData({ ...formData, location: e.target.value })}
                       className="input-field"
+                      placeholder="e.g., New York"
                     />
                   </div>
                 </div>
                 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700">Status</label>
+                    <label className="block text-sm font-semibold text-slate-700 mb-2">Status</label>
                     <select
                       value={formData.status}
                       onChange={(e) => setFormData({ ...formData, status: e.target.value as Firm['status'] })}
@@ -302,7 +373,7 @@ export default function FirmTracker() {
                     </select>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700">Deadline</label>
+                    <label className="block text-sm font-semibold text-slate-700 mb-2">Deadline</label>
                     <input
                       type="date"
                       value={formData.deadline}
@@ -313,7 +384,7 @@ export default function FirmTracker() {
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">Key Contacts</label>
+                  <label className="block text-sm font-semibold text-slate-700 mb-2">Key Contacts</label>
                   <input
                     type="text"
                     value={formData.keyContacts}
@@ -324,7 +395,7 @@ export default function FirmTracker() {
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">Notes</label>
+                  <label className="block text-sm font-semibold text-slate-700 mb-2">Notes</label>
                   <textarea
                     value={formData.notes}
                     onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
@@ -334,7 +405,7 @@ export default function FirmTracker() {
                   />
                 </div>
                 
-                <div className="flex justify-end space-x-3 pt-4">
+                <div className="flex justify-end space-x-4 pt-6">
                   <button
                     type="button"
                     onClick={() => {
@@ -350,43 +421,58 @@ export default function FirmTracker() {
                   </button>
                 </div>
               </form>
-            </div>
-          </div>
-        </div>
-      )}
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Coffee Chat Modal */}
-      {showChatModal && selectedFirm && (
-        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
-          <div className="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
-            <div className="mt-3">
-              <h3 className="text-lg font-medium text-gray-900 mb-4">
-                Schedule Coffee Chat - {selectedFirm.name}
-              </h3>
-              <form onSubmit={handleChatSubmit} className="space-y-4">
+      <AnimatePresence>
+        {showChatModal && selectedFirm && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="modal-overlay"
+          >
+            <motion.div 
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.8, opacity: 0 }}
+              className="modal-content"
+            >
+              <div className="mb-6">
+                <h3 className="text-2xl font-bold text-slate-900 mb-2">
+                  Schedule Coffee Chat
+                </h3>
+                <p className="text-slate-600">with {selectedFirm.name}</p>
+              </div>
+              <form onSubmit={handleChatSubmit} className="space-y-6">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">Contact Name</label>
+                  <label className="block text-sm font-semibold text-slate-700 mb-2">Contact Name</label>
                   <input
                     type="text"
                     required
                     value={chatFormData.contactName}
                     onChange={(e) => setChatFormData({ ...chatFormData, contactName: e.target.value })}
                     className="input-field"
+                    placeholder="e.g., John Smith"
                   />
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">Contact Title</label>
+                  <label className="block text-sm font-semibold text-slate-700 mb-2">Contact Title</label>
                   <input
                     type="text"
                     value={chatFormData.contactTitle}
                     onChange={(e) => setChatFormData({ ...chatFormData, contactTitle: e.target.value })}
                     className="input-field"
+                    placeholder="e.g., Vice President"
                   />
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">Scheduled Date</label>
+                  <label className="block text-sm font-semibold text-slate-700 mb-2">Scheduled Date</label>
                   <input
                     type="datetime-local"
                     required
@@ -397,7 +483,7 @@ export default function FirmTracker() {
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">Notes</label>
+                  <label className="block text-sm font-semibold text-slate-700 mb-2">Notes</label>
                   <textarea
                     value={chatFormData.notes}
                     onChange={(e) => setChatFormData({ ...chatFormData, notes: e.target.value })}
@@ -407,7 +493,7 @@ export default function FirmTracker() {
                   />
                 </div>
                 
-                <div className="flex justify-end space-x-3 pt-4">
+                <div className="flex justify-end space-x-4 pt-6">
                   <button
                     type="button"
                     onClick={() => setShowChatModal(false)}
@@ -420,10 +506,10 @@ export default function FirmTracker() {
                   </button>
                 </div>
               </form>
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.div>
   )
 } 

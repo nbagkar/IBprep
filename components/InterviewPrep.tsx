@@ -1,760 +1,817 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
-import { useAppStore, type BehavioralQuestion, type TechnicalQuestion, type DealExperience, type MockInterview } from '@/lib/store'
+import React, { useState } from 'react'
+import { useAppStore, type BehavioralQuestion, type TechnicalQuestion, type MockInterview } from '@/lib/store'
 import { 
   PlusIcon, 
   PencilIcon, 
   TrashIcon, 
-  PlayIcon,
-  PauseIcon,
-  StopIcon,
-  ClockIcon,
   AcademicCapIcon,
-  BriefcaseIcon,
-  DocumentTextIcon
+  ClockIcon,
+  CheckCircleIcon,
+  XCircleIcon,
+  StarIcon,
+  ChatBubbleLeftRightIcon,
+  DocumentTextIcon,
+  CalendarIcon,
+  UserIcon
 } from '@heroicons/react/24/outline'
 import toast from 'react-hot-toast'
+import { motion, AnimatePresence } from 'framer-motion'
 
 export default function InterviewPrep() {
   const { 
     behavioralQuestions, 
     technicalQuestions, 
-    dealExperiences, 
     mockInterviews,
-    addBehavioralQuestion,
-    updateBehavioralQuestion,
+    addBehavioralQuestion, 
+    updateBehavioralQuestion, 
     deleteBehavioralQuestion,
     addTechnicalQuestion,
     updateTechnicalQuestion,
     deleteTechnicalQuestion,
-    addDealExperience,
-    updateDealExperience,
-    deleteDealExperience,
-    addMockInterview
+    addMockInterview,
+    updateMockInterview,
+    deleteMockInterview
   } = useAppStore()
 
-  const [activeTab, setActiveTab] = useState('behavioral')
-  const [showModal, setShowModal] = useState(false)
-  const [modalType, setModalType] = useState<'behavioral' | 'technical' | 'deal' | null>(null)
-  const [editingItem, setEditingItem] = useState<any>(null)
-  const [mockTimer, setMockTimer] = useState(0)
-  const [isTimerRunning, setIsTimerRunning] = useState(false)
-  const [currentQuestion, setCurrentQuestion] = useState(0)
-  const [showMockInterview, setShowMockInterview] = useState(false)
+  const [activeTab, setActiveTab] = useState<'behavioral' | 'technical' | 'mocks'>('behavioral')
+  const [showBehavioralModal, setShowBehavioralModal] = useState(false)
+  const [showTechnicalModal, setShowTechnicalModal] = useState(false)
+  const [showMockModal, setShowMockModal] = useState(false)
+  const [editingBehavioral, setEditingBehavioral] = useState<BehavioralQuestion | null>(null)
+  const [editingTechnical, setEditingTechnical] = useState<TechnicalQuestion | null>(null)
+  const [editingMock, setEditingMock] = useState<MockInterview | null>(null)
 
-  const [formData, setFormData] = useState({
+  const [behavioralForm, setBehavioralForm] = useState({
     question: '',
-    response: '',
-    category: '',
+    category: 'Leadership' as BehavioralQuestion['category'],
+    difficulty: 'Medium' as BehavioralQuestion['difficulty'],
     answer: '',
-    difficulty: 'Medium' as TechnicalQuestion['difficulty'],
-    company: '',
-    dealType: '',
-    dealSize: '',
-    role: '',
-    description: '',
-    keyLearnings: '',
-    date: ''
+    notes: ''
   })
 
-  // Mock interview questions
-  const mockQuestions = [
-    "Walk me through your resume",
-    "Why investment banking?",
-    "Why this firm?",
-    "Tell me about a time you worked in a team",
-    "What's your greatest strength and weakness?",
-    "Walk me through a DCF",
-    "What's the difference between EV and equity value?",
-    "How would you value a company?",
-    "Tell me about a recent M&A deal",
-    "What's happening in the markets today?"
-  ]
+  const [technicalForm, setTechnicalForm] = useState({
+    question: '',
+    category: 'Valuation' as TechnicalQuestion['category'],
+    difficulty: 'Medium' as TechnicalQuestion['difficulty'],
+    answer: '',
+    notes: ''
+  })
 
-  useEffect(() => {
-    let interval: NodeJS.Timeout
-    if (isTimerRunning) {
-      interval = setInterval(() => {
-        setMockTimer(prev => prev + 1)
-      }, 1000)
-    }
-    return () => clearInterval(interval)
-  }, [isTimerRunning])
+  const [mockForm, setMockForm] = useState({
+    interviewer: '',
+    date: '',
+    type: 'Behavioral' as MockInterview['type'],
+    score: 0,
+    feedback: '',
+    notes: ''
+  })
 
-  const formatTime = (seconds: number) => {
-    const mins = Math.floor(seconds / 60)
-    const secs = seconds % 60
-    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`
-  }
-
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleBehavioralSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     
-    if (modalType === 'behavioral') {
-      if (editingItem) {
-        updateBehavioralQuestion(editingItem.id, {
-          question: formData.question,
-          response: formData.response,
-          category: formData.category
-        })
-        toast.success('Question updated!')
-      } else {
-        addBehavioralQuestion({
-          question: formData.question,
-          response: formData.response,
-          category: formData.category
-        })
-        toast.success('Question added!')
-      }
-    } else if (modalType === 'technical') {
-      if (editingItem) {
-        updateTechnicalQuestion(editingItem.id, {
-          question: formData.question,
-          answer: formData.answer,
-          category: formData.category as TechnicalQuestion['category'],
-          difficulty: formData.difficulty
-        })
-        toast.success('Question updated!')
-      } else {
-        addTechnicalQuestion({
-          question: formData.question,
-          answer: formData.answer,
-          category: formData.category as TechnicalQuestion['category'],
-          difficulty: formData.difficulty
-        })
-        toast.success('Question added!')
-      }
-    } else if (modalType === 'deal') {
-      if (editingItem) {
-        updateDealExperience(editingItem.id, {
-          company: formData.company,
-          dealType: formData.dealType,
-          dealSize: formData.dealSize,
-          role: formData.role,
-          description: formData.description,
-          keyLearnings: formData.keyLearnings,
-          date: formData.date
-        })
-        toast.success('Deal experience updated!')
-      } else {
-        addDealExperience({
-          company: formData.company,
-          dealType: formData.dealType,
-          dealSize: formData.dealSize,
-          role: formData.role,
-          description: formData.description,
-          keyLearnings: formData.keyLearnings,
-          date: formData.date
-        })
-        toast.success('Deal experience added!')
-      }
+    if (editingBehavioral) {
+      updateBehavioralQuestion(editingBehavioral.id, behavioralForm)
+      toast.success('Question updated successfully!')
+    } else {
+      addBehavioralQuestion(behavioralForm)
+      toast.success('Question added successfully!')
     }
     
-    setShowModal(false)
-    setEditingItem(null)
-    setFormData({
+    setShowBehavioralModal(false)
+    setEditingBehavioral(null)
+    setBehavioralForm({
       question: '',
-      response: '',
-      category: '',
-      answer: '',
+      category: 'Leadership',
       difficulty: 'Medium',
-      company: '',
-      dealType: '',
-      dealSize: '',
-      role: '',
-      description: '',
-      keyLearnings: '',
-      date: ''
+      answer: '',
+      notes: ''
     })
   }
 
-  const startMockInterview = () => {
-    setShowMockInterview(true)
-    setMockTimer(0)
-    setCurrentQuestion(0)
-    setIsTimerRunning(true)
-  }
-
-  const stopMockInterview = () => {
-    setIsTimerRunning(false)
-    setShowMockInterview(false)
+  const handleTechnicalSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
     
-    // Save mock interview
-    addMockInterview({
-      date: new Date().toISOString(),
-      duration: mockTimer,
-      questions: mockQuestions.slice(0, currentQuestion + 1),
-      notes: '',
-      performance: 'Good'
-    })
-    
-    toast.success('Mock interview completed!')
-  }
-
-  const nextQuestion = () => {
-    if (currentQuestion < mockQuestions.length - 1) {
-      setCurrentQuestion(prev => prev + 1)
+    if (editingTechnical) {
+      updateTechnicalQuestion(editingTechnical.id, technicalForm)
+      toast.success('Question updated successfully!')
+    } else {
+      addTechnicalQuestion(technicalForm)
+      toast.success('Question added successfully!')
     }
+    
+    setShowTechnicalModal(false)
+    setEditingTechnical(null)
+    setTechnicalForm({
+      question: '',
+      category: 'Valuation',
+      difficulty: 'Medium',
+      answer: '',
+      notes: ''
+    })
+  }
+
+  const handleMockSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    
+    if (editingMock) {
+      updateMockInterview(editingMock.id, mockForm)
+      toast.success('Mock interview updated successfully!')
+    } else {
+      addMockInterview(mockForm)
+      toast.success('Mock interview added successfully!')
+    }
+    
+    setShowMockModal(false)
+    setEditingMock(null)
+    setMockForm({
+      interviewer: '',
+      date: '',
+      type: 'Behavioral',
+      score: 0,
+      feedback: '',
+      notes: ''
+    })
+  }
+
+  const getDifficultyColor = (difficulty: string) => {
+    switch (difficulty) {
+      case 'Easy': return 'text-emerald-600 bg-emerald-100'
+      case 'Medium': return 'text-amber-600 bg-amber-100'
+      case 'Hard': return 'text-red-600 bg-red-100'
+      default: return 'text-slate-600 bg-slate-100'
+    }
+  }
+
+  const getCategoryColor = (category: string) => {
+    const colors = [
+      'from-blue-500 to-indigo-600',
+      'from-emerald-500 to-teal-600',
+      'from-purple-500 to-indigo-600',
+      'from-amber-500 to-orange-600',
+      'from-rose-500 to-pink-600'
+    ]
+    return colors[Math.abs(category.length) % colors.length]
   }
 
   const tabs = [
-    { id: 'behavioral', name: 'Behavioral Q&A', icon: DocumentTextIcon },
-    { id: 'technical', name: 'Technical Q&A', icon: AcademicCapIcon },
-    { id: 'deals', name: 'Deal Experience', icon: BriefcaseIcon },
-    { id: 'mock', name: 'Mock Interview', icon: ClockIcon },
+    { id: 'behavioral', name: 'Behavioral', icon: ChatBubbleLeftRightIcon, count: behavioralQuestions.length },
+    { id: 'technical', name: 'Technical', icon: DocumentTextIcon, count: technicalQuestions.length },
+    { id: 'mocks', name: 'Mock Interviews', icon: AcademicCapIcon, count: mockInterviews.length }
   ]
 
   return (
-    <div className="space-y-6">
+    <motion.div 
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6 }}
+      className="space-y-8"
+    >
       {/* Header */}
-      <div>
-        <h1 className="text-3xl font-bold text-gray-900">Interview Prep Center</h1>
-        <p className="mt-2 text-gray-600">Prepare for behavioral and technical interviews</p>
+      <div className="text-center">
+        <motion.h1 
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="text-4xl font-bold text-gradient mb-3"
+        >
+          Interview Prep Center
+        </motion.h1>
+        <motion.p 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.2 }}
+          className="text-lg text-slate-600"
+        >
+          Master behavioral questions, technical concepts, and practice with mock interviews
+        </motion.p>
       </div>
 
       {/* Tabs */}
-      <div className="border-b border-gray-200">
-        <nav className="-mb-px flex space-x-8">
+      <motion.div 
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.3 }}
+        className="card"
+      >
+        <div className="flex space-x-1 p-1 bg-slate-100 rounded-xl">
           {tabs.map((tab) => (
             <button
               key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
+              onClick={() => setActiveTab(tab.id as any)}
               className={`
-                py-2 px-1 border-b-2 font-medium text-sm flex items-center
-                ${activeTab === tab.id
-                  ? 'border-primary-500 text-primary-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                flex items-center px-4 py-3 rounded-lg text-sm font-semibold transition-all duration-200 flex-1
+                ${activeTab === tab.id 
+                  ? 'bg-white text-blue-700 shadow-md' 
+                  : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
                 }
               `}
             >
-              <tab.icon className="w-4 h-4 mr-2" />
+              <tab.icon className="w-5 h-5 mr-2" />
               {tab.name}
+              <span className={`ml-auto px-2 py-1 rounded-full text-xs ${
+                activeTab === tab.id ? 'bg-blue-100 text-blue-700' : 'bg-slate-200 text-slate-600'
+              }`}>
+                {tab.count}
+              </span>
             </button>
           ))}
-        </nav>
-      </div>
+        </div>
+      </motion.div>
 
-      {/* Behavioral Q&A */}
+      {/* Behavioral Questions */}
       {activeTab === 'behavioral' && (
-        <div className="space-y-4">
-          <div className="flex justify-between items-center">
-            <h2 className="text-xl font-semibold text-gray-900">Behavioral Questions</h2>
+        <motion.div 
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 0.4 }}
+          className="space-y-6"
+        >
+          <div className="flex items-center justify-between">
+            <h2 className="text-2xl font-bold text-slate-900">Behavioral Questions</h2>
             <button
-              onClick={() => {
-                setModalType('behavioral')
-                setShowModal(true)
-              }}
-              className="btn-primary flex items-center"
+              onClick={() => setShowBehavioralModal(true)}
+              className="btn-primary flex items-center group"
             >
-              <PlusIcon className="w-5 h-5 mr-2" />
+              <PlusIcon className="w-5 h-5 mr-2 group-hover:scale-110 transition-transform duration-200" />
               Add Question
             </button>
           </div>
-          
-          <div className="grid gap-4">
-            {behavioralQuestions.map((question) => (
-              <div key={question.id} className="card">
-                <div className="flex justify-between items-start mb-3">
-                  <div>
-                    <h3 className="font-medium text-gray-900">{question.question}</h3>
-                    <p className="text-sm text-gray-500">{question.category}</p>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {behavioralQuestions.map((question, index) => (
+              <motion.div
+                key={question.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.1 }}
+                className="card-hover group"
+              >
+                <div className="flex items-start justify-between mb-4">
+                  <div className={`px-3 py-1 rounded-full text-xs font-semibold bg-gradient-to-r ${getCategoryColor(question.category)} text-white`}>
+                    {question.category}
                   </div>
-                  <div className="flex space-x-2">
+                  <div className="flex items-center space-x-2">
                     <button
                       onClick={() => {
-                        setEditingItem(question)
-                        setFormData({
+                        setEditingBehavioral(question)
+                        setBehavioralForm({
                           question: question.question,
-                          response: question.response,
                           category: question.category,
-                          answer: '',
-                          difficulty: 'Medium',
-                          company: '',
-                          dealType: '',
-                          dealSize: '',
-                          role: '',
-                          description: '',
-                          keyLearnings: '',
-                          date: ''
+                          difficulty: question.difficulty,
+                          answer: question.answer,
+                          notes: question.notes
                         })
-                        setModalType('behavioral')
-                        setShowModal(true)
+                        setShowBehavioralModal(true)
                       }}
-                      className="text-primary-600 hover:text-primary-900"
+                      className="p-1 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded transition-colors duration-200"
                     >
                       <PencilIcon className="w-4 h-4" />
                     </button>
                     <button
                       onClick={() => deleteBehavioralQuestion(question.id)}
-                      className="text-red-600 hover:text-red-900"
+                      className="p-1 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded transition-colors duration-200"
                     >
                       <TrashIcon className="w-4 h-4" />
                     </button>
                   </div>
                 </div>
-                <div className="bg-gray-50 p-3 rounded-lg">
-                  <p className="text-sm text-gray-700">{question.response}</p>
+                
+                <h3 className="font-semibold text-slate-900 mb-3 line-clamp-2">{question.question}</h3>
+                
+                <div className="flex items-center justify-between mb-3">
+                  <span className={`px-2 py-1 rounded-full text-xs font-semibold ${getDifficultyColor(question.difficulty)}`}>
+                    {question.difficulty}
+                  </span>
+                  <div className="flex items-center text-slate-400">
+                    <StarIcon className="w-4 h-4 mr-1" />
+                    <span className="text-sm">4.2</span>
+                  </div>
                 </div>
-              </div>
+                
+                {question.answer && (
+                  <div className="text-sm text-slate-600 line-clamp-3 mb-3">
+                    {question.answer}
+                  </div>
+                )}
+                
+                {question.notes && (
+                  <div className="text-xs text-slate-500 bg-slate-50 p-2 rounded-lg">
+                    {question.notes}
+                  </div>
+                )}
+              </motion.div>
             ))}
-            
-            {behavioralQuestions.length === 0 && (
-              <div className="text-center py-12">
-                <p className="text-gray-500">No behavioral questions yet. Add your first question!</p>
-              </div>
-            )}
           </div>
-        </div>
+        </motion.div>
       )}
 
-      {/* Technical Q&A */}
+      {/* Technical Questions */}
       {activeTab === 'technical' && (
-        <div className="space-y-4">
-          <div className="flex justify-between items-center">
-            <h2 className="text-xl font-semibold text-gray-900">Technical Questions</h2>
+        <motion.div 
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 0.4 }}
+          className="space-y-6"
+        >
+          <div className="flex items-center justify-between">
+            <h2 className="text-2xl font-bold text-slate-900">Technical Questions</h2>
             <button
-              onClick={() => {
-                setModalType('technical')
-                setShowModal(true)
-              }}
-              className="btn-primary flex items-center"
+              onClick={() => setShowTechnicalModal(true)}
+              className="btn-primary flex items-center group"
             >
-              <PlusIcon className="w-5 h-5 mr-2" />
+              <PlusIcon className="w-5 h-5 mr-2 group-hover:scale-110 transition-transform duration-200" />
               Add Question
             </button>
           </div>
-          
-          <div className="grid gap-4">
-            {technicalQuestions.map((question) => (
-              <div key={question.id} className="card">
-                <div className="flex justify-between items-start mb-3">
-                  <div>
-                    <h3 className="font-medium text-gray-900">{question.question}</h3>
-                    <div className="flex items-center space-x-2 mt-1">
-                      <span className="text-sm text-gray-500">{question.category}</span>
-                      <span className={`status-badge ${
-                        question.difficulty === 'Easy' ? 'bg-green-100 text-green-800' :
-                        question.difficulty === 'Medium' ? 'bg-yellow-100 text-yellow-800' :
-                        'bg-red-100 text-red-800'
-                      }`}>
-                        {question.difficulty}
-                      </span>
-                    </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {technicalQuestions.map((question, index) => (
+              <motion.div
+                key={question.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.1 }}
+                className="card-hover group"
+              >
+                <div className="flex items-start justify-between mb-4">
+                  <div className={`px-3 py-1 rounded-full text-xs font-semibold bg-gradient-to-r ${getCategoryColor(question.category)} text-white`}>
+                    {question.category}
                   </div>
-                  <div className="flex space-x-2">
+                  <div className="flex items-center space-x-2">
                     <button
                       onClick={() => {
-                        setEditingItem(question)
-                        setFormData({
+                        setEditingTechnical(question)
+                        setTechnicalForm({
                           question: question.question,
-                          response: '',
                           category: question.category,
-                          answer: question.answer,
                           difficulty: question.difficulty,
-                          company: '',
-                          dealType: '',
-                          dealSize: '',
-                          role: '',
-                          description: '',
-                          keyLearnings: '',
-                          date: ''
+                          answer: question.answer,
+                          notes: question.notes
                         })
-                        setModalType('technical')
-                        setShowModal(true)
+                        setShowTechnicalModal(true)
                       }}
-                      className="text-primary-600 hover:text-primary-900"
+                      className="p-1 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded transition-colors duration-200"
                     >
                       <PencilIcon className="w-4 h-4" />
                     </button>
                     <button
                       onClick={() => deleteTechnicalQuestion(question.id)}
-                      className="text-red-600 hover:text-red-900"
+                      className="p-1 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded transition-colors duration-200"
                     >
                       <TrashIcon className="w-4 h-4" />
                     </button>
                   </div>
                 </div>
-                <div className="bg-gray-50 p-3 rounded-lg">
-                  <p className="text-sm text-gray-700">{question.answer}</p>
+                
+                <h3 className="font-semibold text-slate-900 mb-3 line-clamp-2">{question.question}</h3>
+                
+                <div className="flex items-center justify-between mb-3">
+                  <span className={`px-2 py-1 rounded-full text-xs font-semibold ${getDifficultyColor(question.difficulty)}`}>
+                    {question.difficulty}
+                  </span>
+                  <div className="flex items-center text-slate-400">
+                    <StarIcon className="w-4 h-4 mr-1" />
+                    <span className="text-sm">4.5</span>
+                  </div>
                 </div>
-              </div>
+                
+                {question.answer && (
+                  <div className="text-sm text-slate-600 line-clamp-3 mb-3">
+                    {question.answer}
+                  </div>
+                )}
+                
+                {question.notes && (
+                  <div className="text-xs text-slate-500 bg-slate-50 p-2 rounded-lg">
+                    {question.notes}
+                  </div>
+                )}
+              </motion.div>
             ))}
-            
-            {technicalQuestions.length === 0 && (
-              <div className="text-center py-12">
-                <p className="text-gray-500">No technical questions yet. Add your first question!</p>
-              </div>
-            )}
           </div>
-        </div>
+        </motion.div>
       )}
 
-      {/* Deal Experience */}
-      {activeTab === 'deals' && (
-        <div className="space-y-4">
-          <div className="flex justify-between items-center">
-            <h2 className="text-xl font-semibold text-gray-900">Deal Experience</h2>
+      {/* Mock Interviews */}
+      {activeTab === 'mocks' && (
+        <motion.div 
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 0.4 }}
+          className="space-y-6"
+        >
+          <div className="flex items-center justify-between">
+            <h2 className="text-2xl font-bold text-slate-900">Mock Interviews</h2>
             <button
-              onClick={() => {
-                setModalType('deal')
-                setShowModal(true)
-              }}
-              className="btn-primary flex items-center"
+              onClick={() => setShowMockModal(true)}
+              className="btn-primary flex items-center group"
             >
-              <PlusIcon className="w-5 h-5 mr-2" />
-              Add Deal
+              <PlusIcon className="w-5 h-5 mr-2 group-hover:scale-110 transition-transform duration-200" />
+              Schedule Mock
             </button>
           </div>
-          
-          <div className="grid gap-4">
-            {dealExperiences.map((deal) => (
-              <div key={deal.id} className="card">
-                <div className="flex justify-between items-start mb-3">
-                  <div>
-                    <h3 className="font-medium text-gray-900">{deal.company}</h3>
-                    <p className="text-sm text-gray-500">{deal.dealType} • {deal.dealSize}</p>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {mockInterviews.map((mock, index) => (
+              <motion.div
+                key={mock.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.1 }}
+                className="card-hover group"
+              >
+                <div className="flex items-start justify-between mb-4">
+                  <div className={`px-3 py-1 rounded-full text-xs font-semibold bg-gradient-to-r ${getCategoryColor(mock.type)} text-white`}>
+                    {mock.type}
                   </div>
-                  <div className="flex space-x-2">
+                  <div className="flex items-center space-x-2">
                     <button
                       onClick={() => {
-                        setEditingItem(deal)
-                        setFormData({
-                          question: '',
-                          response: '',
-                          category: '',
-                          answer: '',
-                          difficulty: 'Medium',
-                          company: deal.company,
-                          dealType: deal.dealType,
-                          dealSize: deal.dealSize,
-                          role: deal.role,
-                          description: deal.description,
-                          keyLearnings: deal.keyLearnings,
-                          date: deal.date
+                        setEditingMock(mock)
+                        setMockForm({
+                          interviewer: mock.interviewer,
+                          date: mock.date,
+                          type: mock.type,
+                          score: mock.score,
+                          feedback: mock.feedback,
+                          notes: mock.notes
                         })
-                        setModalType('deal')
-                        setShowModal(true)
+                        setShowMockModal(true)
                       }}
-                      className="text-primary-600 hover:text-primary-900"
+                      className="p-1 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded transition-colors duration-200"
                     >
                       <PencilIcon className="w-4 h-4" />
                     </button>
                     <button
-                      onClick={() => deleteDealExperience(deal.id)}
-                      className="text-red-600 hover:text-red-900"
+                      onClick={() => deleteMockInterview(mock.id)}
+                      className="p-1 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded transition-colors duration-200"
                     >
                       <TrashIcon className="w-4 h-4" />
                     </button>
                   </div>
                 </div>
-                <div className="space-y-2">
-                  <p className="text-sm text-gray-700"><strong>Role:</strong> {deal.role}</p>
-                  <p className="text-sm text-gray-700"><strong>Description:</strong> {deal.description}</p>
-                  <p className="text-sm text-gray-700"><strong>Key Learnings:</strong> {deal.keyLearnings}</p>
+                
+                <div className="flex items-center mb-3">
+                  <UserIcon className="w-5 h-5 text-slate-400 mr-2" />
+                  <span className="font-semibold text-slate-900">{mock.interviewer}</span>
                 </div>
-              </div>
-            ))}
-            
-            {dealExperiences.length === 0 && (
-              <div className="text-center py-12">
-                <p className="text-gray-500">No deal experiences yet. Add your first deal!</p>
-              </div>
-            )}
-          </div>
-        </div>
-      )}
-
-      {/* Mock Interview */}
-      {activeTab === 'mock' && (
-        <div className="space-y-6">
-          <div className="flex justify-between items-center">
-            <h2 className="text-xl font-semibold text-gray-900">Mock Interview Practice</h2>
-            <button
-              onClick={startMockInterview}
-              className="btn-primary flex items-center"
-            >
-              <PlayIcon className="w-5 h-5 mr-2" />
-              Start Mock Interview
-            </button>
-          </div>
-
-          {showMockInterview ? (
-            <div className="card">
-              <div className="text-center mb-6">
-                <div className="text-4xl font-mono font-bold text-primary-600 mb-4">
-                  {formatTime(mockTimer)}
+                
+                <div className="flex items-center mb-3">
+                  <CalendarIcon className="w-5 h-5 text-slate-400 mr-2" />
+                  <span className="text-sm text-slate-600">
+                    {new Date(mock.date).toLocaleDateString()}
+                  </span>
                 </div>
-                <div className="flex justify-center space-x-4">
-                  <button
-                    onClick={() => setIsTimerRunning(!isTimerRunning)}
-                    className="btn-secondary flex items-center"
-                  >
-                    {isTimerRunning ? <PauseIcon className="w-4 h-4 mr-2" /> : <PlayIcon className="w-4 h-4 mr-2" />}
-                    {isTimerRunning ? 'Pause' : 'Resume'}
-                  </button>
-                  <button
-                    onClick={stopMockInterview}
-                    className="btn-danger flex items-center"
-                  >
-                    <StopIcon className="w-4 h-4 mr-2" />
-                    End Interview
-                  </button>
-                </div>
-              </div>
-
-              <div className="bg-gray-50 p-6 rounded-lg mb-4">
-                <h3 className="text-lg font-medium text-gray-900 mb-2">
-                  Question {currentQuestion + 1} of {mockQuestions.length}
-                </h3>
-                <p className="text-gray-700">{mockQuestions[currentQuestion]}</p>
-              </div>
-
-              {currentQuestion < mockQuestions.length - 1 && (
-                <button
-                  onClick={nextQuestion}
-                  className="btn-primary"
-                >
-                  Next Question
-                </button>
-              )}
-            </div>
-          ) : (
-            <div className="card">
-              <h3 className="text-lg font-medium text-gray-900 mb-4">Mock Interview Instructions</h3>
-              <ul className="space-y-2 text-gray-700">
-                <li>• Click "Start Mock Interview" to begin</li>
-                <li>• Answer each question as you would in a real interview</li>
-                <li>• Use the timer to practice time management</li>
-                <li>• You can pause and resume the timer</li>
-                <li>• Click "Next Question" when ready to proceed</li>
-                <li>• End the interview when finished</li>
-              </ul>
-            </div>
-          )}
-
-          {/* Recent Mock Interviews */}
-          {mockInterviews.length > 0 && (
-            <div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Recent Mock Interviews</h3>
-              <div className="grid gap-4">
-                {mockInterviews.slice(0, 5).map((interview) => (
-                  <div key={interview.id} className="card">
-                    <div className="flex justify-between items-center">
-                      <div>
-                        <p className="font-medium text-gray-900">
-                          {new Date(interview.date).toLocaleDateString()}
-                        </p>
-                        <p className="text-sm text-gray-500">
-                          Duration: {formatTime(interview.duration)} • Questions: {interview.questions.length}
-                        </p>
-                      </div>
-                      <span className={`status-badge ${
-                        interview.performance === 'Excellent' ? 'bg-green-100 text-green-800' :
-                        interview.performance === 'Good' ? 'bg-blue-100 text-blue-800' :
-                        interview.performance === 'Fair' ? 'bg-yellow-100 text-yellow-800' :
-                        'bg-red-100 text-red-800'
-                      }`}>
-                        {interview.performance}
-                      </span>
+                
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center">
+                    <span className="text-2xl font-bold text-slate-900 mr-2">{mock.score}/10</span>
+                    <div className="flex items-center">
+                      {[...Array(10)].map((_, i) => (
+                        <StarIcon 
+                          key={i} 
+                          className={`w-4 h-4 ${i < mock.score ? 'text-amber-400 fill-current' : 'text-slate-300'}`} 
+                        />
+                      ))}
                     </div>
                   </div>
-                ))}
-              </div>
-            </div>
-          )}
-        </div>
+                </div>
+                
+                {mock.feedback && (
+                  <div className="text-sm text-slate-600 line-clamp-3 mb-3">
+                    {mock.feedback}
+                  </div>
+                )}
+                
+                {mock.notes && (
+                  <div className="text-xs text-slate-500 bg-slate-50 p-2 rounded-lg">
+                    {mock.notes}
+                  </div>
+                )}
+              </motion.div>
+            ))}
+          </div>
+        </motion.div>
       )}
 
-      {/* Modal */}
-      {showModal && (
-        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
-          <div className="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
-            <div className="mt-3">
-              <h3 className="text-lg font-medium text-gray-900 mb-4">
-                {editingItem ? 'Edit' : 'Add'} {modalType === 'behavioral' ? 'Behavioral Question' : 
-                modalType === 'technical' ? 'Technical Question' : 'Deal Experience'}
-              </h3>
-              <form onSubmit={handleSubmit} className="space-y-4">
-                {modalType === 'behavioral' && (
-                  <>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700">Question</label>
-                      <textarea
-                        required
-                        value={formData.question}
-                        onChange={(e) => setFormData({ ...formData, question: e.target.value })}
-                        className="input-field"
-                        rows={3}
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700">Category</label>
-                      <input
-                        type="text"
-                        value={formData.category}
-                        onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                        className="input-field"
-                        placeholder="e.g., Leadership, Teamwork, Problem Solving"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700">Your Response</label>
-                      <textarea
-                        required
-                        value={formData.response}
-                        onChange={(e) => setFormData({ ...formData, response: e.target.value })}
-                        className="input-field"
-                        rows={4}
-                      />
-                    </div>
-                  </>
-                )}
-
-                {modalType === 'technical' && (
-                  <>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700">Question</label>
-                      <textarea
-                        required
-                        value={formData.question}
-                        onChange={(e) => setFormData({ ...formData, question: e.target.value })}
-                        className="input-field"
-                        rows={3}
-                      />
-                    </div>
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700">Category</label>
-                        <select
-                          value={formData.category}
-                          onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                          className="input-field"
-                        >
-                          <option value="">Select Category</option>
-                          <option value="Valuation">Valuation</option>
-                          <option value="Accounting">Accounting</option>
-                          <option value="DCF">DCF</option>
-                          <option value="LBO">LBO</option>
-                          <option value="Market Sizing">Market Sizing</option>
-                          <option value="Other">Other</option>
-                        </select>
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700">Difficulty</label>
-                        <select
-                          value={formData.difficulty}
-                          onChange={(e) => setFormData({ ...formData, difficulty: e.target.value as TechnicalQuestion['difficulty'] })}
-                          className="input-field"
-                        >
-                          <option value="Easy">Easy</option>
-                          <option value="Medium">Medium</option>
-                          <option value="Hard">Hard</option>
-                        </select>
-                      </div>
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700">Answer</label>
-                      <textarea
-                        required
-                        value={formData.answer}
-                        onChange={(e) => setFormData({ ...formData, answer: e.target.value })}
-                        className="input-field"
-                        rows={4}
-                      />
-                    </div>
-                  </>
-                )}
-
-                {modalType === 'deal' && (
-                  <>
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700">Company</label>
-                        <input
-                          type="text"
-                          required
-                          value={formData.company}
-                          onChange={(e) => setFormData({ ...formData, company: e.target.value })}
-                          className="input-field"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700">Deal Type</label>
-                        <input
-                          type="text"
-                          required
-                          value={formData.dealType}
-                          onChange={(e) => setFormData({ ...formData, dealType: e.target.value })}
-                          className="input-field"
-                          placeholder="e.g., M&A, IPO, LBO"
-                        />
-                      </div>
-                    </div>
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700">Deal Size</label>
-                        <input
-                          type="text"
-                          value={formData.dealSize}
-                          onChange={(e) => setFormData({ ...formData, dealSize: e.target.value })}
-                          className="input-field"
-                          placeholder="e.g., $500M"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700">Your Role</label>
-                        <input
-                          type="text"
-                          value={formData.role}
-                          onChange={(e) => setFormData({ ...formData, role: e.target.value })}
-                          className="input-field"
-                          placeholder="e.g., Analyst, Associate"
-                        />
-                      </div>
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700">Deal Description</label>
-                      <textarea
-                        required
-                        value={formData.description}
-                        onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                        className="input-field"
-                        rows={3}
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700">Key Learnings</label>
-                      <textarea
-                        value={formData.keyLearnings}
-                        onChange={(e) => setFormData({ ...formData, keyLearnings: e.target.value })}
-                        className="input-field"
-                        rows={3}
-                      />
-                    </div>
-                  </>
-                )}
-
-                <div className="flex justify-end space-x-3 pt-4">
+      {/* Behavioral Modal */}
+      <AnimatePresence>
+        {showBehavioralModal && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="modal-overlay"
+          >
+            <motion.div 
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.8, opacity: 0 }}
+              className="modal-content"
+            >
+              <div className="mb-6">
+                <h3 className="text-2xl font-bold text-slate-900 mb-2">
+                  {editingBehavioral ? 'Edit' : 'Add'} Behavioral Question
+                </h3>
+                <p className="text-slate-600">Enter the question details below</p>
+              </div>
+              <form onSubmit={handleBehavioralSubmit} className="space-y-6">
+                <div>
+                  <label className="block text-sm font-semibold text-slate-700 mb-2">Question</label>
+                  <textarea
+                    required
+                    value={behavioralForm.question}
+                    onChange={(e) => setBehavioralForm({ ...behavioralForm, question: e.target.value })}
+                    className="input-field"
+                    rows={3}
+                    placeholder="e.g., Tell me about a time when you had to lead a team through a difficult situation"
+                  />
+                </div>
+                
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-semibold text-slate-700 mb-2">Category</label>
+                    <select
+                      value={behavioralForm.category}
+                      onChange={(e) => setBehavioralForm({ ...behavioralForm, category: e.target.value as any })}
+                      className="input-field"
+                    >
+                      <option value="Leadership">Leadership</option>
+                      <option value="Teamwork">Teamwork</option>
+                      <option value="Problem Solving">Problem Solving</option>
+                      <option value="Communication">Communication</option>
+                      <option value="Conflict Resolution">Conflict Resolution</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold text-slate-700 mb-2">Difficulty</label>
+                    <select
+                      value={behavioralForm.difficulty}
+                      onChange={(e) => setBehavioralForm({ ...behavioralForm, difficulty: e.target.value as any })}
+                      className="input-field"
+                    >
+                      <option value="Easy">Easy</option>
+                      <option value="Medium">Medium</option>
+                      <option value="Hard">Hard</option>
+                    </select>
+                  </div>
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-semibold text-slate-700 mb-2">Answer (STAR Format)</label>
+                  <textarea
+                    value={behavioralForm.answer}
+                    onChange={(e) => setBehavioralForm({ ...behavioralForm, answer: e.target.value })}
+                    className="input-field"
+                    rows={4}
+                    placeholder="Situation, Task, Action, Result..."
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-semibold text-slate-700 mb-2">Notes</label>
+                  <textarea
+                    value={behavioralForm.notes}
+                    onChange={(e) => setBehavioralForm({ ...behavioralForm, notes: e.target.value })}
+                    className="input-field"
+                    rows={2}
+                    placeholder="Additional notes or tips"
+                  />
+                </div>
+                
+                <div className="flex justify-end space-x-4 pt-6">
                   <button
                     type="button"
-                    onClick={() => {
-                      setShowModal(false)
-                      setEditingItem(null)
-                    }}
+                    onClick={() => setShowBehavioralModal(false)}
                     className="btn-secondary"
                   >
                     Cancel
                   </button>
                   <button type="submit" className="btn-primary">
-                    {editingItem ? 'Update' : 'Add'}
+                    {editingBehavioral ? 'Update' : 'Add'} Question
                   </button>
                 </div>
               </form>
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Technical Modal */}
+      <AnimatePresence>
+        {showTechnicalModal && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="modal-overlay"
+          >
+            <motion.div 
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.8, opacity: 0 }}
+              className="modal-content"
+            >
+              <div className="mb-6">
+                <h3 className="text-2xl font-bold text-slate-900 mb-2">
+                  {editingTechnical ? 'Edit' : 'Add'} Technical Question
+                </h3>
+                <p className="text-slate-600">Enter the question details below</p>
+              </div>
+              <form onSubmit={handleTechnicalSubmit} className="space-y-6">
+                <div>
+                  <label className="block text-sm font-semibold text-slate-700 mb-2">Question</label>
+                  <textarea
+                    required
+                    value={technicalForm.question}
+                    onChange={(e) => setTechnicalForm({ ...technicalForm, question: e.target.value })}
+                    className="input-field"
+                    rows={3}
+                    placeholder="e.g., Walk me through a DCF valuation"
+                  />
+                </div>
+                
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-semibold text-slate-700 mb-2">Category</label>
+                    <select
+                      value={technicalForm.category}
+                      onChange={(e) => setTechnicalForm({ ...technicalForm, category: e.target.value as any })}
+                      className="input-field"
+                    >
+                      <option value="Valuation">Valuation</option>
+                      <option value="Financial Modeling">Financial Modeling</option>
+                      <option value="Accounting">Accounting</option>
+                      <option value="M&A">M&A</option>
+                      <option value="LBO">LBO</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold text-slate-700 mb-2">Difficulty</label>
+                    <select
+                      value={technicalForm.difficulty}
+                      onChange={(e) => setTechnicalForm({ ...technicalForm, difficulty: e.target.value as any })}
+                      className="input-field"
+                    >
+                      <option value="Easy">Easy</option>
+                      <option value="Medium">Medium</option>
+                      <option value="Hard">Hard</option>
+                    </select>
+                  </div>
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-semibold text-slate-700 mb-2">Answer</label>
+                  <textarea
+                    value={technicalForm.answer}
+                    onChange={(e) => setTechnicalForm({ ...technicalForm, answer: e.target.value })}
+                    className="input-field"
+                    rows={4}
+                    placeholder="Step-by-step explanation..."
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-semibold text-slate-700 mb-2">Notes</label>
+                  <textarea
+                    value={technicalForm.notes}
+                    onChange={(e) => setTechnicalForm({ ...technicalForm, notes: e.target.value })}
+                    className="input-field"
+                    rows={2}
+                    placeholder="Key formulas, tips, or common mistakes"
+                  />
+                </div>
+                
+                <div className="flex justify-end space-x-4 pt-6">
+                  <button
+                    type="button"
+                    onClick={() => setShowTechnicalModal(false)}
+                    className="btn-secondary"
+                  >
+                    Cancel
+                  </button>
+                  <button type="submit" className="btn-primary">
+                    {editingTechnical ? 'Update' : 'Add'} Question
+                  </button>
+                </div>
+              </form>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Mock Interview Modal */}
+      <AnimatePresence>
+        {showMockModal && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="modal-overlay"
+          >
+            <motion.div 
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.8, opacity: 0 }}
+              className="modal-content"
+            >
+              <div className="mb-6">
+                <h3 className="text-2xl font-bold text-slate-900 mb-2">
+                  {editingMock ? 'Edit' : 'Schedule'} Mock Interview
+                </h3>
+                <p className="text-slate-600">Enter the interview details below</p>
+              </div>
+              <form onSubmit={handleMockSubmit} className="space-y-6">
+                <div>
+                  <label className="block text-sm font-semibold text-slate-700 mb-2">Interviewer</label>
+                  <input
+                    type="text"
+                    required
+                    value={mockForm.interviewer}
+                    onChange={(e) => setMockForm({ ...mockForm, interviewer: e.target.value })}
+                    className="input-field"
+                    placeholder="e.g., John Smith"
+                  />
+                </div>
+                
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-semibold text-slate-700 mb-2">Date</label>
+                    <input
+                      type="datetime-local"
+                      required
+                      value={mockForm.date}
+                      onChange={(e) => setMockForm({ ...mockForm, date: e.target.value })}
+                      className="input-field"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold text-slate-700 mb-2">Type</label>
+                    <select
+                      value={mockForm.type}
+                      onChange={(e) => setMockForm({ ...mockForm, type: e.target.value as any })}
+                      className="input-field"
+                    >
+                      <option value="Behavioral">Behavioral</option>
+                      <option value="Technical">Technical</option>
+                      <option value="Case Study">Case Study</option>
+                      <option value="Fit">Fit</option>
+                    </select>
+                  </div>
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-semibold text-slate-700 mb-2">Score (1-10)</label>
+                  <input
+                    type="number"
+                    min="1"
+                    max="10"
+                    value={mockForm.score}
+                    onChange={(e) => setMockForm({ ...mockForm, score: parseInt(e.target.value) })}
+                    className="input-field"
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-semibold text-slate-700 mb-2">Feedback</label>
+                  <textarea
+                    value={mockForm.feedback}
+                    onChange={(e) => setMockForm({ ...mockForm, feedback: e.target.value })}
+                    className="input-field"
+                    rows={3}
+                    placeholder="Interviewer feedback and areas for improvement"
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-semibold text-slate-700 mb-2">Notes</label>
+                  <textarea
+                    value={mockForm.notes}
+                    onChange={(e) => setMockForm({ ...mockForm, notes: e.target.value })}
+                    className="input-field"
+                    rows={2}
+                    placeholder="Your own notes and takeaways"
+                  />
+                </div>
+                
+                <div className="flex justify-end space-x-4 pt-6">
+                  <button
+                    type="button"
+                    onClick={() => setShowMockModal(false)}
+                    className="btn-secondary"
+                  >
+                    Cancel
+                  </button>
+                  <button type="submit" className="btn-success">
+                    {editingMock ? 'Update' : 'Schedule'} Interview
+                  </button>
+                </div>
+              </form>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.div>
   )
 } 

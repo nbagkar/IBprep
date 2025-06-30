@@ -8,11 +8,12 @@ import FirmTracker from '@/components/FirmTracker'
 import InterviewPrep from '@/components/InterviewPrep'
 import ResourceLibrary from '@/components/ResourceLibrary'
 import NewsFeed from '@/components/NewsFeed'
+import { Bars3Icon } from '@heroicons/react/24/outline'
 
-export default function HomePage() {
+export default function Home() {
   const { activeTab, sidebarOpen, setSidebarOpen } = useAppStore()
 
-  const renderActiveTab = () => {
+  const renderContent = () => {
     switch (activeTab) {
       case 'dashboard':
         return <Dashboard />
@@ -30,26 +31,33 @@ export default function HomePage() {
   }
 
   return (
-    <div className="flex h-screen bg-gray-50">
+    <div className="flex h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
+      {/* Sidebar */}
       <Sidebar />
       
+      {/* Main Content */}
       <div className="flex-1 flex flex-col overflow-hidden">
-        {/* Mobile header */}
-        <div className="lg:hidden bg-white border-b border-gray-200 px-4 py-3">
+        {/* Mobile Header */}
+        <div className="lg:hidden flex items-center justify-between p-4 bg-white/80 backdrop-blur-sm border-b border-slate-200">
           <button
-            onClick={() => setSidebarOpen(!sidebarOpen)}
-            className="text-gray-500 hover:text-gray-700"
+            onClick={() => setSidebarOpen(true)}
+            className="p-2 rounded-lg hover:bg-slate-100 transition-colors duration-200"
           >
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-            </svg>
+            <Bars3Icon className="w-6 h-6 text-slate-600" />
           </button>
+          <div className="flex items-center">
+            <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-xl flex items-center justify-center mr-3">
+              <span className="text-white font-bold text-sm">IB</span>
+            </div>
+            <span className="font-semibold text-slate-900">Prep Hub</span>
+          </div>
+          <div className="w-10"></div> {/* Spacer for centering */}
         </div>
         
-        {/* Main content */}
-        <main className="flex-1 overflow-y-auto p-6">
+        {/* Content Area */}
+        <main className="flex-1 overflow-y-auto p-6 lg:p-8">
           <div className="max-w-7xl mx-auto">
-            {renderActiveTab()}
+            {renderContent()}
           </div>
         </main>
       </div>

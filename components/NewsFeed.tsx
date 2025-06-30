@@ -1,361 +1,384 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
-import { useAppStore, type NewsItem } from '@/lib/store'
+import React, { useState } from 'react'
+import { useAppStore } from '@/lib/store'
 import { 
   PlusIcon, 
   TrashIcon, 
-  BookmarkIcon,
+  ArrowTopRightOnSquareIcon,
+  CalendarIcon,
   GlobeAltIcon,
-  ClockIcon,
-  ArrowTopRightOnSquareIcon
+  BookmarkIcon,
+  ShareIcon,
+  EyeIcon,
+  ClockIcon
 } from '@heroicons/react/24/outline'
 import toast from 'react-hot-toast'
+import { motion, AnimatePresence } from 'framer-motion'
 
 export default function NewsFeed() {
   const { newsItems, addNewsItem, deleteNewsItem } = useAppStore()
-  const [activeTab, setActiveTab] = useState('live')
-  const [showAddModal, setShowAddModal] = useState(false)
-  const [newRssUrl, setNewRssUrl] = useState('')
+  const [showModal, setShowModal] = useState(false)
+  const [filterSource, setFilterSource] = useState<string>('all')
+  const [searchTerm, setSearchTerm] = useState('')
 
-  // Mock live news data
-  const liveNews = [
-    {
-      id: '1',
-      title: 'Fed Signals Potential Rate Cuts in 2024',
-      source: 'Bloomberg',
-      url: '#',
-      publishedAt: new Date().toISOString(),
-      summary: 'Federal Reserve officials indicated they may consider interest rate reductions next year as inflation continues to moderate.'
-    },
-    {
-      id: '2',
-      title: 'Tech M&A Activity Surges in Q4',
-      source: 'Reuters',
-      url: '#',
-      publishedAt: new Date(Date.now() - 3600000).toISOString(),
-      summary: 'Technology sector merger and acquisition deals reached $150 billion in the fourth quarter, marking the highest level in two years.'
-    },
-    {
-      id: '3',
-      title: 'Oil Prices Stabilize Amid OPEC+ Production Cuts',
-      source: 'WSJ',
-      url: '#',
-      publishedAt: new Date(Date.now() - 7200000).toISOString(),
-      summary: 'Crude oil prices found support as OPEC+ members reaffirmed their commitment to production cuts through early 2024.'
-    },
-    {
-      id: '4',
-      title: 'European Markets Rally on ECB Policy Shift',
-      source: 'Financial Times',
-      url: '#',
-      publishedAt: new Date(Date.now() - 10800000).toISOString(),
-      summary: 'European stock markets gained ground following the European Central Bank\'s dovish policy stance and improved economic outlook.'
-    }
-  ]
+  const [formData, setFormData] = useState({
+    title: '',
+    source: '',
+    url: '',
+    summary: ''
+  })
 
-  const tabs = [
-    { id: 'live', name: 'Live News', icon: GlobeAltIcon },
-    { id: 'bookmarks', name: 'Bookmarks', icon: BookmarkIcon },
-    { id: 'rss', name: 'RSS Feeds', icon: PlusIcon },
-  ]
-
-  const handleAddRssFeed = (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    if (newRssUrl.trim()) {
-      addNewsItem({
-        title: `RSS Feed: ${newRssUrl}`,
-        source: 'RSS',
-        url: newRssUrl,
-        publishedAt: new Date().toISOString(),
-        summary: 'Custom RSS feed added to your news sources.'
-      })
-      toast.success('RSS feed added!')
-      setNewRssUrl('')
-      setShowAddModal(false)
+    
+    addNewsItem({
+      ...formData,
+      publishedAt: new Date().toISOString()
+    })
+    
+    toast.success('News item added successfully!')
+    setShowModal(false)
+    setFormData({
+      title: '',
+      source: '',
+      url: '',
+      summary: ''
+    })
+  }
+
+  const handleDelete = (id: string) => {
+    if (confirm('Are you sure you want to delete this news item?')) {
+      deleteNewsItem(id)
+      toast.success('News item deleted successfully!')
     }
   }
 
-  const formatTimeAgo = (dateString: string) => {
+  const filteredNews = newsItems.filter(news => {
+    const matchesSource = filterSource === 'all' || news.source.toLowerCase().includes(filterSource.toLowerCase())
+    const matchesSearch = news.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         news.summary.toLowerCase().includes(searchTerm.toLowerCase())
+    return matchesSource && matchesSearch
+  })
+
+  const sources = Array.from(new Set(newsItems.map(news => news.source)))
+  const sourceOptions = [
+    { id: 'all', name: 'All Sources', count: newsItems.length },
+    ...sources.map(source => ({
+      id: source,
+      name: source,
+      count: newsItems.filter(news => news.source === source).length
+    }))
+  ]
+
+  const getSourceColor = (source: string) => {
+    const colors = [
+      'from-blue-500 to-indigo-600',
+      'from-emerald-500 to-teal-600',
+      'from-purple-500 to-indigo-600',
+      'from-amber-500 to-orange-600',
+      'from-rose-500 to-pink-600',
+      'from-slate-500 to-gray-600'
+    ]
+    return colors[Math.abs(source.length) % colors.length]
+  }
+
+  const formatDate = (dateString: string) => {
     const date = new Date(dateString)
     const now = new Date()
-    const diffInMinutes = Math.floor((now.getTime() - date.getTime()) / (1000 * 60))
+    const diffTime = now.getTime() - date.getTime()
+    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24))
     
-    if (diffInMinutes < 1) return 'Just now'
-    if (diffInMinutes < 60) return `${diffInMinutes}m ago`
-    if (diffInMinutes < 1440) return `${Math.floor(diffInMinutes / 60)}h ago`
-    return `${Math.floor(diffInMinutes / 1440)}d ago`
+    if (diffDays === 0) return 'Today'
+    if (diffDays === 1) return 'Yesterday'
+    if (diffDays < 7) return `${diffDays} days ago`
+    return date.toLocaleDateString()
   }
 
   return (
-    <div className="space-y-6">
+    <motion.div 
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6 }}
+      className="space-y-8"
+    >
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900">News Feed</h1>
-          <p className="mt-2 text-gray-600">Stay updated with market news and industry insights</p>
-        </div>
-        <button
-          onClick={() => setShowAddModal(true)}
-          className="btn-primary flex items-center"
+      <div className="text-center">
+        <motion.h1 
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="text-4xl font-bold text-gradient mb-3"
         >
-          <PlusIcon className="w-5 h-5 mr-2" />
-          Add RSS Feed
-        </button>
+          Live News Feed
+        </motion.h1>
+        <motion.p 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.2 }}
+          className="text-lg text-slate-600"
+        >
+          Stay updated with the latest investment banking news and market insights
+        </motion.p>
       </div>
 
-      {/* Tabs */}
-      <div className="border-b border-gray-200">
-        <nav className="-mb-px flex space-x-8">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={`
-                py-2 px-1 border-b-2 font-medium text-sm flex items-center
-                ${activeTab === tab.id
-                  ? 'border-primary-500 text-primary-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                }
-              `}
+      {/* Filters and Search */}
+      <motion.div 
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.3 }}
+        className="card"
+      >
+        <div className="flex flex-col lg:flex-row gap-4">
+          <div className="flex-1">
+            <label className="block text-sm font-semibold text-slate-700 mb-2">Search News</label>
+            <div className="relative">
+              <input
+                type="text"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="input-field pl-10"
+                placeholder="Search by title or summary..."
+              />
+              <EyeIcon className="w-5 h-5 text-slate-400 absolute left-3 top-1/2 transform -translate-y-1/2" />
+            </div>
+          </div>
+          <div className="lg:w-64">
+            <label className="block text-sm font-semibold text-slate-700 mb-2">Filter by Source</label>
+            <select
+              value={filterSource}
+              onChange={(e) => setFilterSource(e.target.value)}
+              className="input-field"
             >
-              <tab.icon className="w-4 h-4 mr-2" />
-              {tab.name}
+              {sourceOptions.map(source => (
+                <option key={source.id} value={source.id}>
+                  {source.name} ({source.count})
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+      </motion.div>
+
+      {/* Add News Button */}
+      <motion.div 
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.4 }}
+        className="flex justify-end"
+      >
+        <button
+          onClick={() => setShowModal(true)}
+          className="btn-primary flex items-center group"
+        >
+          <PlusIcon className="w-5 h-5 mr-2 group-hover:scale-110 transition-transform duration-200" />
+          Add News Item
+        </button>
+      </motion.div>
+
+      {/* News Grid */}
+      <motion.div 
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.5 }}
+        className="grid grid-cols-1 lg:grid-cols-2 gap-6"
+      >
+        {filteredNews.map((news, index) => (
+          <motion.div
+            key={news.id}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: index * 0.1 }}
+            className="card-hover group"
+          >
+            {/* Header */}
+            <div className="flex items-start justify-between mb-4">
+              <div className={`px-3 py-1 rounded-full text-xs font-semibold bg-gradient-to-r ${getSourceColor(news.source)} text-white`}>
+                {news.source}
+              </div>
+              <div className="flex items-center space-x-2">
+                <button
+                  className="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all duration-200"
+                  title="Bookmark"
+                >
+                  <BookmarkIcon className="w-4 h-4" />
+                </button>
+                <button
+                  className="p-2 text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 rounded-lg transition-all duration-200"
+                  title="Share"
+                >
+                  <ShareIcon className="w-4 h-4" />
+                </button>
+                <button
+                  onClick={() => handleDelete(news.id)}
+                  className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all duration-200"
+                  title="Delete"
+                >
+                  <TrashIcon className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+
+            {/* Content */}
+            <div className="space-y-3">
+              <h3 className="font-semibold text-slate-900 text-lg line-clamp-2 group-hover:text-blue-600 transition-colors duration-200">
+                {news.title}
+              </h3>
+              
+              <div className="flex items-center space-x-4 text-sm text-slate-500">
+                <div className="flex items-center">
+                  <GlobeAltIcon className="w-4 h-4 mr-1" />
+                  <span>{news.source}</span>
+                </div>
+                <div className="flex items-center">
+                  <CalendarIcon className="w-4 h-4 mr-1" />
+                  <span>{formatDate(news.publishedAt)}</span>
+                </div>
+              </div>
+
+              {news.summary && (
+                <p className="text-sm text-slate-600 line-clamp-3">
+                  {news.summary}
+                </p>
+              )}
+
+              {/* Actions */}
+              <div className="flex items-center justify-between pt-3 border-t border-slate-100">
+                <div className="flex items-center space-x-4 text-sm text-slate-500">
+                  <div className="flex items-center">
+                    <ClockIcon className="w-4 h-4 mr-1" />
+                    <span>{formatDate(news.publishedAt)}</span>
+                  </div>
+                </div>
+                {news.url && (
+                  <a
+                    href={news.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="btn-ghost text-sm flex items-center group"
+                  >
+                    Read More
+                    <ArrowTopRightOnSquareIcon className="w-4 h-4 ml-1 group-hover:scale-110 transition-transform duration-200" />
+                  </a>
+                )}
+              </div>
+            </div>
+          </motion.div>
+        ))}
+      </motion.div>
+
+      {/* Empty State */}
+      {filteredNews.length === 0 && (
+        <motion.div 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="text-center py-16"
+        >
+          <div className="w-24 h-24 bg-gradient-to-r from-slate-100 to-blue-100 rounded-2xl flex items-center justify-center mx-auto mb-6">
+            <GlobeAltIcon className="w-12 h-12 text-slate-400" />
+          </div>
+          <h3 className="text-xl font-semibold text-slate-900 mb-2">No news found</h3>
+          <p className="text-slate-600 mb-6">
+            {searchTerm || filterSource !== 'all' 
+              ? 'Try adjusting your search or filters' 
+              : 'Add your first news item to get started!'
+            }
+          </p>
+          {!searchTerm && filterSource === 'all' && (
+            <button
+              onClick={() => setShowModal(true)}
+              className="btn-primary"
+            >
+              Add Your First News Item
             </button>
-          ))}
-        </nav>
-      </div>
-
-      {/* Live News Tab */}
-      {activeTab === 'live' && (
-        <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <h2 className="text-xl font-semibold text-gray-900">Live Market News</h2>
-            <div className="flex items-center text-sm text-gray-500">
-              <div className="w-2 h-2 bg-green-500 rounded-full mr-2 animate-pulse"></div>
-              Live
-            </div>
-          </div>
-
-          {/* Bloomberg TV Embed Placeholder */}
-          <div className="card">
-            <div className="aspect-video bg-gray-900 rounded-lg flex items-center justify-center">
-              <div className="text-center text-white">
-                <GlobeAltIcon className="w-16 h-16 mx-auto mb-4 text-gray-400" />
-                <h3 className="text-xl font-semibold mb-2">Bloomberg TV Live</h3>
-                <p className="text-gray-400">Live market coverage and financial news</p>
-                <p className="text-sm text-gray-500 mt-2">(Embed Bloomberg TV stream here)</p>
-              </div>
-            </div>
-          </div>
-
-          {/* News Articles */}
-          <div className="space-y-4">
-            {liveNews.map((news) => (
-              <div key={news.id} className="card">
-                <div className="flex justify-between items-start">
-                  <div className="flex-1">
-                    <div className="flex items-center space-x-2 mb-2">
-                      <span className="text-sm font-medium text-gray-900">{news.source}</span>
-                      <span className="text-sm text-gray-500">•</span>
-                      <span className="text-sm text-gray-500 flex items-center">
-                        <ClockIcon className="w-4 h-4 mr-1" />
-                        {formatTimeAgo(news.publishedAt)}
-                      </span>
-                    </div>
-                    <h3 className="text-lg font-semibold text-gray-900 mb-2">{news.title}</h3>
-                    <p className="text-gray-700 mb-3">{news.summary}</p>
-                    <div className="flex items-center space-x-3">
-                      <a
-                        href={news.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center text-sm text-primary-600 hover:text-primary-800"
-                      >
-                        Read Full Article
-                        <ArrowTopRightOnSquareIcon className="w-4 h-4 ml-1" />
-                      </a>
-                      <button
-                        onClick={() => {
-                          addNewsItem({
-                            title: news.title,
-                            source: news.source,
-                            url: news.url,
-                            publishedAt: news.publishedAt,
-                            summary: news.summary
-                          })
-                          toast.success('Article bookmarked!')
-                        }}
-                        className="inline-flex items-center text-sm text-gray-600 hover:text-gray-800"
-                      >
-                        <BookmarkIcon className="w-4 h-4 mr-1" />
-                        Bookmark
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
+          )}
+        </motion.div>
       )}
 
-      {/* Bookmarks Tab */}
-      {activeTab === 'bookmarks' && (
-        <div className="space-y-4">
-          <h2 className="text-xl font-semibold text-gray-900">Bookmarked Articles</h2>
-          
-          <div className="space-y-4">
-            {newsItems.map((news) => (
-              <div key={news.id} className="card">
-                <div className="flex justify-between items-start">
-                  <div className="flex-1">
-                    <div className="flex items-center space-x-2 mb-2">
-                      <span className="text-sm font-medium text-gray-900">{news.source}</span>
-                      <span className="text-sm text-gray-500">•</span>
-                      <span className="text-sm text-gray-500">
-                        {new Date(news.publishedAt).toLocaleDateString()}
-                      </span>
-                    </div>
-                    <h3 className="text-lg font-semibold text-gray-900 mb-2">{news.title}</h3>
-                    <p className="text-gray-700 mb-3">{news.summary}</p>
-                    <div className="flex items-center space-x-3">
-                      <a
-                        href={news.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center text-sm text-primary-600 hover:text-primary-800"
-                      >
-                        Read Full Article
-                        <ArrowTopRightOnSquareIcon className="w-4 h-4 ml-1" />
-                      </a>
-                      <button
-                        onClick={() => {
-                          deleteNewsItem(news.id)
-                          toast.success('Bookmark removed!')
-                        }}
-                        className="inline-flex items-center text-sm text-red-600 hover:text-red-800"
-                      >
-                        <TrashIcon className="w-4 h-4 mr-1" />
-                        Remove
-                      </button>
-                    </div>
-                  </div>
-                </div>
+      {/* Add News Modal */}
+      <AnimatePresence>
+        {showModal && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="modal-overlay"
+          >
+            <motion.div 
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.8, opacity: 0 }}
+              className="modal-content"
+            >
+              <div className="mb-6">
+                <h3 className="text-2xl font-bold text-slate-900 mb-2">
+                  Add News Item
+                </h3>
+                <p className="text-slate-600">Enter the news details below</p>
               </div>
-            ))}
-            
-            {newsItems.length === 0 && (
-              <div className="text-center py-12">
-                <BookmarkIcon className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                <p className="text-gray-500">No bookmarked articles yet.</p>
-                <p className="text-sm text-gray-400">Bookmark articles from the Live News tab to see them here.</p>
-              </div>
-            )}
-          </div>
-        </div>
-      )}
-
-      {/* RSS Feeds Tab */}
-      {activeTab === 'rss' && (
-        <div className="space-y-4">
-          <h2 className="text-xl font-semibold text-gray-900">RSS Feed Management</h2>
-          
-          <div className="card">
-            <h3 className="text-lg font-medium text-gray-900 mb-4">Add New RSS Feed</h3>
-            <form onSubmit={handleAddRssFeed} className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700">RSS Feed URL</label>
-                <input
-                  type="url"
-                  required
-                  value={newRssUrl}
-                  onChange={(e) => setNewRssUrl(e.target.value)}
-                  className="input-field"
-                  placeholder="https://example.com/rss-feed.xml"
-                />
-              </div>
-              <button type="submit" className="btn-primary">
-                Add Feed
-              </button>
-            </form>
-          </div>
-
-          <div className="card">
-            <h3 className="text-lg font-medium text-gray-900 mb-4">Popular RSS Sources</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="p-4 border border-gray-200 rounded-lg">
-                <h4 className="font-medium text-gray-900">Wall Street Journal</h4>
-                <p className="text-sm text-gray-600 mb-2">Business and financial news</p>
-                <button className="text-sm text-primary-600 hover:text-primary-800">
-                  Add Feed
-                </button>
-              </div>
-              <div className="p-4 border border-gray-200 rounded-lg">
-                <h4 className="font-medium text-gray-900">Financial Times</h4>
-                <p className="text-sm text-gray-600 mb-2">Global business and economics</p>
-                <button className="text-sm text-primary-600 hover:text-primary-800">
-                  Add Feed
-                </button>
-              </div>
-              <div className="p-4 border border-gray-200 rounded-lg">
-                <h4 className="font-medium text-gray-900">Reuters Business</h4>
-                <p className="text-sm text-gray-600 mb-2">Breaking business news</p>
-                <button className="text-sm text-primary-600 hover:text-primary-800">
-                  Add Feed
-                </button>
-              </div>
-              <div className="p-4 border border-gray-200 rounded-lg">
-                <h4 className="font-medium text-gray-900">Bloomberg</h4>
-                <p className="text-sm text-gray-600 mb-2">Markets and financial data</p>
-                <button className="text-sm text-primary-600 hover:text-primary-800">
-                  Add Feed
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Add RSS Modal */}
-      {showAddModal && (
-        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
-          <div className="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
-            <div className="mt-3">
-              <h3 className="text-lg font-medium text-gray-900 mb-4">Add RSS Feed</h3>
-              <form onSubmit={handleAddRssFeed} className="space-y-4">
+              <form onSubmit={handleSubmit} className="space-y-6">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">RSS Feed URL</label>
+                  <label className="block text-sm font-semibold text-slate-700 mb-2">Title</label>
                   <input
-                    type="url"
+                    type="text"
                     required
-                    value={newRssUrl}
-                    onChange={(e) => setNewRssUrl(e.target.value)}
+                    value={formData.title}
+                    onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                     className="input-field"
-                    placeholder="https://example.com/rss-feed.xml"
+                    placeholder="e.g., Goldman Sachs Reports Strong Q3 Earnings"
                   />
                 </div>
                 
-                <div className="flex justify-end space-x-3 pt-4">
+                <div>
+                  <label className="block text-sm font-semibold text-slate-700 mb-2">Source</label>
+                  <input
+                    type="text"
+                    required
+                    value={formData.source}
+                    onChange={(e) => setFormData({ ...formData, source: e.target.value })}
+                    className="input-field"
+                    placeholder="e.g., Bloomberg, Reuters, Financial Times"
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-semibold text-slate-700 mb-2">URL (Optional)</label>
+                  <input
+                    type="url"
+                    value={formData.url}
+                    onChange={(e) => setFormData({ ...formData, url: e.target.value })}
+                    className="input-field"
+                    placeholder="https://example.com/article"
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-semibold text-slate-700 mb-2">Summary</label>
+                  <textarea
+                    value={formData.summary}
+                    onChange={(e) => setFormData({ ...formData, summary: e.target.value })}
+                    className="input-field"
+                    rows={4}
+                    placeholder="Brief summary of the news article..."
+                  />
+                </div>
+                
+                <div className="flex justify-end space-x-4 pt-6">
                   <button
                     type="button"
-                    onClick={() => {
-                      setShowAddModal(false)
-                      setNewRssUrl('')
-                    }}
+                    onClick={() => setShowModal(false)}
                     className="btn-secondary"
                   >
                     Cancel
                   </button>
                   <button type="submit" className="btn-primary">
-                    Add Feed
+                    Add News Item
                   </button>
                 </div>
               </form>
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.div>
   )
 } 

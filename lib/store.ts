@@ -56,12 +56,14 @@ export interface DealExperience {
 
 export interface Resource {
   id: string
-  name: string
-  category: string
+  title: string
+  type: 'Document' | 'Video' | 'Book' | 'Link'
+  category: 'Valuation' | 'Financial Modeling' | 'Accounting' | 'M&A' | 'LBO' | 'Interview Prep' | 'Networking'
   url?: string
-  file?: File
+  description: string
+  tags: string[]
   notes: string
-  addedDate: string
+  createdAt: string
 }
 
 export interface Contact {
@@ -149,7 +151,7 @@ interface AppState {
   updateDealExperience: (id: string, updates: Partial<DealExperience>) => void
   deleteDealExperience: (id: string) => void
   
-  addResource: (resource: Omit<Resource, 'id' | 'addedDate'>) => void
+  addResource: (resource: Omit<Resource, 'id' | 'createdAt'>) => void
   updateResource: (id: string, updates: Partial<Resource>) => void
   deleteResource: (id: string) => void
   
@@ -294,7 +296,7 @@ export const useAppStore = create<AppState>()(
         resources: [...state.resources, {
           ...resource,
           id: crypto.randomUUID(),
-          addedDate: new Date().toISOString(),
+          createdAt: new Date().toISOString(),
         }]
       })),
       
