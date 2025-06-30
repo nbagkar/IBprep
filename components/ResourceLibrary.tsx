@@ -80,6 +80,8 @@ export default function ResourceLibrary() {
     file: null as File | null
   })
 
+  const [isUploading, setIsUploading] = useState(false)
+
   const categories = [
     'WSO Guides',
     'Study Notes',
@@ -157,36 +159,57 @@ export default function ResourceLibrary() {
       return
     }
 
-    // Create a blob URL for the uploaded file
-    const fileUrl = URL.createObjectURL(uploadFormData.file)
-    
-    const resourceData = {
-      title: uploadFormData.title,
-      type: 'Document' as Resource['type'],
-      category: uploadFormData.category,
-      url: fileUrl,
-      description: uploadFormData.description,
-      tags: uploadFormData.tags.split(',').map(tag => tag.trim()).filter(Boolean),
-      notes: uploadFormData.notes
+    setIsUploading(true)
+
+    // Convert file to base64 for persistent storage
+    const reader = new FileReader()
+    reader.onload = (event) => {
+      const base64String = event.target?.result as string
+      
+      const resourceData = {
+        title: uploadFormData.title,
+        type: 'Document' as Resource['type'],
+        category: uploadFormData.category,
+        url: base64String, // Store as base64 instead of blob URL
+        description: uploadFormData.description,
+        tags: uploadFormData.tags.split(',').map(tag => tag.trim()).filter(Boolean),
+        notes: uploadFormData.notes
+      }
+      
+      addResource(resourceData)
+      toast.success('Document uploaded successfully!')
+      
+      setShowUploadModal(false)
+      setUploadFormData({
+        title: '',
+        category: 'Valuation',
+        description: '',
+        tags: '',
+        notes: '',
+        file: null
+      })
+      setIsUploading(false)
     }
     
-    addResource(resourceData)
-    toast.success('Document uploaded successfully!')
+    reader.onerror = () => {
+      toast.error('Failed to process file. Please try again.')
+      setIsUploading(false)
+    }
     
-    setShowUploadModal(false)
-    setUploadFormData({
-      title: '',
-      category: 'Valuation',
-      description: '',
-      tags: '',
-      notes: '',
-      file: null
-    })
+    reader.readAsDataURL(uploadFormData.file)
   }
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (file) {
+      // Check file size (limit to 10MB for base64 storage)
+      const maxSize = 10 * 1024 * 1024 // 10MB
+      if (file.size > maxSize) {
+        toast.error('File size must be less than 10MB')
+        e.target.value = ''
+        return
+      }
+      
       setUploadFormData({ ...uploadFormData, file })
     }
   }
@@ -579,11 +602,26 @@ export default function ResourceLibrary() {
             {selectedResource.url && (
               <div className="border border-slate-200 rounded-xl p-4">
                 {selectedResource.type === 'Document' ? (
-                  <iframe
-                    src={selectedResource.url}
-                    className="w-full h-96 rounded-lg"
-                    title={selectedResource.title}
-                  />
+                  selectedResource.url.startsWith('data:') ? (
+                    <iframe
+                      src={selectedResource.url}
+                      className="w-full h-96 rounded-lg"
+                      title={selectedResource.title}
+                    />
+                  ) : (
+                    <div className="text-center py-8">
+                      <DocumentIcon className="w-16 h-16 text-slate-400 mx-auto mb-4" />
+                      <p className="text-slate-600 mb-4">Document available for download</p>
+                      <a
+                        href={selectedResource.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="btn-primary"
+                      >
+                        Download Document
+                      </a>
+                    </div>
+                  )
                 ) : selectedResource.type === 'Video' ? (
                   <div className="aspect-video bg-slate-100 rounded-lg flex items-center justify-center">
                     <PlayIcon className="w-16 h-16 text-slate-400" />
@@ -843,11 +881,16 @@ export default function ResourceLibrary() {
                     type="button"
                     onClick={() => setShowUploadModal(false)}
                     className="btn-secondary"
+                    disabled={isUploading}
                   >
                     Cancel
                   </button>
-                  <button type="submit" className="btn-primary">
-                    Upload Document
+                  <button 
+                    type="submit" 
+                    className="btn-primary"
+                    disabled={isUploading}
+                  >
+                    {isUploading ? 'Uploading...' : 'Upload Document'}
                   </button>
                 </div>
               </form>
