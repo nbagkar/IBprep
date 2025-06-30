@@ -11,9 +11,11 @@ import {
   Bars3Icon,
   XMarkIcon,
   DocumentTextIcon,
-  LightBulbIcon
+  LightBulbIcon,
+  Cog6ToothIcon
 } from '@heroicons/react/24/outline'
 import { motion, AnimatePresence } from 'framer-motion'
+import DataManagement from './DataManagement'
 
 const navigation = [
   { name: 'Dashboard', href: 'dashboard', icon: ChartBarIcon, color: 'from-blue-500 to-indigo-600' },
@@ -22,11 +24,11 @@ const navigation = [
   { name: 'Resource Library', href: 'resources', icon: BookOpenIcon, color: 'from-amber-500 to-orange-600' },
   { name: 'Live Markets', href: 'live-markets', icon: ChartBarIcon, color: 'from-rose-500 to-pink-600' },
   { name: 'Market Intel', href: 'news', icon: LightBulbIcon, color: 'from-indigo-500 to-purple-600' },
-  { name: 'Data Management', href: 'data-management', icon: DocumentTextIcon, color: 'from-slate-500 to-gray-600' },
 ]
 
 export default function Sidebar() {
-  const { activeTab, sidebarOpen, setActiveTab, setSidebarOpen } = useAppStore()
+  const { activeTab, sidebarOpen, setActiveTab, setSidebarOpen, user, userLoading, signIn, signOut } = useAppStore()
+  const [showSettings, setShowSettings] = React.useState(false)
 
   return (
     <>
@@ -154,6 +156,59 @@ export default function Sidebar() {
             })}
           </div>
         </nav>
+
+        {/* User Info */}
+        <div className="mt-8 px-4">
+          {user ? (
+            <div className="flex flex-col items-center space-y-2">
+              {user.photoURL && (
+                <img src={user.photoURL} alt="avatar" className="w-12 h-12 rounded-full border" />
+              )}
+              <span className="font-semibold text-slate-900 text-sm">{user.displayName || user.email}</span>
+              <button
+                onClick={signOut}
+                className="btn-secondary w-full mt-2"
+                disabled={userLoading}
+              >
+                Sign out
+              </button>
+            </div>
+          ) : (
+            <button
+              onClick={signIn}
+              className="btn-primary w-full"
+              disabled={userLoading}
+            >
+              {userLoading ? 'Signing in...' : 'Sign in with Google'}
+            </button>
+          )}
+        </div>
+
+        {/* Settings Icon at the bottom */}
+        <div className="p-4 flex flex-col items-center">
+          <button
+            onClick={() => setShowSettings(true)}
+            className="p-2 rounded-full hover:bg-slate-200 transition"
+            title="Settings"
+          >
+            <Cog6ToothIcon className="w-7 h-7 text-slate-500" />
+          </button>
+          {/* Data Management Modal */}
+          {showSettings && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-30">
+              <div className="bg-white rounded-xl shadow-xl p-6 w-full max-w-md relative">
+                <button
+                  className="absolute top-2 right-2 p-2 rounded-full hover:bg-slate-100"
+                  onClick={() => setShowSettings(false)}
+                  title="Close"
+                >
+                  <span className="text-2xl">×</span>
+                </button>
+                <DataManagement />
+              </div>
+            </div>
+          )}
+        </div>
 
         {/* Footer */}
         <div className="absolute bottom-0 left-0 right-0 p-6 border-t border-slate-200/50 bg-gradient-to-r from-slate-50 to-blue-50">

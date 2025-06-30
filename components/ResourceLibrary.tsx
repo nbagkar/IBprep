@@ -38,6 +38,8 @@ export default function ResourceLibrary() {
     loadResources,
     resourcesLoading,
     resourcesError,
+    user,
+    userLoading,
     addContact,
     updateContact,
     deleteContact
@@ -118,7 +120,8 @@ export default function ResourceLibrary() {
       url: resourceFormData.url,
       description: resourceFormData.description,
       tags: resourceFormData.tags.split(',').map(tag => tag.trim()).filter(Boolean),
-      notes: resourceFormData.notes
+      notes: resourceFormData.notes,
+      createdBy: null
     }
     if (editingResource) {
       updateResource(editingResource.id, resourceData)
@@ -193,7 +196,8 @@ export default function ResourceLibrary() {
         url: downloadURL,
         description: uploadFormData.description,
         tags: uploadFormData.tags.split(',').map(tag => tag.trim()).filter(Boolean),
-        notes: uploadFormData.notes
+        notes: uploadFormData.notes,
+        createdBy: null
       }
       
       // Add resource to Firebase
@@ -414,20 +418,22 @@ export default function ResourceLibrary() {
       </motion.div>
 
       {/* Add Resource Button */}
-      <motion.div 
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.5 }}
-        className="flex justify-end"
-      >
-        <button
-          onClick={() => setShowResourceModal(true)}
-          className="btn-primary flex items-center group"
+      {user && (
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.5 }}
+          className="flex justify-end"
         >
-          <PlusIcon className="w-5 h-5 mr-2 group-hover:scale-110 transition-transform duration-200" />
-          Add Resource
-        </button>
-      </motion.div>
+          <button
+            onClick={() => setShowResourceModal(true)}
+            className="btn-primary flex items-center group"
+          >
+            <PlusIcon className="w-5 h-5 mr-2 group-hover:scale-110 transition-transform duration-200" />
+            Add Resource
+          </button>
+        </motion.div>
+      )}
 
       {/* Resources Tab */}
       {activeTab === 'resources' && (
@@ -561,6 +567,15 @@ export default function ResourceLibrary() {
                         </div>
                       )}
 
+                      {resource.createdBy && (
+                        <div className="flex items-center space-x-2 text-xs text-slate-500">
+                          {resource.createdBy.photoURL && (
+                            <img src={resource.createdBy.photoURL} alt="avatar" className="w-5 h-5 rounded-full" />
+                          )}
+                          <span>Added by {resource.createdBy.displayName || resource.createdBy.email}</span>
+                        </div>
+                      )}
+
                       {/* Actions */}
                       <div className="flex items-center justify-between pt-3 border-t border-slate-100">
                         <div className="flex items-center space-x-4 text-sm text-slate-500">
@@ -645,13 +660,19 @@ export default function ResourceLibrary() {
             </p>
           </div>
           
-          <button
-            onClick={() => setShowUploadModal(true)}
-            className="btn-primary flex items-center mx-auto group"
-          >
-            <ArrowUpTrayIcon className="w-5 h-5 mr-2 group-hover:scale-110 transition-transform duration-200" />
-            Upload New Document
-          </button>
+          {user ? (
+            <button
+              onClick={() => setShowUploadModal(true)}
+              className="btn-primary flex items-center mx-auto group"
+            >
+              <ArrowUpTrayIcon className="w-5 h-5 mr-2 group-hover:scale-110 transition-transform duration-200" />
+              Upload New Document
+            </button>
+          ) : (
+            <div className="text-center text-slate-500 mt-6">
+              <p>You must be signed in to upload documents.</p>
+            </div>
+          )}
         </motion.div>
       )}
 
@@ -818,6 +839,15 @@ export default function ResourceLibrary() {
               <div className="bg-slate-50 p-4 rounded-xl">
                 <h3 className="font-semibold text-slate-900 mb-2">Notes</h3>
                 <p className="text-slate-600">{selectedResource.notes}</p>
+              </div>
+            )}
+
+            {selectedResource.createdBy && (
+              <div className="flex items-center space-x-2 text-xs text-slate-500">
+                {selectedResource.createdBy.photoURL && (
+                  <img src={selectedResource.createdBy.photoURL} alt="avatar" className="w-5 h-5 rounded-full" />
+                )}
+                <span>Added by {selectedResource.createdBy.displayName || selectedResource.createdBy.email}</span>
               </div>
             )}
           </div>

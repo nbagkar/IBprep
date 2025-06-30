@@ -1,6 +1,8 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import { FirebaseService } from './firebaseService'
+import { signInWithGoogle, signOutUser, onUserStateChanged } from './firebaseAuth'
+import type { User } from 'firebase/auth'
 
 // Types
 export interface Firm {
@@ -68,6 +70,12 @@ export interface Resource {
   tags: string[]
   notes: string
   createdAt: string
+  createdBy: {
+    uid: string
+    displayName: string | null
+    email: string | null
+    photoURL: string | null
+  } | null
 }
 
 export interface Contact {
@@ -163,6 +171,10 @@ interface AppState {
   resourcesLoading: boolean
   resourcesError: string | null
   
+  // Auth
+  user: User | null
+  userLoading: boolean
+  
   // Actions
   addFirm: (firm: Omit<Firm, 'id' | 'lastUpdated'>) => void
   updateFirm: (id: string, updates: Partial<Firm>) => void
@@ -230,6 +242,10 @@ interface AppState {
     totalMarketIntel: number
     lastUpdated: string
   }
+  
+  // Auth
+  signIn: () => Promise<void>
+  signOut: () => Promise<void>
 }
 
 // Store
@@ -252,6 +268,8 @@ export const useAppStore = create<AppState>()(
       sidebarOpen: true,
       resourcesLoading: false,
       resourcesError: null,
+      user: null,
+      userLoading: true,
       
       // Firm Actions
       addFirm: (firm) => set((state) => ({
@@ -355,13 +373,35 @@ export const useAppStore = create<AppState>()(
       // Resource Actions
       addResource: async (resource) => {
         try {
-          const id = await FirebaseService.addResource(resource)
+          const user = get().user
+          const id = await FirebaseService.addResource({
+            ...resource,
+            createdBy: user
+              ? {
+                  uid: user.uid,
+                  displayName: user.displayName,
+                  email: user.email,
+                  photoURL: user.photoURL
+                }
+              : null
+          })
           set((state) => ({
-            resources: [...state.resources, {
-              ...resource,
-              id,
-              createdAt: new Date().toISOString(),
-            }]
+            resources: [
+              ...state.resources,
+              {
+                ...resource,
+                id,
+                createdAt: new Date().toISOString(),
+                createdBy: user
+                  ? {
+                      uid: user.uid,
+                      displayName: user.displayName,
+                      email: user.email,
+                      photoURL: user.photoURL
+                    }
+                  : null
+              }
+            ]
           }))
         } catch (error) {
           set({ resourcesError: error instanceof Error ? error.message : 'An error occurred' })
@@ -585,7 +625,25 @@ export const useAppStore = create<AppState>()(
           totalMarketIntel: state.marketIntel.length,
           lastUpdated: new Date().toISOString()
         }
-      }
+      },
+      
+      // Auth
+      signIn: async () => {
+        set({ userLoading: true })
+        try {
+          await signInWithGoogle()
+        } finally {
+          set({ userLoading: false })
+        }
+      },
+      signOut: async () => {
+        set({ userLoading: true })
+        try {
+          await signOutUser()
+        } finally {
+          set({ userLoading: false })
+        }
+      },
     }),
     {
       name: 'ib-prep-hub-storage',
@@ -601,7 +659,13 @@ export const useAppStore = create<AppState>()(
         networkingEvents: state.networkingEvents,
         newsItems: state.newsItems,
         marketIntel: state.marketIntel,
+        user: state.user,
       }),
     }
   )
-) 
+)
+
+// Listen for auth state changes
+onUserStateChanged((user) => {
+  useAppStore.setState({ user, userLoading: false })
+}) 
