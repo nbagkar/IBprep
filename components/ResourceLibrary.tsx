@@ -45,9 +45,12 @@ export default function ResourceLibrary() {
   const [searchTerm, setSearchTerm] = useState('')
 
   const [resourceFormData, setResourceFormData] = useState({
-    name: '',
-    category: '',
+    title: '',
+    type: 'Document' as Resource['type'],
+    category: 'Valuation' as Resource['category'],
     url: '',
+    description: '',
+    tags: '', // comma-separated string for the form
     notes: ''
   })
 
@@ -74,21 +77,31 @@ export default function ResourceLibrary() {
 
   const handleResourceSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    
+    const resourceData = {
+      title: resourceFormData.title,
+      type: resourceFormData.type,
+      category: resourceFormData.category,
+      url: resourceFormData.url,
+      description: resourceFormData.description,
+      tags: resourceFormData.tags.split(',').map(tag => tag.trim()).filter(Boolean),
+      notes: resourceFormData.notes
+    }
     if (editingResource) {
-      updateResource(editingResource.id, resourceFormData)
+      updateResource(editingResource.id, resourceData)
       toast.success('Resource updated!')
     } else {
-      addResource(resourceFormData)
+      addResource(resourceData)
       toast.success('Resource added!')
     }
-    
     setShowResourceModal(false)
     setEditingResource(null)
     setResourceFormData({
-      name: '',
-      category: '',
+      title: '',
+      type: 'Document',
+      category: 'Valuation',
       url: '',
+      description: '',
+      tags: '',
       notes: ''
     })
   }
@@ -329,9 +342,12 @@ export default function ResourceLibrary() {
                         onClick={() => {
                           setEditingResource(resource)
                           setResourceFormData({
-                            name: resource.title,
+                            title: resource.title,
+                            type: resource.type,
                             category: resource.category,
                             url: resource.url || '',
+                            description: resource.description,
+                            tags: resource.tags.join(','),
                             notes: resource.description
                           })
                           setShowResourceModal(true)
@@ -559,8 +575,8 @@ export default function ResourceLibrary() {
                   <input
                     type="text"
                     required
-                    value={resourceFormData.name}
-                    onChange={(e) => setResourceFormData({ ...resourceFormData, name: e.target.value })}
+                    value={resourceFormData.title}
+                    onChange={(e) => setResourceFormData({ ...resourceFormData, title: e.target.value })}
                     className="input-field"
                     placeholder="e.g., Investment Banking Interview Guide"
                   />
@@ -612,8 +628,8 @@ export default function ResourceLibrary() {
                 <div>
                   <label className="block text-sm font-semibold text-slate-700 mb-2">Description</label>
                   <textarea
-                    value={resourceFormData.notes}
-                    onChange={(e) => setResourceFormData({ ...resourceFormData, notes: e.target.value })}
+                    value={resourceFormData.description}
+                    onChange={(e) => setResourceFormData({ ...resourceFormData, description: e.target.value })}
                     className="input-field"
                     rows={3}
                     placeholder="Brief description of the resource"
@@ -628,6 +644,17 @@ export default function ResourceLibrary() {
                     onChange={(e) => setResourceFormData({ ...resourceFormData, tags: e.target.value })}
                     className="input-field"
                     placeholder="Comma-separated tags (e.g., valuation, modeling, interview)"
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-semibold text-slate-700 mb-2">Notes</label>
+                  <textarea
+                    value={resourceFormData.notes}
+                    onChange={(e) => setResourceFormData({ ...resourceFormData, notes: e.target.value })}
+                    className="input-field"
+                    rows={3}
+                    placeholder="Additional notes about the resource"
                   />
                 </div>
                 

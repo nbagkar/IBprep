@@ -29,8 +29,10 @@ export interface CoffeeChat {
 export interface BehavioralQuestion {
   id: string
   question: string
-  response: string
-  category: string
+  category: 'Leadership' | 'Teamwork' | 'Problem Solving' | 'Communication' | 'Conflict Resolution'
+  difficulty: 'Easy' | 'Medium' | 'Hard'
+  answer: string
+  notes: string
   lastUpdated: string
 }
 
@@ -38,8 +40,9 @@ export interface TechnicalQuestion {
   id: string
   question: string
   answer: string
-  category: 'Valuation' | 'Accounting' | 'DCF' | 'LBO' | 'Market Sizing' | 'Other'
+  category: 'Valuation' | 'Financial Modeling' | 'Accounting' | 'M&A' | 'LBO' | 'Market Sizing' | 'Other'
   difficulty: 'Easy' | 'Medium' | 'Hard'
+  notes: string
   lastUpdated: string
 }
 
@@ -90,11 +93,12 @@ export interface NetworkingEvent {
 
 export interface MockInterview {
   id: string
+  interviewer: string
   date: string
-  duration: number
-  questions: string[]
+  type: 'Behavioral' | 'Technical' | 'Case Study' | 'Fit'
+  score: number
+  feedback: string
   notes: string
-  performance: 'Poor' | 'Fair' | 'Good' | 'Excellent'
 }
 
 export interface NewsItem {
