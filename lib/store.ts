@@ -176,6 +176,24 @@ interface AppState {
   
   setActiveTab: (tab: string) => void
   setSidebarOpen: (open: boolean) => void
+  
+  // Data Management Actions
+  exportData: () => void
+  importData: (jsonData: string) => { success: boolean; message: string }
+  clearAllData: () => { success: boolean; message: string }
+  getDataStats: () => {
+    totalFirms: number
+    totalCoffeeChats: number
+    totalBehavioralQuestions: number
+    totalTechnicalQuestions: number
+    totalDealExperiences: number
+    totalMockInterviews: number
+    totalResources: number
+    totalContacts: number
+    totalNetworkingEvents: number
+    totalNewsItems: number
+    lastUpdated: string
+  }
 }
 
 // Store
@@ -383,6 +401,92 @@ export const useAppStore = create<AppState>()(
       // UI Actions
       setActiveTab: (tab) => set({ activeTab: tab }),
       setSidebarOpen: (open) => set({ sidebarOpen: open }),
+      
+      // Data Management Actions
+      exportData: () => {
+        const state = get()
+        const exportData = {
+          firms: state.firms,
+          coffeeChats: state.coffeeChats,
+          behavioralQuestions: state.behavioralQuestions,
+          technicalQuestions: state.technicalQuestions,
+          dealExperiences: state.dealExperiences,
+          mockInterviews: state.mockInterviews,
+          resources: state.resources,
+          contacts: state.contacts,
+          networkingEvents: state.networkingEvents,
+          newsItems: state.newsItems,
+          exportDate: new Date().toISOString(),
+          version: '1.0'
+        }
+        
+        const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' })
+        const url = URL.createObjectURL(blob)
+        const a = document.createElement('a')
+        a.href = url
+        a.download = `ib-prep-hub-backup-${new Date().toISOString().split('T')[0]}.json`
+        document.body.appendChild(a)
+        a.click()
+        document.body.removeChild(a)
+        URL.revokeObjectURL(url)
+      },
+      
+      importData: (jsonData: string) => {
+        try {
+          const data = JSON.parse(jsonData)
+          set({
+            firms: data.firms || [],
+            coffeeChats: data.coffeeChats || [],
+            behavioralQuestions: data.behavioralQuestions || [],
+            technicalQuestions: data.technicalQuestions || [],
+            dealExperiences: data.dealExperiences || [],
+            mockInterviews: data.mockInterviews || [],
+            resources: data.resources || [],
+            contacts: data.contacts || [],
+            networkingEvents: data.networkingEvents || [],
+            newsItems: data.newsItems || [],
+          })
+          return { success: true, message: 'Data imported successfully!' }
+        } catch (error) {
+          return { success: false, message: 'Invalid data format. Please check your backup file.' }
+        }
+      },
+      
+      clearAllData: () => {
+        if (confirm('Are you sure you want to clear all data? This action cannot be undone.')) {
+          set({
+            firms: [],
+            coffeeChats: [],
+            behavioralQuestions: [],
+            technicalQuestions: [],
+            dealExperiences: [],
+            mockInterviews: [],
+            resources: [],
+            contacts: [],
+            networkingEvents: [],
+            newsItems: [],
+          })
+          return { success: true, message: 'All data cleared successfully!' }
+        }
+        return { success: false, message: 'Operation cancelled.' }
+      },
+      
+      getDataStats: () => {
+        const state = get()
+        return {
+          totalFirms: state.firms.length,
+          totalCoffeeChats: state.coffeeChats.length,
+          totalBehavioralQuestions: state.behavioralQuestions.length,
+          totalTechnicalQuestions: state.technicalQuestions.length,
+          totalDealExperiences: state.dealExperiences.length,
+          totalMockInterviews: state.mockInterviews.length,
+          totalResources: state.resources.length,
+          totalContacts: state.contacts.length,
+          totalNetworkingEvents: state.networkingEvents.length,
+          totalNewsItems: state.newsItems.length,
+          lastUpdated: new Date().toISOString()
+        }
+      }
     }),
     {
       name: 'ib-prep-hub-storage',

@@ -8,6 +8,7 @@ import FirmTracker from '@/components/FirmTracker'
 import InterviewPrep from '@/components/InterviewPrep'
 import ResourceLibrary from '@/components/ResourceLibrary'
 import LiveMarketCoverage from '@/components/LiveMarketCoverage'
+import DataManagement from '@/components/DataManagement'
 import NewsFeed from '@/components/NewsFeed'
 import { Bars3Icon } from '@heroicons/react/24/outline'
 
@@ -26,6 +27,8 @@ export default function Home() {
         return <ResourceLibrary />
       case 'live-markets':
         return <LiveMarketCoverage />
+      case 'data-management':
+        return <DataManagement />
       case 'news':
         return <NewsFeed />
       default:
