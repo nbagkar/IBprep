@@ -18,7 +18,10 @@ import {
   CalendarIcon,
   TagIcon,
   StarIcon,
-  EyeIcon
+  EyeIcon,
+  ArrowUpTrayIcon,
+  XMarkIcon,
+  PlayIcon
 } from '@heroicons/react/24/outline'
 import toast from 'react-hot-toast'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -35,9 +38,12 @@ export default function ResourceLibrary() {
     deleteContact
   } = useAppStore()
 
-  const [activeTab, setActiveTab] = useState('resources')
+  const [activeTab, setActiveTab] = useState<'resources' | 'upload' | 'viewer'>('resources')
   const [showResourceModal, setShowResourceModal] = useState(false)
   const [showContactModal, setShowContactModal] = useState(false)
+  const [showUploadModal, setShowUploadModal] = useState(false)
+  const [showViewer, setShowViewer] = useState(false)
+  const [selectedResource, setSelectedResource] = useState<Resource | null>(null)
   const [editingResource, setEditingResource] = useState<Resource | null>(null)
   const [editingContact, setEditingContact] = useState<Contact | null>(null)
   const [filterCategory, setFilterCategory] = useState('all')
@@ -63,6 +69,15 @@ export default function ResourceLibrary() {
     notes: '',
     lastContact: '',
     followUpDate: ''
+  })
+
+  const [uploadFormData, setUploadFormData] = useState({
+    title: '',
+    category: 'Valuation' as Resource['category'],
+    description: '',
+    tags: '',
+    notes: '',
+    file: null as File | null
   })
 
   const categories = [
@@ -134,6 +149,61 @@ export default function ResourceLibrary() {
     })
   }
 
+  const handleUploadSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    
+    if (!uploadFormData.file) {
+      toast.error('Please select a file to upload')
+      return
+    }
+
+    // Create a blob URL for the uploaded file
+    const fileUrl = URL.createObjectURL(uploadFormData.file)
+    
+    const resourceData = {
+      title: uploadFormData.title,
+      type: 'Document' as Resource['type'],
+      category: uploadFormData.category,
+      url: fileUrl,
+      description: uploadFormData.description,
+      tags: uploadFormData.tags.split(',').map(tag => tag.trim()).filter(Boolean),
+      notes: uploadFormData.notes
+    }
+    
+    addResource(resourceData)
+    toast.success('Document uploaded successfully!')
+    
+    setShowUploadModal(false)
+    setUploadFormData({
+      title: '',
+      category: 'Valuation',
+      description: '',
+      tags: '',
+      notes: '',
+      file: null
+    })
+  }
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (file) {
+      setUploadFormData({ ...uploadFormData, file })
+    }
+  }
+
+  const handleViewResource = (resource: Resource) => {
+    setSelectedResource(resource)
+    setShowViewer(true)
+    setActiveTab('viewer')
+  }
+
+  const handleDelete = (id: string) => {
+    if (confirm('Are you sure you want to delete this resource?')) {
+      deleteResource(id)
+      toast.success('Resource deleted successfully!')
+    }
+  }
+
   const filteredResources = resources.filter(resource => {
     const matchesType = filterType === 'all' || resource.type === filterType
     const matchesSearch = resource.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -144,8 +214,7 @@ export default function ResourceLibrary() {
 
   const tabs = [
     { id: 'resources', name: 'Resources', icon: DocumentIcon },
-    { id: 'contacts', name: 'Contacts', icon: UserIcon },
-    { id: 'reference', name: 'Quick Reference', icon: BookmarkIcon },
+    { id: 'upload', name: 'Upload Documents', icon: ArrowUpTrayIcon },
   ]
 
   const quickReferenceData = {
@@ -238,32 +307,37 @@ export default function ResourceLibrary() {
       </div>
 
       {/* Tabs */}
-      <div className="border-b border-gray-200">
-        <nav className="-mb-px flex space-x-8">
+      <motion.div 
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.3 }}
+        className="card"
+      >
+        <div className="flex space-x-1 p-1 bg-slate-100 rounded-xl">
           {tabs.map((tab) => (
             <button
               key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
+              onClick={() => setActiveTab(tab.id as any)}
               className={`
-                py-2 px-1 border-b-2 font-medium text-sm flex items-center
-                ${activeTab === tab.id
-                  ? 'border-primary-500 text-primary-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                flex items-center px-4 py-3 rounded-lg text-sm font-semibold transition-all duration-200 flex-1
+                ${activeTab === tab.id 
+                  ? 'bg-white text-blue-700 shadow-md' 
+                  : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
                 }
               `}
             >
-              <tab.icon className="w-4 h-4 mr-2" />
+              <tab.icon className="w-5 h-5 mr-2" />
               {tab.name}
             </button>
           ))}
-        </nav>
-      </div>
+        </div>
+      </motion.div>
 
       {/* Filters and Search */}
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.3 }}
+        transition={{ delay: 0.4 }}
         className="card"
       >
         <div className="flex flex-col lg:flex-row gap-4">
@@ -301,7 +375,7 @@ export default function ResourceLibrary() {
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.4 }}
+        transition={{ delay: 0.5 }}
         className="flex justify-end"
       >
         <button
@@ -449,106 +523,96 @@ export default function ResourceLibrary() {
         </div>
       )}
 
-      {/* Contacts Tab */}
-      {activeTab === 'contacts' && (
-        <div className="space-y-4">
-          <div className="flex justify-between items-center">
-            <h2 className="text-xl font-semibold text-gray-900">Networking Contacts</h2>
+      {/* Upload Tab */}
+      {activeTab === 'upload' && (
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4 }}
+          className="card"
+        >
+          <div className="text-center mb-8">
+            <h2 className="text-2xl font-bold text-slate-900 mb-2">Upload Documents</h2>
+            <p className="text-slate-600">Upload your study materials and documents</p>
+          </div>
+          
+          <button
+            onClick={() => setShowUploadModal(true)}
+            className="btn-primary flex items-center mx-auto group"
+          >
+            <ArrowUpTrayIcon className="w-5 h-5 mr-2 group-hover:scale-110 transition-transform duration-200" />
+            Upload New Document
+          </button>
+        </motion.div>
+      )}
+
+      {/* Document Viewer */}
+      {activeTab === 'viewer' && selectedResource && (
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4 }}
+          className="card"
+        >
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-2xl font-bold text-slate-900">{selectedResource.title}</h2>
             <button
-              onClick={() => setShowContactModal(true)}
-              className="btn-primary flex items-center"
+              onClick={() => setActiveTab('resources')}
+              className="btn-secondary"
             >
-              <PlusIcon className="w-5 h-5 mr-2" />
-              Add Contact
+              <XMarkIcon className="w-5 h-5 mr-2" />
+              Close
             </button>
           </div>
-
-          <div className="grid gap-4">
-            {contacts.map((contact) => (
-              <div key={contact.id} className="card">
-                <div className="flex justify-between items-start mb-3">
-                  <div>
-                    <h3 className="font-medium text-gray-900">{contact.name}</h3>
-                    <p className="text-sm text-gray-500">{contact.title} at {contact.company}</p>
-                    <p className="text-sm text-gray-500">{contact.email}</p>
-                    {contact.phone && <p className="text-sm text-gray-500">{contact.phone}</p>}
-                  </div>
-                  <div className="flex space-x-2">
-                    <button
-                      onClick={() => {
-                        setEditingContact(contact)
-                        setContactFormData({
-                          name: contact.name,
-                          title: contact.title,
-                          company: contact.company,
-                          email: contact.email,
-                          phone: contact.phone || '',
-                          notes: contact.notes,
-                          lastContact: contact.lastContact,
-                          followUpDate: contact.followUpDate || ''
-                        })
-                        setShowContactModal(true)
-                      }}
-                      className="text-primary-600 hover:text-primary-900"
-                    >
-                      <PencilIcon className="w-4 h-4" />
-                    </button>
-                    <button
-                      onClick={() => deleteContact(contact.id)}
-                      className="text-red-600 hover:text-red-900"
-                    >
-                      <TrashIcon className="w-4 h-4" />
-                    </button>
-                  </div>
-                </div>
-                
-                {contact.notes && (
-                  <p className="text-sm text-gray-700 bg-gray-50 p-2 rounded mb-2">
-                    {contact.notes}
-                  </p>
-                )}
-                
-                <div className="flex justify-between text-xs text-gray-500">
-                  <span>Last Contact: {new Date(contact.lastContact).toLocaleDateString()}</span>
-                  {contact.followUpDate && (
-                    <span>Follow-up: {new Date(contact.followUpDate).toLocaleDateString()}</span>
-                  )}
-                </div>
-              </div>
-            ))}
+          
+          <div className="space-y-4">
+            <div className="flex items-center space-x-4 text-sm text-slate-500">
+              <span>Category: {selectedResource.category}</span>
+              <span>Type: {selectedResource.type}</span>
+              <span>Added: {new Date(selectedResource.createdAt).toLocaleDateString()}</span>
+            </div>
             
-            {contacts.length === 0 && (
-              <div className="text-center py-12">
-                <p className="text-gray-500">No contacts yet. Add your first networking contact!</p>
+            {selectedResource.description && (
+              <p className="text-slate-600">{selectedResource.description}</p>
+            )}
+            
+            {selectedResource.url && (
+              <div className="border border-slate-200 rounded-xl p-4">
+                {selectedResource.type === 'Document' ? (
+                  <iframe
+                    src={selectedResource.url}
+                    className="w-full h-96 rounded-lg"
+                    title={selectedResource.title}
+                  />
+                ) : selectedResource.type === 'Video' ? (
+                  <div className="aspect-video bg-slate-100 rounded-lg flex items-center justify-center">
+                    <PlayIcon className="w-16 h-16 text-slate-400" />
+                    <p className="text-slate-500 ml-4">Video Player</p>
+                  </div>
+                ) : (
+                  <a
+                    href={selectedResource.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="btn-primary"
+                  >
+                    Open {selectedResource.type}
+                  </a>
+                )}
+              </div>
+            )}
+            
+            {selectedResource.notes && (
+              <div className="bg-slate-50 p-4 rounded-xl">
+                <h3 className="font-semibold text-slate-900 mb-2">Notes</h3>
+                <p className="text-slate-600">{selectedResource.notes}</p>
               </div>
             )}
           </div>
-        </div>
+        </motion.div>
       )}
 
-      {/* Quick Reference Tab */}
-      {activeTab === 'reference' && (
-        <div className="space-y-6">
-          <h2 className="text-xl font-semibold text-gray-900">Quick Reference</h2>
-          
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {Object.entries(quickReferenceData).map(([category, formulas]) => (
-              <div key={category} className="card">
-                <h3 className="text-lg font-medium text-gray-900 mb-4">{category}</h3>
-                <div className="space-y-3">
-                  {formulas.map((formula, index) => (
-                    <div key={index} className="p-3 bg-gray-50 rounded-lg">
-                      <p className="text-sm text-gray-700 font-mono">{formula}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* Resource Modal */}
+      {/* Add/Edit Resource Modal */}
       <AnimatePresence>
         {showResourceModal && (
           <motion.div 
@@ -653,8 +717,8 @@ export default function ResourceLibrary() {
                     value={resourceFormData.notes}
                     onChange={(e) => setResourceFormData({ ...resourceFormData, notes: e.target.value })}
                     className="input-field"
-                    rows={3}
-                    placeholder="Additional notes about the resource"
+                    rows={2}
+                    placeholder="Additional notes or personal insights"
                   />
                 </div>
                 
@@ -676,122 +740,121 @@ export default function ResourceLibrary() {
         )}
       </AnimatePresence>
 
-      {/* Contact Modal */}
-      {showContactModal && (
-        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
-          <div className="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
-            <div className="mt-3">
-              <h3 className="text-lg font-medium text-gray-900 mb-4">
-                {editingContact ? 'Edit Contact' : 'Add New Contact'}
-              </h3>
-              <form onSubmit={handleContactSubmit} className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700">Name</label>
-                    <input
-                      type="text"
-                      required
-                      value={contactFormData.name}
-                      onChange={(e) => setContactFormData({ ...contactFormData, name: e.target.value })}
-                      className="input-field"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700">Title</label>
-                    <input
-                      type="text"
-                      value={contactFormData.title}
-                      onChange={(e) => setContactFormData({ ...contactFormData, title: e.target.value })}
-                      className="input-field"
-                    />
-                  </div>
-                </div>
-                
+      {/* Upload Document Modal */}
+      <AnimatePresence>
+        {showUploadModal && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="modal-overlay"
+          >
+            <motion.div 
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.8, opacity: 0 }}
+              className="modal-content"
+            >
+              <div className="mb-6">
+                <h3 className="text-2xl font-bold text-slate-900 mb-2">
+                  Upload Document
+                </h3>
+                <p className="text-slate-600">Upload a document to your resource library</p>
+              </div>
+              <form onSubmit={handleUploadSubmit} className="space-y-6">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">Company</label>
+                  <label className="block text-sm font-semibold text-slate-700 mb-2">Document Title</label>
                   <input
                     type="text"
                     required
-                    value={contactFormData.company}
-                    onChange={(e) => setContactFormData({ ...contactFormData, company: e.target.value })}
+                    value={uploadFormData.title}
+                    onChange={(e) => setUploadFormData({ ...uploadFormData, title: e.target.value })}
                     className="input-field"
+                    placeholder="e.g., DCF Valuation Model"
                   />
-                </div>
-                
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700">Email</label>
-                    <input
-                      type="email"
-                      required
-                      value={contactFormData.email}
-                      onChange={(e) => setContactFormData({ ...contactFormData, email: e.target.value })}
-                      className="input-field"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700">Phone</label>
-                    <input
-                      type="tel"
-                      value={contactFormData.phone}
-                      onChange={(e) => setContactFormData({ ...contactFormData, phone: e.target.value })}
-                      className="input-field"
-                    />
-                  </div>
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">Notes</label>
+                  <label className="block text-sm font-semibold text-slate-700 mb-2">Category</label>
+                  <select
+                    value={uploadFormData.category}
+                    onChange={(e) => setUploadFormData({ ...uploadFormData, category: e.target.value as Resource['category'] })}
+                    className="input-field"
+                  >
+                    <option value="Valuation">Valuation</option>
+                    <option value="Financial Modeling">Financial Modeling</option>
+                    <option value="Accounting">Accounting</option>
+                    <option value="M&A">M&A</option>
+                    <option value="LBO">LBO</option>
+                    <option value="Interview Prep">Interview Prep</option>
+                    <option value="Networking">Networking</option>
+                  </select>
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-semibold text-slate-700 mb-2">File</label>
+                  <input
+                    type="file"
+                    required
+                    onChange={handleFileChange}
+                    className="input-field"
+                    accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx"
+                  />
+                  <p className="text-xs text-slate-500 mt-1">
+                    Supported formats: PDF, DOC, DOCX, XLS, XLSX, PPT, PPTX
+                  </p>
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-semibold text-slate-700 mb-2">Description</label>
                   <textarea
-                    value={contactFormData.notes}
-                    onChange={(e) => setContactFormData({ ...contactFormData, notes: e.target.value })}
+                    value={uploadFormData.description}
+                    onChange={(e) => setUploadFormData({ ...uploadFormData, description: e.target.value })}
                     className="input-field"
                     rows={3}
-                    placeholder="How you met, key topics discussed, etc."
+                    placeholder="Brief description of the document"
                   />
                 </div>
                 
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700">Last Contact</label>
-                    <input
-                      type="date"
-                      value={contactFormData.lastContact}
-                      onChange={(e) => setContactFormData({ ...contactFormData, lastContact: e.target.value })}
-                      className="input-field"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700">Follow-up Date</label>
-                    <input
-                      type="date"
-                      value={contactFormData.followUpDate}
-                      onChange={(e) => setContactFormData({ ...contactFormData, followUpDate: e.target.value })}
-                      className="input-field"
-                    />
-                  </div>
+                <div>
+                  <label className="block text-sm font-semibold text-slate-700 mb-2">Tags</label>
+                  <input
+                    type="text"
+                    value={uploadFormData.tags}
+                    onChange={(e) => setUploadFormData({ ...uploadFormData, tags: e.target.value })}
+                    className="input-field"
+                    placeholder="Comma-separated tags (e.g., valuation, modeling, interview)"
+                  />
                 </div>
                 
-                <div className="flex justify-end space-x-3 pt-4">
+                <div>
+                  <label className="block text-sm font-semibold text-slate-700 mb-2">Notes</label>
+                  <textarea
+                    value={uploadFormData.notes}
+                    onChange={(e) => setUploadFormData({ ...uploadFormData, notes: e.target.value })}
+                    className="input-field"
+                    rows={2}
+                    placeholder="Additional notes about the document"
+                  />
+                </div>
+                
+                <div className="flex justify-end space-x-4 pt-6">
                   <button
                     type="button"
-                    onClick={() => {
-                      setShowContactModal(false)
-                      setEditingContact(null)
-                    }}
+                    onClick={() => setShowUploadModal(false)}
                     className="btn-secondary"
                   >
                     Cancel
                   </button>
                   <button type="submit" className="btn-primary">
-                    {editingContact ? 'Update' : 'Add'} Contact
+                    Upload Document
                   </button>
                 </div>
               </form>
-            </div>
-          </div>
-        </div>
-      )}
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </motion.div>
   )
 } 

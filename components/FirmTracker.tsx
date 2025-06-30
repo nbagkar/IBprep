@@ -119,6 +119,7 @@ export default function FirmTracker() {
 
   const getStatusColor = (status: Firm['status']) => {
     switch (status) {
+      case 'Researching': return 'status-researching'
       case 'Applied': return 'status-applied'
       case 'Interviewing': return 'status-interviewing'
       case 'Offer': return 'status-offer'
@@ -180,6 +181,7 @@ export default function FirmTracker() {
             className="input-field w-auto"
           >
             <option value="all">All Statuses</option>
+            <option value="Researching">Researching</option>
             <option value="Applied">Applied</option>
             <option value="Interviewing">Interviewing</option>
             <option value="Offer">Offer</option>
@@ -366,6 +368,7 @@ export default function FirmTracker() {
                       onChange={(e) => setFormData({ ...formData, status: e.target.value as Firm['status'] })}
                       className="input-field"
                     >
+                      <option value="Researching">Researching</option>
                       <option value="Applied">Applied</option>
                       <option value="Interviewing">Interviewing</option>
                       <option value="Offer">Offer</option>

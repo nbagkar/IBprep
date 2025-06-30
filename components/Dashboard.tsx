@@ -12,7 +12,8 @@ import {
   ExclamationTriangleIcon,
   ArrowTrendingUpIcon,
   UsersIcon,
-  FlagIcon
+  FlagIcon,
+  NewspaperIcon
 } from '@heroicons/react/24/outline'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts'
 import { motion } from 'framer-motion'
@@ -24,11 +25,13 @@ export default function Dashboard() {
     behavioralQuestions, 
     technicalQuestions, 
     mockInterviews,
-    networkingEvents 
+    networkingEvents,
+    setActiveTab
   } = useAppStore()
 
   // Calculate KPIs
   const totalFirms = firms.length
+  const researchingFirms = firms.filter(f => f.status === 'Researching').length
   const appliedFirms = firms.filter(f => f.status === 'Applied').length
   const interviewingFirms = firms.filter(f => f.status === 'Interviewing').length
   const offerFirms = firms.filter(f => f.status === 'Offer').length
@@ -50,6 +53,7 @@ export default function Dashboard() {
 
   // Status distribution for chart
   const statusData = [
+    { name: 'Researching', value: researchingFirms, color: '#8b5cf6' },
     { name: 'Applied', value: appliedFirms, color: '#3b82f6' },
     { name: 'Interviewing', value: interviewingFirms, color: '#f59e0b' },
     { name: 'Offer', value: offerFirms, color: '#22c55e' },
@@ -314,19 +318,92 @@ export default function Dashboard() {
         className="card"
       >
         <h3 className="text-xl font-bold text-slate-900 mb-6">Quick Actions</h3>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <button className="btn-primary flex items-center justify-center group">
-            <BuildingOfficeIcon className="w-5 h-5 mr-2 group-hover:scale-110 transition-transform duration-200" />
-            Add New Firm
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <button 
+            onClick={() => {
+              setActiveTab('firm-tracker')
+              // You can add logic here to open the add firm modal directly
+            }}
+            className="btn-primary flex items-center justify-center group p-6"
+          >
+            <div className="text-center">
+              <BuildingOfficeIcon className="w-8 h-8 mx-auto mb-3 group-hover:scale-110 transition-transform duration-200" />
+              <span className="font-semibold">Add New Firm</span>
+              <p className="text-sm opacity-90 mt-1">Track applications</p>
+            </div>
           </button>
-          <button className="btn-secondary flex items-center justify-center group">
-            <AcademicCapIcon className="w-5 h-5 mr-2 group-hover:scale-110 transition-transform duration-200" />
-            Schedule Mock Interview
+          
+          <button 
+            onClick={() => {
+              setActiveTab('interview-prep')
+              // You can add logic here to open the mock interview modal directly
+            }}
+            className="btn-secondary flex items-center justify-center group p-6"
+          >
+            <div className="text-center">
+              <AcademicCapIcon className="w-8 h-8 mx-auto mb-3 group-hover:scale-110 transition-transform duration-200" />
+              <span className="font-semibold">Schedule Mock Interview</span>
+              <p className="text-sm opacity-90 mt-1">Practice sessions</p>
+            </div>
           </button>
-          <button className="btn-secondary flex items-center justify-center group">
-            <BookOpenIcon className="w-5 h-5 mr-2 group-hover:scale-110 transition-transform duration-200" />
-            Add Resource
+          
+          <button 
+            onClick={() => {
+              setActiveTab('resources')
+              // You can add logic here to open the upload modal directly
+            }}
+            className="btn-secondary flex items-center justify-center group p-6"
+          >
+            <div className="text-center">
+              <BookOpenIcon className="w-8 h-8 mx-auto mb-3 group-hover:scale-110 transition-transform duration-200" />
+              <span className="font-semibold">Add Resource</span>
+              <p className="text-sm opacity-90 mt-1">Study materials</p>
+            </div>
           </button>
+          
+          <button 
+            onClick={() => {
+              setActiveTab('news')
+              // You can add logic here to open the add news modal directly
+            }}
+            className="btn-secondary flex items-center justify-center group p-6"
+          >
+            <div className="text-center">
+              <NewspaperIcon className="w-8 h-8 mx-auto mb-3 group-hover:scale-110 transition-transform duration-200" />
+              <span className="font-semibold">Add News Item</span>
+              <p className="text-sm opacity-90 mt-1">Market updates</p>
+            </div>
+          </button>
+        </div>
+        
+        {/* Additional Quick Actions */}
+        <div className="mt-6 pt-6 border-t border-slate-200">
+          <h4 className="text-lg font-semibold text-slate-900 mb-4">Recent Activities</h4>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl border border-blue-200">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-sm font-semibold text-blue-700">Applications</span>
+                <span className="text-xs text-blue-600 bg-blue-100 px-2 py-1 rounded-full">{appliedFirms}</span>
+              </div>
+              <p className="text-sm text-blue-600">Firms applied to this month</p>
+            </div>
+            
+            <div className="p-4 bg-gradient-to-r from-emerald-50 to-teal-50 rounded-xl border border-emerald-200">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-sm font-semibold text-emerald-700">Coffee Chats</span>
+                <span className="text-xs text-emerald-600 bg-emerald-100 px-2 py-1 rounded-full">{completedChats}</span>
+              </div>
+              <p className="text-sm text-emerald-600">Networking conversations</p>
+            </div>
+            
+            <div className="p-4 bg-gradient-to-r from-purple-50 to-indigo-50 rounded-xl border border-purple-200">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-sm font-semibold text-purple-700">Prep Questions</span>
+                <span className="text-xs text-purple-600 bg-purple-100 px-2 py-1 rounded-full">{totalQuestions}</span>
+              </div>
+              <p className="text-sm text-purple-600">Questions prepared</p>
+            </div>
+          </div>
         </div>
       </motion.div>
     </motion.div>

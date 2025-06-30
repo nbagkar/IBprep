@@ -7,7 +7,7 @@ export interface Firm {
   name: string
   division: string
   location: string
-  status: 'Applied' | 'Interviewing' | 'Offer' | 'Rejected'
+  status: 'Researching' | 'Applied' | 'Interviewing' | 'Offer' | 'Rejected'
   deadline?: string
   keyContacts: string
   notes: string

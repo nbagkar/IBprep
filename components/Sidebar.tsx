@@ -11,7 +11,7 @@ import {
   Bars3Icon,
   XMarkIcon
 } from '@heroicons/react/24/outline'
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 
 const navigation = [
   { name: 'Dashboard', href: 'dashboard', icon: ChartBarIcon, color: 'from-blue-500 to-indigo-600' },
@@ -38,6 +38,21 @@ export default function Sidebar() {
           <div className="fixed inset-0 bg-black/50 backdrop-blur-sm" />
         </motion.div>
       )}
+
+      {/* Floating sidebar toggle button - only visible when sidebar is closed */}
+      <AnimatePresence>
+        {!sidebarOpen && (
+          <motion.button
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.8 }}
+            onClick={() => setSidebarOpen(true)}
+            className="fixed top-4 left-4 z-50 lg:hidden p-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-110"
+          >
+            <Bars3Icon className="w-6 h-6" />
+          </motion.button>
+        )}
+      </AnimatePresence>
 
       {/* Sidebar */}
       <motion.div 
