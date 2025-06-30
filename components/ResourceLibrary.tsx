@@ -479,6 +479,24 @@ export default function ResourceLibrary() {
                         <CalendarIcon className="w-4 h-4 mr-1" />
                         <span>{new Date(resource.createdAt).toLocaleDateString()}</span>
                       </div>
+                      {resource.url && resource.url.startsWith('data:') && (
+                        <div className="flex items-center">
+                          <DocumentIcon className="w-4 h-4 mr-1" />
+                          <span className="text-xs">
+                            {(() => {
+                              const fileType = resource.url.split(';')[0].split(':')[1]
+                              if (fileType === 'application/pdf') return 'PDF'
+                              if (fileType.startsWith('image/')) return 'Image'
+                              if (fileType.includes('spreadsheet') || fileType.includes('excel')) return 'Excel'
+                              if (fileType.includes('presentation') || fileType.includes('powerpoint')) return 'PPT'
+                              if (fileType.includes('document') || fileType.includes('word')) return 'Word'
+                              if (fileType.includes('text/plain')) return 'Text'
+                              if (fileType.includes('text/csv')) return 'CSV'
+                              return 'File'
+                            })()}
+                          </span>
+                        </div>
+                      )}
                     </div>
 
                     <div className={`px-3 py-1 rounded-full text-xs font-semibold bg-gradient-to-r ${getCategoryColor(resource.category)} text-slate-700 w-fit`}>
@@ -521,16 +539,28 @@ export default function ResourceLibrary() {
                           <span>4.5</span>
                         </div>
                       </div>
-                      {resource.url && (
-                        <a
-                          href={resource.url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="btn-ghost text-sm"
-                        >
-                          Open
-                        </a>
-                      )}
+                      <div className="flex items-center space-x-2">
+                        {resource.url && (
+                          <>
+                            <button
+                              onClick={() => handleViewResource(resource)}
+                              className="btn-ghost text-sm"
+                            >
+                              View
+                            </button>
+                            {!resource.url.startsWith('data:') && (
+                              <a
+                                href={resource.url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="btn-ghost text-sm"
+                              >
+                                Open
+                              </a>
+                            )}
+                          </>
+                        )}
+                      </div>
                     </div>
                   </div>
                 </motion.div>
@@ -603,11 +633,127 @@ export default function ResourceLibrary() {
               <div className="border border-slate-200 rounded-xl p-4">
                 {selectedResource.type === 'Document' ? (
                   selectedResource.url.startsWith('data:') ? (
-                    <iframe
-                      src={selectedResource.url}
-                      className="w-full h-96 rounded-lg"
-                      title={selectedResource.title}
-                    />
+                    <div className="space-y-4">
+                      {/* File Type Detection and Display */}
+                      {(() => {
+                        const fileType = selectedResource.url.split(';')[0].split(':')[1]
+                        
+                        if (fileType === 'application/pdf') {
+                          return (
+                            <div className="space-y-4">
+                              <div className="flex items-center justify-between">
+                                <h3 className="text-lg font-semibold text-slate-900">PDF Document</h3>
+                                <a
+                                  href={selectedResource.url}
+                                  download={`${selectedResource.title}.pdf`}
+                                  className="btn-secondary text-sm"
+                                >
+                                  Download PDF
+                                </a>
+                              </div>
+                              <div className="bg-slate-50 rounded-lg overflow-hidden">
+                                <iframe
+                                  src={selectedResource.url}
+                                  className="w-full h-96 md:h-[600px]"
+                                  title={selectedResource.title}
+                                  style={{ border: 'none' }}
+                                />
+                              </div>
+                            </div>
+                          )
+                        } else if (fileType.startsWith('image/')) {
+                          return (
+                            <div className="space-y-4">
+                              <div className="flex items-center justify-between">
+                                <h3 className="text-lg font-semibold text-slate-900">Image</h3>
+                                <a
+                                  href={selectedResource.url}
+                                  download={`${selectedResource.title}.${fileType.split('/')[1]}`}
+                                  className="btn-secondary text-sm"
+                                >
+                                  Download Image
+                                </a>
+                              </div>
+                              <div className="bg-slate-50 rounded-lg p-4">
+                                <img
+                                  src={selectedResource.url}
+                                  alt={selectedResource.title}
+                                  className="max-w-full h-auto rounded-lg shadow-sm"
+                                />
+                              </div>
+                            </div>
+                          )
+                        } else if (fileType.includes('spreadsheet') || fileType.includes('excel') || fileType.includes('sheet')) {
+                          return (
+                            <div className="text-center py-12">
+                              <DocumentTextIcon className="w-20 h-20 text-blue-500 mx-auto mb-4" />
+                              <h3 className="text-xl font-semibold text-slate-900 mb-2">Spreadsheet Document</h3>
+                              <p className="text-slate-600 mb-6">
+                                This appears to be an Excel or spreadsheet file. Download it to view the contents.
+                              </p>
+                              <a
+                                href={selectedResource.url}
+                                download={`${selectedResource.title}.xlsx`}
+                                className="btn-primary"
+                              >
+                                Download Spreadsheet
+                              </a>
+                            </div>
+                          )
+                        } else if (fileType.includes('presentation') || fileType.includes('powerpoint')) {
+                          return (
+                            <div className="text-center py-12">
+                              <DocumentTextIcon className="w-20 h-20 text-orange-500 mx-auto mb-4" />
+                              <h3 className="text-xl font-semibold text-slate-900 mb-2">Presentation Document</h3>
+                              <p className="text-slate-600 mb-6">
+                                This appears to be a PowerPoint presentation. Download it to view the slides.
+                              </p>
+                              <a
+                                href={selectedResource.url}
+                                download={`${selectedResource.title}.pptx`}
+                                className="btn-primary"
+                              >
+                                Download Presentation
+                              </a>
+                            </div>
+                          )
+                        } else if (fileType.includes('document') || fileType.includes('word')) {
+                          return (
+                            <div className="text-center py-12">
+                              <DocumentTextIcon className="w-20 h-20 text-blue-600 mx-auto mb-4" />
+                              <h3 className="text-xl font-semibold text-slate-900 mb-2">Word Document</h3>
+                              <p className="text-slate-600 mb-6">
+                                This appears to be a Word document. Download it to view the contents.
+                              </p>
+                              <a
+                                href={selectedResource.url}
+                                download={`${selectedResource.title}.docx`}
+                                className="btn-primary"
+                              >
+                                Download Document
+                              </a>
+                            </div>
+                          )
+                        } else {
+                          return (
+                            <div className="text-center py-12">
+                              <DocumentIcon className="w-20 h-20 text-slate-400 mx-auto mb-4" />
+                              <h3 className="text-xl font-semibold text-slate-900 mb-2">Document Available</h3>
+                              <p className="text-slate-600 mb-6">
+                                File type: {fileType}
+                              </p>
+                              <a
+                                href={selectedResource.url}
+                                download={`${selectedResource.title}`}
+                                className="btn-primary"
+                              >
+                                Download File
+                              </a>
+                            </div>
+                          )
+                        }
+                      })()}
+                    </div>
                   ) : (
                     <div className="text-center py-8">
                       <DocumentIcon className="w-16 h-16 text-slate-400 mx-auto mb-4" />
@@ -836,10 +982,13 @@ export default function ResourceLibrary() {
                     required
                     onChange={handleFileChange}
                     className="input-field"
-                    accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx"
+                    accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.jpg,.jpeg,.png,.gif,.bmp,.tiff,.txt,.csv"
                   />
                   <p className="text-xs text-slate-500 mt-1">
-                    Supported formats: PDF, DOC, DOCX, XLS, XLSX, PPT, PPTX
+                    Supported formats: PDF, DOC, DOCX, XLS, XLSX, PPT, PPTX, Images (JPG, PNG, GIF, BMP, TIFF), TXT, CSV
+                  </p>
+                  <p className="text-xs text-slate-400 mt-1">
+                    Maximum file size: 10MB
                   </p>
                 </div>
                 
