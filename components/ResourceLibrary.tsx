@@ -1,7 +1,8 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useAppStore, type Resource, type Contact } from '@/lib/store'
+import { FirebaseService } from '@/lib/firebaseService'
 import { 
   PlusIcon, 
   PencilIcon, 
@@ -21,7 +22,8 @@ import {
   EyeIcon,
   ArrowUpTrayIcon,
   XMarkIcon,
-  PlayIcon
+  PlayIcon,
+  CloudArrowUpIcon
 } from '@heroicons/react/24/outline'
 import toast from 'react-hot-toast'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -33,10 +35,25 @@ export default function ResourceLibrary() {
     addResource, 
     updateResource, 
     deleteResource,
+    loadResources,
+    resourcesLoading,
+    resourcesError,
     addContact,
     updateContact,
     deleteContact
   } = useAppStore()
+
+  // Load resources on component mount
+  useEffect(() => {
+    loadResources()
+  }, [loadResources])
+
+  // Show error toast if there's an error
+  useEffect(() => {
+    if (resourcesError) {
+      toast.error(resourcesError)
+    }
+  }, [resourcesError])
 
   const [activeTab, setActiveTab] = useState<'resources' | 'upload' | 'viewer'>('resources')
   const [showResourceModal, setShowResourceModal] = useState(false)
@@ -151,7 +168,7 @@ export default function ResourceLibrary() {
     })
   }
 
-  const handleUploadSubmit = (e: React.FormEvent) => {
+  const handleUploadSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     
     if (!uploadFormData.file) {
@@ -161,123 +178,53 @@ export default function ResourceLibrary() {
 
     setIsUploading(true)
 
-    // Process file based on type
-    const processFile = (file: File) => {
-      return new Promise<string>((resolve, reject) => {
-        const reader = new FileReader()
-        
-        reader.onload = (event) => {
-          try {
-            let result = event.target?.result as string
-            
-            // Compress images if they're too large
-            if (file.type.startsWith('image/') && file.size > 1024 * 1024) { // > 1MB
-              const img = new Image()
-              img.onload = () => {
-                const canvas = document.createElement('canvas')
-                const ctx = canvas.getContext('2d')
-                
-                // Calculate new dimensions (max 1200px width/height)
-                const maxSize = 1200
-                let { width, height } = img
-                
-                if (width > height) {
-                  if (width > maxSize) {
-                    height = (height * maxSize) / width
-                    width = maxSize
-                  }
-                } else {
-                  if (height > maxSize) {
-                    width = (width * maxSize) / height
-                    height = maxSize
-                  }
-                }
-                
-                canvas.width = width
-                canvas.height = height
-                
-                ctx?.drawImage(img, 0, 0, width, height)
-                
-                // Convert to base64 with compression
-                const compressedResult = canvas.toDataURL('image/jpeg', 0.8)
-                resolve(compressedResult)
-              }
-              
-              img.onerror = () => {
-                // If image compression fails, use original
-                resolve(result)
-              }
-              
-              img.src = result
-            } else {
-              resolve(result)
-            }
-          } catch (error) {
-            reject(error)
-          }
-        }
-        
-        reader.onerror = () => {
-          reject(new Error('Failed to read file'))
-        }
-        
-        reader.readAsDataURL(file)
+    try {
+      // Generate unique filename
+      const fileName = FirebaseService.generateFileName(uploadFormData.file.name)
+      
+      // Upload file to Firebase Storage
+      const downloadURL = await FirebaseService.uploadFile(uploadFormData.file, fileName)
+      
+      // Create resource data
+      const resourceData = {
+        title: uploadFormData.title,
+        type: 'Document' as Resource['type'],
+        category: uploadFormData.category,
+        url: downloadURL,
+        description: uploadFormData.description,
+        tags: uploadFormData.tags.split(',').map(tag => tag.trim()).filter(Boolean),
+        notes: uploadFormData.notes
+      }
+      
+      // Add resource to Firebase
+      await addResource(resourceData)
+      
+      toast.success('Document uploaded successfully!')
+      
+      setShowUploadModal(false)
+      setUploadFormData({
+        title: '',
+        category: 'Valuation',
+        description: '',
+        tags: '',
+        notes: '',
+        file: null
       })
+    } catch (error) {
+      console.error('Upload error:', error)
+      toast.error('Failed to upload file. Please try again.')
+    } finally {
+      setIsUploading(false)
     }
-
-    // Process the file
-    processFile(uploadFormData.file)
-      .then((base64String) => {
-        const resourceData = {
-          title: uploadFormData.title,
-          type: 'Document' as Resource['type'],
-          category: uploadFormData.category,
-          url: base64String,
-          description: uploadFormData.description,
-          tags: uploadFormData.tags.split(',').map(tag => tag.trim()).filter(Boolean),
-          notes: uploadFormData.notes
-        }
-        
-        addResource(resourceData)
-        toast.success('Document uploaded successfully!')
-        
-        setShowUploadModal(false)
-        setUploadFormData({
-          title: '',
-          category: 'Valuation',
-          description: '',
-          tags: '',
-          notes: '',
-          file: null
-        })
-      })
-      .catch((error) => {
-        console.error('Upload error:', error)
-        toast.error('Failed to upload file. Please try again with a smaller file.')
-      })
-      .finally(() => {
-        setIsUploading(false)
-      })
   }
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (file) {
-      // Check file size (limit to 5MB for base64 storage to prevent memory issues)
-      const maxSize = 5 * 1024 * 1024 // 5MB
+      // Check file size (limit to 50MB for Firebase Storage)
+      const maxSize = 50 * 1024 * 1024 // 50MB
       if (file.size > maxSize) {
-        toast.error('File size must be less than 5MB for optimal performance')
-        e.target.value = ''
-        return
-      }
-      
-      // Check total storage usage
-      const currentStorage = JSON.stringify(resources).length
-      const estimatedNewStorage = currentStorage + (file.size * 1.4) // base64 is ~1.4x larger
-      const maxStorage = 5 * 1024 * 1024 // 5MB total storage limit
-      
-      if (estimatedNewStorage > maxStorage) {
-        toast.error('Storage limit reached. Please delete some files or use smaller files.')
+        toast.error('File size must be less than 50MB')
         e.target.value = ''
         return
       }
@@ -489,158 +436,174 @@ export default function ResourceLibrary() {
             <h2 className="text-xl font-semibold text-gray-900">Study Resources</h2>
           </div>
 
+          {/* Loading State */}
+          {resourcesLoading && (
+            <div className="text-center py-12">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+              <p className="text-slate-600">Loading resources from Firebase...</p>
+            </div>
+          )}
+
           {/* Resources Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {filteredResources.map((resource) => {
-              const TypeIcon = getTypeIcon(resource.type)
-              return (
-                <motion.div
-                  key={resource.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.1 }}
-                  className="card-hover group"
-                >
-                  {/* Header */}
-                  <div className="flex items-start justify-between mb-4">
-                    <div className={`p-3 bg-gradient-to-r ${getTypeColor(resource.type)} rounded-2xl`}>
-                      <TypeIcon className="w-6 h-6 text-white" />
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <button
-                        onClick={() => {
-                          setEditingResource(resource)
-                          setResourceFormData({
-                            title: resource.title,
-                            type: resource.type,
-                            category: resource.category,
-                            url: resource.url || '',
-                            description: resource.description,
-                            tags: resource.tags.join(','),
-                            notes: resource.description
-                          })
-                          setShowResourceModal(true)
-                        }}
-                        className="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all duration-200"
-                        title="Edit Resource"
-                      >
-                        <PencilIcon className="w-4 h-4" />
-                      </button>
-                      <button
-                        onClick={() => deleteResource(resource.id)}
-                        className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all duration-200"
-                        title="Delete Resource"
-                      >
-                        <TrashIcon className="w-4 h-4" />
-                      </button>
-                    </div>
-                  </div>
-
-                  {/* Content */}
-                  <div className="space-y-3">
-                    <h3 className="font-semibold text-slate-900 text-lg line-clamp-2 group-hover:text-blue-600 transition-colors duration-200">
-                      {resource.title}
-                    </h3>
-                    
-                    <div className="flex items-center space-x-4 text-sm text-slate-500">
-                      <div className="flex items-center">
-                        <TagIcon className="w-4 h-4 mr-1" />
-                        <span className="capitalize">{resource.type}</span>
-                      </div>
-                      <div className="flex items-center">
-                        <CalendarIcon className="w-4 h-4 mr-1" />
-                        <span>{new Date(resource.createdAt).toLocaleDateString()}</span>
-                      </div>
-                      {resource.url && resource.url.startsWith('data:') && (
-                        <div className="flex items-center">
-                          <DocumentIcon className="w-4 h-4 mr-1" />
-                          <span className="text-xs">
-                            {(() => {
-                              const fileType = resource.url.split(';')[0].split(':')[1]
-                              if (fileType === 'application/pdf') return 'PDF'
-                              if (fileType.startsWith('image/')) return 'Image'
-                              if (fileType.includes('spreadsheet') || fileType.includes('excel')) return 'Excel'
-                              if (fileType.includes('presentation') || fileType.includes('powerpoint')) return 'PPT'
-                              if (fileType.includes('document') || fileType.includes('word')) return 'Word'
-                              if (fileType.includes('text/plain')) return 'Text'
-                              if (fileType.includes('text/csv')) return 'CSV'
-                              return 'File'
-                            })()}
-                          </span>
-                        </div>
-                      )}
-                    </div>
-
-                    <div className={`px-3 py-1 rounded-full text-xs font-semibold bg-gradient-to-r ${getCategoryColor(resource.category)} text-slate-700 w-fit`}>
-                      {resource.category}
-                    </div>
-
-                    {resource.description && (
-                      <p className="text-sm text-slate-600 line-clamp-3">
-                        {resource.description}
-                      </p>
-                    )}
-
-                    {resource.tags.length > 0 && (
-                      <div className="flex flex-wrap gap-1">
-                        {resource.tags.slice(0, 3).map((tag, tagIndex) => (
-                          <span
-                            key={tagIndex}
-                            className="px-2 py-1 bg-slate-100 text-slate-600 text-xs rounded-full"
-                          >
-                            {tag}
-                          </span>
-                        ))}
-                        {resource.tags.length > 3 && (
-                          <span className="px-2 py-1 bg-slate-100 text-slate-600 text-xs rounded-full">
-                            +{resource.tags.length - 3}
-                          </span>
-                        )}
-                      </div>
-                    )}
-
-                    {/* Actions */}
-                    <div className="flex items-center justify-between pt-3 border-t border-slate-100">
-                      <div className="flex items-center space-x-4 text-sm text-slate-500">
-                        <div className="flex items-center">
-                          <EyeIcon className="w-4 h-4 mr-1" />
-                          <span>1.2k views</span>
-                        </div>
-                        <div className="flex items-center">
-                          <StarIcon className="w-4 h-4 mr-1" />
-                          <span>4.5</span>
-                        </div>
+          {!resourcesLoading && (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {filteredResources.map((resource) => {
+                const TypeIcon = getTypeIcon(resource.type)
+                return (
+                  <motion.div
+                    key={resource.id}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.1 }}
+                    className="card-hover group"
+                  >
+                    {/* Header */}
+                    <div className="flex items-start justify-between mb-4">
+                      <div className={`p-3 bg-gradient-to-r ${getTypeColor(resource.type)} rounded-2xl`}>
+                        <TypeIcon className="w-6 h-6 text-white" />
                       </div>
                       <div className="flex items-center space-x-2">
-                        {resource.url && (
-                          <>
-                            <button
-                              onClick={() => handleViewResource(resource)}
-                              className="btn-ghost text-sm"
-                            >
-                              View
-                            </button>
-                            {!resource.url.startsWith('data:') && (
-                              <a
-                                href={resource.url}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="btn-ghost text-sm"
-                              >
-                                Open
-                              </a>
-                            )}
-                          </>
-                        )}
+                        <button
+                          onClick={() => {
+                            setEditingResource(resource)
+                            setResourceFormData({
+                              title: resource.title,
+                              type: resource.type,
+                              category: resource.category,
+                              url: resource.url || '',
+                              description: resource.description,
+                              tags: resource.tags.join(','),
+                              notes: resource.description
+                            })
+                            setShowResourceModal(true)
+                          }}
+                          className="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all duration-200"
+                          title="Edit Resource"
+                        >
+                          <PencilIcon className="w-4 h-4" />
+                        </button>
+                        <button
+                          onClick={() => deleteResource(resource.id)}
+                          className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all duration-200"
+                          title="Delete Resource"
+                        >
+                          <TrashIcon className="w-4 h-4" />
+                        </button>
                       </div>
                     </div>
-                  </div>
-                </motion.div>
-              )
-            })}
-          </div>
 
-          {filteredResources.length === 0 && (
+                    {/* Content */}
+                    <div className="space-y-3">
+                      <h3 className="font-semibold text-slate-900 text-lg line-clamp-2 group-hover:text-blue-600 transition-colors duration-200">
+                        {resource.title}
+                      </h3>
+                      
+                      <div className="flex items-center space-x-4 text-sm text-slate-500">
+                        <div className="flex items-center">
+                          <TagIcon className="w-4 h-4 mr-1" />
+                          <span className="capitalize">{resource.type}</span>
+                        </div>
+                        <div className="flex items-center">
+                          <CalendarIcon className="w-4 h-4 mr-1" />
+                          <span>{new Date(resource.createdAt).toLocaleDateString()}</span>
+                        </div>
+                        {resource.url && resource.url.startsWith('data:') && (
+                          <div className="flex items-center">
+                            <DocumentIcon className="w-4 h-4 mr-1" />
+                            <span className="text-xs">
+                              {(() => {
+                                const fileType = resource.url.split(';')[0].split(':')[1]
+                                if (fileType === 'application/pdf') return 'PDF'
+                                if (fileType.startsWith('image/')) return 'Image'
+                                if (fileType.includes('spreadsheet') || fileType.includes('excel')) return 'Excel'
+                                if (fileType.includes('presentation') || fileType.includes('powerpoint')) return 'PPT'
+                                if (fileType.includes('document') || fileType.includes('word')) return 'Word'
+                                if (fileType.includes('text/plain')) return 'Text'
+                                if (fileType.includes('text/csv')) return 'CSV'
+                                return 'File'
+                              })()}
+                            </span>
+                          </div>
+                        )}
+                        {resource.url && resource.url.startsWith('https://firebasestorage.googleapis.com') && (
+                          <div className="flex items-center">
+                            <CloudArrowUpIcon className="w-4 h-4 mr-1 text-green-500" />
+                            <span className="text-xs text-green-600">Firebase</span>
+                          </div>
+                        )}
+                      </div>
+
+                      <div className={`px-3 py-1 rounded-full text-xs font-semibold bg-gradient-to-r ${getCategoryColor(resource.category)} text-slate-700 w-fit`}>
+                        {resource.category}
+                      </div>
+
+                      {resource.description && (
+                        <p className="text-sm text-slate-600 line-clamp-3">
+                          {resource.description}
+                        </p>
+                      )}
+
+                      {resource.tags.length > 0 && (
+                        <div className="flex flex-wrap gap-1">
+                          {resource.tags.slice(0, 3).map((tag, tagIndex) => (
+                            <span
+                              key={tagIndex}
+                              className="px-2 py-1 bg-slate-100 text-slate-600 text-xs rounded-full"
+                            >
+                              {tag}
+                            </span>
+                          ))}
+                          {resource.tags.length > 3 && (
+                            <span className="px-2 py-1 bg-slate-100 text-slate-600 text-xs rounded-full">
+                              +{resource.tags.length - 3}
+                            </span>
+                          )}
+                        </div>
+                      )}
+
+                      {/* Actions */}
+                      <div className="flex items-center justify-between pt-3 border-t border-slate-100">
+                        <div className="flex items-center space-x-4 text-sm text-slate-500">
+                          <div className="flex items-center">
+                            <EyeIcon className="w-4 h-4 mr-1" />
+                            <span>1.2k views</span>
+                          </div>
+                          <div className="flex items-center">
+                            <StarIcon className="w-4 h-4 mr-1" />
+                            <span>4.5</span>
+                          </div>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          {resource.url && (
+                            <>
+                              <button
+                                onClick={() => handleViewResource(resource)}
+                                className="btn-ghost text-sm"
+                              >
+                                View
+                              </button>
+                              {!resource.url.startsWith('data:') && (
+                                <a
+                                  href={resource.url}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="btn-ghost text-sm"
+                                >
+                                  Open
+                                </a>
+                              )}
+                            </>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </motion.div>
+                )
+              })}
+            </div>
+          )}
+
+          {!resourcesLoading && filteredResources.length === 0 && (
             <div className="text-center py-12">
               <p className="text-gray-500">No resources found. Add your first resource!</p>
             </div>
@@ -664,21 +627,21 @@ export default function ResourceLibrary() {
           {/* Storage Usage Indicator */}
           <div className="mb-6 p-4 bg-slate-50 rounded-xl">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-sm font-semibold text-slate-700">Storage Usage</span>
+              <span className="text-sm font-semibold text-slate-700">Firebase Storage</span>
               <span className="text-sm text-slate-500">
-                {Math.round(JSON.stringify(resources).length / 1024)}KB / 5MB
+                {resources.filter(r => r.url?.startsWith('https://firebasestorage.googleapis.com')).length} files
               </span>
             </div>
             <div className="w-full bg-slate-200 rounded-full h-2">
               <div 
-                className="bg-gradient-to-r from-blue-500 to-indigo-600 h-2 rounded-full transition-all duration-300"
+                className="bg-gradient-to-r from-green-500 to-emerald-600 h-2 rounded-full transition-all duration-300"
                 style={{ 
-                  width: `${Math.min((JSON.stringify(resources).length / (5 * 1024 * 1024)) * 100, 100)}%` 
+                  width: `${Math.min((resources.filter(r => r.url?.startsWith('https://firebasestorage.googleapis.com')).length / 100) * 100, 100)}%` 
                 }}
               />
             </div>
             <p className="text-xs text-slate-500 mt-2">
-              {resources.length} files stored • {resources.filter(r => r.url?.startsWith('data:')).length} embedded files
+              Up to 5GB free storage • 50MB per file limit
             </p>
           </div>
           
@@ -776,57 +739,6 @@ export default function ResourceLibrary() {
                               </div>
                             </div>
                           )
-                        } else if (fileType.includes('spreadsheet') || fileType.includes('excel') || fileType.includes('sheet')) {
-                          return (
-                            <div className="text-center py-12">
-                              <DocumentTextIcon className="w-20 h-20 text-blue-500 mx-auto mb-4" />
-                              <h3 className="text-xl font-semibold text-slate-900 mb-2">Spreadsheet Document</h3>
-                              <p className="text-slate-600 mb-6">
-                                This appears to be an Excel or spreadsheet file. Download it to view the contents.
-                              </p>
-                              <a
-                                href={selectedResource.url}
-                                download={`${selectedResource.title}.xlsx`}
-                                className="btn-primary"
-                              >
-                                Download Spreadsheet
-                              </a>
-                            </div>
-                          )
-                        } else if (fileType.includes('presentation') || fileType.includes('powerpoint')) {
-                          return (
-                            <div className="text-center py-12">
-                              <DocumentTextIcon className="w-20 h-20 text-orange-500 mx-auto mb-4" />
-                              <h3 className="text-xl font-semibold text-slate-900 mb-2">Presentation Document</h3>
-                              <p className="text-slate-600 mb-6">
-                                This appears to be a PowerPoint presentation. Download it to view the slides.
-                              </p>
-                              <a
-                                href={selectedResource.url}
-                                download={`${selectedResource.title}.pptx`}
-                                className="btn-primary"
-                              >
-                                Download Presentation
-                              </a>
-                            </div>
-                          )
-                        } else if (fileType.includes('document') || fileType.includes('word')) {
-                          return (
-                            <div className="text-center py-12">
-                              <DocumentTextIcon className="w-20 h-20 text-blue-600 mx-auto mb-4" />
-                              <h3 className="text-xl font-semibold text-slate-900 mb-2">Word Document</h3>
-                              <p className="text-slate-600 mb-6">
-                                This appears to be a Word document. Download it to view the contents.
-                              </p>
-                              <a
-                                href={selectedResource.url}
-                                download={`${selectedResource.title}.docx`}
-                                className="btn-primary"
-                              >
-                                Download Document
-                              </a>
-                            </div>
-                          )
                         } else {
                           return (
                             <div className="text-center py-12">
@@ -846,6 +758,29 @@ export default function ResourceLibrary() {
                           )
                         }
                       })()}
+                    </div>
+                  ) : selectedResource.url.startsWith('https://firebasestorage.googleapis.com') ? (
+                    <div className="space-y-4">
+                      <div className="flex items-center justify-between">
+                        <h3 className="text-lg font-semibold text-slate-900">Firebase Document</h3>
+                        <a
+                          href={selectedResource.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="btn-secondary text-sm"
+                        >
+                          Open in New Tab
+                        </a>
+                      </div>
+                      <div className="bg-slate-50 rounded-lg p-4">
+                        <div className="flex items-center space-x-4">
+                          <CloudArrowUpIcon className="w-12 h-12 text-green-500" />
+                          <div>
+                            <p className="font-semibold text-slate-900">Document stored in Firebase</p>
+                            <p className="text-sm text-slate-600">Click "Open in New Tab" to view or download</p>
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   ) : (
                     <div className="text-center py-8">
@@ -1081,7 +1016,7 @@ export default function ResourceLibrary() {
                     Supported formats: PDF, DOC, DOCX, XLS, XLSX, PPT, PPTX, Images (JPG, PNG, GIF, BMP, TIFF), TXT, CSV
                   </p>
                   <p className="text-xs text-slate-400 mt-1">
-                    Maximum file size: 5MB
+                    Maximum file size: 50MB (Firebase Storage)
                   </p>
                 </div>
                 

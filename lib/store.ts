@@ -1,5 +1,6 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
+import { FirebaseService } from './firebaseService'
 
 // Types
 export interface Firm {
@@ -143,7 +144,7 @@ interface AppState {
   dealExperiences: DealExperience[]
   mockInterviews: MockInterview[]
   
-  // Resources
+  // Resources (Firebase-managed)
   resources: Resource[]
   contacts: Contact[]
   
@@ -157,6 +158,10 @@ interface AppState {
   // UI State
   activeTab: string
   sidebarOpen: boolean
+  
+  // Firebase loading states
+  resourcesLoading: boolean
+  resourcesError: string | null
   
   // Actions
   addFirm: (firm: Omit<Firm, 'id' | 'lastUpdated'>) => void
@@ -179,9 +184,11 @@ interface AppState {
   updateDealExperience: (id: string, updates: Partial<DealExperience>) => void
   deleteDealExperience: (id: string) => void
   
-  addResource: (resource: Omit<Resource, 'id' | 'createdAt'>) => void
-  updateResource: (id: string, updates: Partial<Resource>) => void
-  deleteResource: (id: string) => void
+  // Firebase Resource Actions
+  addResource: (resource: Omit<Resource, 'id' | 'createdAt'>) => Promise<void>
+  updateResource: (id: string, updates: Partial<Resource>) => Promise<void>
+  deleteResource: (id: string) => Promise<void>
+  loadResources: () => Promise<void>
   
   addContact: (contact: Omit<Contact, 'id'>) => void
   updateContact: (id: string, updates: Partial<Contact>) => void
@@ -243,6 +250,8 @@ export const useAppStore = create<AppState>()(
       marketIntel: [],
       activeTab: 'dashboard',
       sidebarOpen: true,
+      resourcesLoading: false,
+      resourcesError: null,
       
       // Firm Actions
       addFirm: (firm) => set((state) => ({
@@ -344,23 +353,60 @@ export const useAppStore = create<AppState>()(
       })),
       
       // Resource Actions
-      addResource: (resource) => set((state) => ({
-        resources: [...state.resources, {
-          ...resource,
-          id: crypto.randomUUID(),
-          createdAt: new Date().toISOString(),
-        }]
-      })),
+      addResource: async (resource) => {
+        try {
+          const id = await FirebaseService.addResource(resource)
+          set((state) => ({
+            resources: [...state.resources, {
+              ...resource,
+              id,
+              createdAt: new Date().toISOString(),
+            }]
+          }))
+        } catch (error) {
+          set({ resourcesError: error instanceof Error ? error.message : 'An error occurred' })
+        }
+      },
       
-      updateResource: (id, updates) => set((state) => ({
-        resources: state.resources.map(resource => 
-          resource.id === id ? { ...resource, ...updates } : resource
-        )
-      })),
+      updateResource: async (id, updates) => {
+        try {
+          await FirebaseService.updateResource(id, updates)
+          set((state) => ({
+            resources: state.resources.map(resource => 
+              resource.id === id ? { ...resource, ...updates } : resource
+            )
+          }))
+        } catch (error) {
+          set({ resourcesError: error instanceof Error ? error.message : 'An error occurred' })
+        }
+      },
       
-      deleteResource: (id) => set((state) => ({
-        resources: state.resources.filter(resource => resource.id !== id)
-      })),
+      deleteResource: async (id) => {
+        try {
+          const resource = get().resources.find(r => r.id === id)
+          if (resource) {
+            await FirebaseService.deleteResource(resource)
+          }
+          set((state) => ({
+            resources: state.resources.filter(resource => resource.id !== id)
+          }))
+        } catch (error) {
+          set({ resourcesError: error instanceof Error ? error.message : 'An error occurred' })
+        }
+      },
+      
+      loadResources: async () => {
+        try {
+          set({ resourcesLoading: true, resourcesError: null })
+          const resources = await FirebaseService.getResources()
+          set({ resources, resourcesLoading: false })
+        } catch (error) {
+          set({ 
+            resourcesError: error instanceof Error ? error.message : 'An error occurred',
+            resourcesLoading: false 
+          })
+        }
+      },
       
       // Contact Actions
       addContact: (contact) => set((state) => ({
