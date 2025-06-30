@@ -20,23 +20,79 @@ export default function LiveMarketCoverage() {
         },
         {
           "proName": "FOREXCOM:NSXUSD",
-          "title": "US 100"
+          "title": "NASDAQ"
         },
         {
           "proName": "FOREXCOM:DJI",
-          "title": "Dow 30"
+          "title": "Dow Jones"
+        },
+        {
+          "proName": "FOREXCOM:VIX",
+          "title": "VIX"
+        },
+        {
+          "proName": "FOREXCOM:UST10Y",
+          "title": "10Y Treasury"
+        },
+        {
+          "proName": "FOREXCOM:USOIL",
+          "title": "Crude Oil"
+        },
+        {
+          "proName": "FOREXCOM:XAUUSD",
+          "title": "Gold"
         },
         {
           "description": "Apple",
           "proName": "NASDAQ:AAPL"
         },
         {
+          "description": "Microsoft",
+          "proName": "NASDAQ:MSFT"
+        },
+        {
           "description": "Google",
           "proName": "NASDAQ:GOOGL"
         },
         {
+          "description": "Amazon",
+          "proName": "NASDAQ:AMZN"
+        },
+        {
           "description": "Tesla",
           "proName": "NASDAQ:TSLA"
+        },
+        {
+          "description": "Meta",
+          "proName": "NASDAQ:META"
+        },
+        {
+          "description": "NVIDIA",
+          "proName": "NASDAQ:NVDA"
+        },
+        {
+          "description": "Netflix",
+          "proName": "NASDAQ:NFLX"
+        },
+        {
+          "description": "Salesforce",
+          "proName": "NYSE:CRM"
+        },
+        {
+          "description": "Adobe",
+          "proName": "NASDAQ:ADBE"
+        },
+        {
+          "description": "Oracle",
+          "proName": "NYSE:ORCL"
+        },
+        {
+          "description": "Intel",
+          "proName": "NASDAQ:INTC"
+        },
+        {
+          "description": "AMD",
+          "proName": "NASDAQ:AMD"
         },
         {
           "description": "JPMorgan",
@@ -47,20 +103,360 @@ export default function LiveMarketCoverage() {
           "proName": "NYSE:GS"
         },
         {
-          "description": "Microsoft",
-          "proName": "NASDAQ:MSFT"
+          "description": "Morgan Stanley",
+          "proName": "NYSE:MS"
         },
         {
-          "description": "Amazon",
-          "proName": "NASDAQ:AMZN"
+          "description": "Bank of America",
+          "proName": "NYSE:BAC"
         },
         {
-          "description": "Meta",
-          "proName": "NASDAQ:META"
+          "description": "Citigroup",
+          "proName": "NYSE:C"
         },
         {
-          "description": "Netflix",
-          "proName": "NASDAQ:NFLX"
+          "description": "Wells Fargo",
+          "proName": "NYSE:WFC"
+        },
+        {
+          "description": "BlackRock",
+          "proName": "NYSE:BLK"
+        },
+        {
+          "description": "Blackstone",
+          "proName": "NYSE:BX"
+        },
+        {
+          "description": "KKR",
+          "proName": "NYSE:KKR"
+        },
+        {
+          "description": "Apollo Global",
+          "proName": "NYSE:APO"
+        },
+        {
+          "description": "Berkshire Hathaway",
+          "proName": "NYSE:BRK.A"
+        },
+        {
+          "description": "Visa",
+          "proName": "NYSE:V"
+        },
+        {
+          "description": "Mastercard",
+          "proName": "NYSE:MA"
+        },
+        {
+          "description": "American Express",
+          "proName": "NYSE:AXP"
+        },
+        {
+          "description": "PayPal",
+          "proName": "NASDAQ:PYPL"
+        },
+        {
+          "description": "Square",
+          "proName": "NYSE:SQ"
+        },
+        {
+          "description": "Exxon Mobil",
+          "proName": "NYSE:XOM"
+        },
+        {
+          "description": "Chevron",
+          "proName": "NYSE:CVX"
+        },
+        {
+          "description": "ConocoPhillips",
+          "proName": "NYSE:COP"
+        },
+        {
+          "description": "Occidental",
+          "proName": "NYSE:OXY"
+        },
+        {
+          "description": "Johnson & Johnson",
+          "proName": "NYSE:JNJ"
+        },
+        {
+          "description": "Pfizer",
+          "proName": "NYSE:PFE"
+        },
+        {
+          "description": "Moderna",
+          "proName": "NASDAQ:MRNA"
+        },
+        {
+          "description": "BioNTech",
+          "proName": "NASDAQ:BNTX"
+        },
+        {
+          "description": "UnitedHealth",
+          "proName": "NYSE:UNH"
+        },
+        {
+          "description": "Anthem",
+          "proName": "NYSE:ANTM"
+        },
+        {
+          "description": "Walmart",
+          "proName": "NYSE:WMT"
+        },
+        {
+          "description": "Home Depot",
+          "proName": "NYSE:HD"
+        },
+        {
+          "description": "Costco",
+          "proName": "NASDAQ:COST"
+        },
+        {
+          "description": "Target",
+          "proName": "NYSE:TGT"
+        },
+        {
+          "description": "McDonald's",
+          "proName": "NYSE:MCD"
+        },
+        {
+          "description": "Starbucks",
+          "proName": "NASDAQ:SBUX"
+        },
+        {
+          "description": "Coca-Cola",
+          "proName": "NYSE:KO"
+        },
+        {
+          "description": "PepsiCo",
+          "proName": "NASDAQ:PEP"
+        },
+        {
+          "description": "Procter & Gamble",
+          "proName": "NYSE:PG"
+        },
+        {
+          "description": "Unilever",
+          "proName": "NYSE:UL"
+        },
+        {
+          "description": "Disney",
+          "proName": "NYSE:DIS"
+        },
+        {
+          "description": "Comcast",
+          "proName": "NASDAQ:CMCSA"
+        },
+        {
+          "description": "Verizon",
+          "proName": "NYSE:VZ"
+        },
+        {
+          "description": "AT&T",
+          "proName": "NYSE:T"
+        },
+        {
+          "description": "T-Mobile",
+          "proName": "NASDAQ:TMUS"
+        },
+        {
+          "description": "Boeing",
+          "proName": "NYSE:BA"
+        },
+        {
+          "description": "Airbus",
+          "proName": "OTC:EADSY"
+        },
+        {
+          "description": "General Electric",
+          "proName": "NYSE:GE"
+        },
+        {
+          "description": "3M",
+          "proName": "NYSE:MMM"
+        },
+        {
+          "description": "Caterpillar",
+          "proName": "NYSE:CAT"
+        },
+        {
+          "description": "Deere",
+          "proName": "NYSE:DE"
+        },
+        {
+          "description": "FedEx",
+          "proName": "NYSE:FDX"
+        },
+        {
+          "description": "UPS",
+          "proName": "NYSE:UPS"
+        },
+        {
+          "description": "Union Pacific",
+          "proName": "NYSE:UNP"
+        },
+        {
+          "description": "CSX",
+          "proName": "NASDAQ:CSX"
+        },
+        {
+          "description": "Airbnb",
+          "proName": "NASDAQ:ABNB"
+        },
+        {
+          "description": "Uber",
+          "proName": "NYSE:UBER"
+        },
+        {
+          "description": "Lyft",
+          "proName": "NASDAQ:LYFT"
+        },
+        {
+          "description": "DoorDash",
+          "proName": "NYSE:DASH"
+        },
+        {
+          "description": "Zoom",
+          "proName": "NASDAQ:ZM"
+        },
+        {
+          "description": "Slack",
+          "proName": "NYSE:WORK"
+        },
+        {
+          "description": "Palantir",
+          "proName": "NYSE:PLTR"
+        },
+        {
+          "description": "Snowflake",
+          "proName": "NYSE:SNOW"
+        },
+        {
+          "description": "Datadog",
+          "proName": "NASDAQ:DDOG"
+        },
+        {
+          "description": "CrowdStrike",
+          "proName": "NASDAQ:CRWD"
+        },
+        {
+          "description": "Zscaler",
+          "proName": "NASDAQ:ZS"
+        },
+        {
+          "description": "Okta",
+          "proName": "NASDAQ:OKTA"
+        },
+        {
+          "description": "Shopify",
+          "proName": "NYSE:SHOP"
+        },
+        {
+          "description": "Square",
+          "proName": "NYSE:SQ"
+        },
+        {
+          "description": "Twilio",
+          "proName": "NYSE:TWLO"
+        },
+        {
+          "description": "ServiceNow",
+          "proName": "NYSE:NOW"
+        },
+        {
+          "description": "Workday",
+          "proName": "NASDAQ:WDAY"
+        },
+        {
+          "description": "Splunk",
+          "proName": "NASDAQ:SPLK"
+        },
+        {
+          "description": "MongoDB",
+          "proName": "NASDAQ:MDB"
+        },
+        {
+          "description": "Elastic",
+          "proName": "NYSE:ESTC"
+        },
+        {
+          "description": "Confluent",
+          "proName": "NASDAQ:CFLT"
+        },
+        {
+          "description": "Coinbase",
+          "proName": "NASDAQ:COIN"
+        },
+        {
+          "description": "Robinhood",
+          "proName": "NASDAQ:HOOD"
+        },
+        {
+          "description": "SoFi",
+          "proName": "NASDAQ:SOFI"
+        },
+        {
+          "description": "Affirm",
+          "proName": "NASDAQ:AFRM"
+        },
+        {
+          "description": "Block",
+          "proName": "NYSE:SQ"
+        },
+        {
+          "description": "Marqeta",
+          "proName": "NASDAQ:MQ"
+        },
+        {
+          "description": "Bill.com",
+          "proName": "NYSE:BILL"
+        },
+        {
+          "description": "Toast",
+          "proName": "NYSE:TOST"
+        },
+        {
+          "description": "Instacart",
+          "proName": "NASDAQ:CART"
+        },
+        {
+          "description": "Rivian",
+          "proName": "NASDAQ:RIVN"
+        },
+        {
+          "description": "Lucid",
+          "proName": "NASDAQ:LCID"
+        },
+        {
+          "description": "Nikola",
+          "proName": "NASDAQ:NKLA"
+        },
+        {
+          "description": "ChargePoint",
+          "proName": "NYSE:CHPT"
+        },
+        {
+          "description": "Plug Power",
+          "proName": "NASDAQ:PLUG"
+        },
+        {
+          "description": "Bloom Energy",
+          "proName": "NYSE:BE"
+        },
+        {
+          "description": "First Solar",
+          "proName": "NASDAQ:FSLR"
+        },
+        {
+          "description": "SunPower",
+          "proName": "NASDAQ:SPWR"
+        },
+        {
+          "description": "Enphase",
+          "proName": "NASDAQ:ENPH"
+        },
+        {
+          "description": "SolarEdge",
+          "proName": "NASDAQ:SEDG"
         }
       ],
       "showSymbolLogo": true,
