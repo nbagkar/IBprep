@@ -8,7 +8,7 @@ import {
   BookmarkIcon,
   GlobeAltIcon,
   ClockIcon,
-  ExternalLinkIcon
+  ArrowTopRightOnSquareIcon
 } from '@heroicons/react/24/outline'
 import toast from 'react-hot-toast'
 
@@ -173,7 +173,7 @@ export default function NewsFeed() {
                         className="inline-flex items-center text-sm text-primary-600 hover:text-primary-800"
                       >
                         Read Full Article
-                        <ExternalLinkIcon className="w-4 h-4 ml-1" />
+                        <ArrowTopRightOnSquareIcon className="w-4 h-4 ml-1" />
                       </a>
                       <button
                         onClick={() => {
@@ -227,7 +227,7 @@ export default function NewsFeed() {
                         className="inline-flex items-center text-sm text-primary-600 hover:text-primary-800"
                       >
                         Read Full Article
-                        <ExternalLinkIcon className="w-4 h-4 ml-1" />
+                        <ArrowTopRightOnSquareIcon className="w-4 h-4 ml-1" />
                       </a>
                       <button
                         onClick={() => {

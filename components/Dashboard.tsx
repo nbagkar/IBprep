@@ -54,9 +54,9 @@ export default function Dashboard() {
 
   // Recent activity
   const recentActivity = [
-    ...firms.map(f => ({ type: 'firm', item: f, date: f.lastUpdated })),
-    ...coffeeChats.map(c => ({ type: 'chat', item: c, date: c.scheduledDate })),
-    ...mockInterviews.map(m => ({ type: 'mock', item: m, date: m.date })),
+    ...firms.map(f => ({ type: 'firm' as const, item: f, date: f.lastUpdated })),
+    ...coffeeChats.map(c => ({ type: 'chat' as const, item: c, date: c.scheduledDate })),
+    ...mockInterviews.map(m => ({ type: 'mock' as const, item: m, date: m.date })),
   ].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()).slice(0, 5)
 
   return (
@@ -167,8 +167,8 @@ export default function Dashboard() {
                   <div className="w-2 h-2 bg-primary-600 rounded-full" />
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-medium text-gray-900 truncate">
-                      {activity.type === 'firm' && `Updated ${activity.item.name} application`}
-                      {activity.type === 'chat' && `Scheduled coffee chat with ${activity.item.contactName}`}
+                      {activity.type === 'firm' && `Updated ${(activity.item as any).name} application`}
+                      {activity.type === 'chat' && `Scheduled coffee chat with ${(activity.item as any).contactName}`}
                       {activity.type === 'mock' && `Completed mock interview`}
                     </p>
                     <p className="text-xs text-gray-500">
