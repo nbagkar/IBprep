@@ -161,51 +161,123 @@ export default function ResourceLibrary() {
 
     setIsUploading(true)
 
-    // Convert file to base64 for persistent storage
-    const reader = new FileReader()
-    reader.onload = (event) => {
-      const base64String = event.target?.result as string
-      
-      const resourceData = {
-        title: uploadFormData.title,
-        type: 'Document' as Resource['type'],
-        category: uploadFormData.category,
-        url: base64String, // Store as base64 instead of blob URL
-        description: uploadFormData.description,
-        tags: uploadFormData.tags.split(',').map(tag => tag.trim()).filter(Boolean),
-        notes: uploadFormData.notes
-      }
-      
-      addResource(resourceData)
-      toast.success('Document uploaded successfully!')
-      
-      setShowUploadModal(false)
-      setUploadFormData({
-        title: '',
-        category: 'Valuation',
-        description: '',
-        tags: '',
-        notes: '',
-        file: null
+    // Process file based on type
+    const processFile = (file: File) => {
+      return new Promise<string>((resolve, reject) => {
+        const reader = new FileReader()
+        
+        reader.onload = (event) => {
+          try {
+            let result = event.target?.result as string
+            
+            // Compress images if they're too large
+            if (file.type.startsWith('image/') && file.size > 1024 * 1024) { // > 1MB
+              const img = new Image()
+              img.onload = () => {
+                const canvas = document.createElement('canvas')
+                const ctx = canvas.getContext('2d')
+                
+                // Calculate new dimensions (max 1200px width/height)
+                const maxSize = 1200
+                let { width, height } = img
+                
+                if (width > height) {
+                  if (width > maxSize) {
+                    height = (height * maxSize) / width
+                    width = maxSize
+                  }
+                } else {
+                  if (height > maxSize) {
+                    width = (width * maxSize) / height
+                    height = maxSize
+                  }
+                }
+                
+                canvas.width = width
+                canvas.height = height
+                
+                ctx?.drawImage(img, 0, 0, width, height)
+                
+                // Convert to base64 with compression
+                const compressedResult = canvas.toDataURL('image/jpeg', 0.8)
+                resolve(compressedResult)
+              }
+              
+              img.onerror = () => {
+                // If image compression fails, use original
+                resolve(result)
+              }
+              
+              img.src = result
+            } else {
+              resolve(result)
+            }
+          } catch (error) {
+            reject(error)
+          }
+        }
+        
+        reader.onerror = () => {
+          reject(new Error('Failed to read file'))
+        }
+        
+        reader.readAsDataURL(file)
       })
-      setIsUploading(false)
     }
-    
-    reader.onerror = () => {
-      toast.error('Failed to process file. Please try again.')
-      setIsUploading(false)
-    }
-    
-    reader.readAsDataURL(uploadFormData.file)
+
+    // Process the file
+    processFile(uploadFormData.file)
+      .then((base64String) => {
+        const resourceData = {
+          title: uploadFormData.title,
+          type: 'Document' as Resource['type'],
+          category: uploadFormData.category,
+          url: base64String,
+          description: uploadFormData.description,
+          tags: uploadFormData.tags.split(',').map(tag => tag.trim()).filter(Boolean),
+          notes: uploadFormData.notes
+        }
+        
+        addResource(resourceData)
+        toast.success('Document uploaded successfully!')
+        
+        setShowUploadModal(false)
+        setUploadFormData({
+          title: '',
+          category: 'Valuation',
+          description: '',
+          tags: '',
+          notes: '',
+          file: null
+        })
+      })
+      .catch((error) => {
+        console.error('Upload error:', error)
+        toast.error('Failed to upload file. Please try again with a smaller file.')
+      })
+      .finally(() => {
+        setIsUploading(false)
+      })
   }
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (file) {
-      // Check file size (limit to 10MB for base64 storage)
-      const maxSize = 10 * 1024 * 1024 // 10MB
+      // Check file size (limit to 5MB for base64 storage to prevent memory issues)
+      const maxSize = 5 * 1024 * 1024 // 5MB
       if (file.size > maxSize) {
-        toast.error('File size must be less than 10MB')
+        toast.error('File size must be less than 5MB for optimal performance')
+        e.target.value = ''
+        return
+      }
+      
+      // Check total storage usage
+      const currentStorage = JSON.stringify(resources).length
+      const estimatedNewStorage = currentStorage + (file.size * 1.4) // base64 is ~1.4x larger
+      const maxStorage = 5 * 1024 * 1024 // 5MB total storage limit
+      
+      if (estimatedNewStorage > maxStorage) {
+        toast.error('Storage limit reached. Please delete some files or use smaller files.')
         e.target.value = ''
         return
       }
@@ -587,6 +659,27 @@ export default function ResourceLibrary() {
           <div className="text-center mb-8">
             <h2 className="text-2xl font-bold text-slate-900 mb-2">Upload Documents</h2>
             <p className="text-slate-600">Upload your study materials and documents</p>
+          </div>
+          
+          {/* Storage Usage Indicator */}
+          <div className="mb-6 p-4 bg-slate-50 rounded-xl">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm font-semibold text-slate-700">Storage Usage</span>
+              <span className="text-sm text-slate-500">
+                {Math.round(JSON.stringify(resources).length / 1024)}KB / 5MB
+              </span>
+            </div>
+            <div className="w-full bg-slate-200 rounded-full h-2">
+              <div 
+                className="bg-gradient-to-r from-blue-500 to-indigo-600 h-2 rounded-full transition-all duration-300"
+                style={{ 
+                  width: `${Math.min((JSON.stringify(resources).length / (5 * 1024 * 1024)) * 100, 100)}%` 
+                }}
+              />
+            </div>
+            <p className="text-xs text-slate-500 mt-2">
+              {resources.length} files stored • {resources.filter(r => r.url?.startsWith('data:')).length} embedded files
+            </p>
           </div>
           
           <button
@@ -988,7 +1081,7 @@ export default function ResourceLibrary() {
                     Supported formats: PDF, DOC, DOCX, XLS, XLSX, PPT, PPTX, Images (JPG, PNG, GIF, BMP, TIFF), TXT, CSV
                   </p>
                   <p className="text-xs text-slate-400 mt-1">
-                    Maximum file size: 10MB
+                    Maximum file size: 5MB
                   </p>
                 </div>
                 
