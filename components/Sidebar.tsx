@@ -15,7 +15,7 @@ import {
   Cog6ToothIcon
 } from '@heroicons/react/24/outline'
 import { motion, AnimatePresence } from 'framer-motion'
-import DataManagement from './DataManagement'
+import { useRouter } from 'next/navigation'
 
 const navigation = [
   { name: 'Dashboard', href: 'dashboard', icon: ChartBarIcon, color: 'from-blue-500 to-indigo-600' },
@@ -28,7 +28,7 @@ const navigation = [
 
 export default function Sidebar() {
   const { activeTab, sidebarOpen, setActiveTab, setSidebarOpen, user, userLoading, signIn, signOut } = useAppStore()
-  const [showSettings, setShowSettings] = React.useState(false)
+  const router = useRouter()
 
   return (
     <>
@@ -187,27 +187,12 @@ export default function Sidebar() {
         {/* Settings Icon at the bottom */}
         <div className="p-4 flex flex-col items-center">
           <button
-            onClick={() => setShowSettings(true)}
+            onClick={() => router.push('/data-management')}
             className="p-2 rounded-full hover:bg-slate-200 transition"
             title="Settings"
           >
             <Cog6ToothIcon className="w-7 h-7 text-slate-500" />
           </button>
-          {/* Data Management Modal */}
-          {showSettings && (
-            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-30">
-              <div className="bg-white rounded-xl shadow-xl p-6 w-full max-w-md relative">
-                <button
-                  className="absolute top-2 right-2 p-2 rounded-full hover:bg-slate-100"
-                  onClick={() => setShowSettings(false)}
-                  title="Close"
-                >
-                  <span className="text-2xl">×</span>
-                </button>
-                <DataManagement />
-              </div>
-            </div>
-          )}
         </div>
 
         {/* Footer */}
