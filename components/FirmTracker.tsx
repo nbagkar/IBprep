@@ -110,6 +110,11 @@ export default function FirmTracker() {
   ];
   const [activeTrackerTab, setActiveTrackerTab] = useState<'applications' | 'coffeechats' | 'coldemails'>('applications');
 
+  // Applications Tracker filters
+  const [appSearch, setAppSearch] = useState('');
+  const [appSortField, setAppSortField] = useState('deadline');
+  const [appSortOrder, setAppSortOrder] = useState<'asc' | 'desc'>('asc');
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     
@@ -205,15 +210,35 @@ export default function FirmTracker() {
     }
   }
 
-  let filteredFirms = firms.filter(firm => 
-    filterStatus === 'all' || firm.status === filterStatus
-  )
-
-  if (appSort === 'deadline-asc') {
-    filteredFirms = [...filteredFirms].sort((a, b) => (a.deadline || '').localeCompare(b.deadline || ''))
-  } else if (appSort === 'deadline-desc') {
-    filteredFirms = [...filteredFirms].sort((a, b) => (b.deadline || '').localeCompare(a.deadline || ''))
-  }
+  let filteredFirms = firms.filter(firm =>
+    (filterStatus === 'all' || firm.status === filterStatus) &&
+    (
+      appSearch === '' ||
+      firm.name.toLowerCase().includes(appSearch.toLowerCase()) ||
+      firm.division.toLowerCase().includes(appSearch.toLowerCase()) ||
+      firm.location.toLowerCase().includes(appSearch.toLowerCase())
+    )
+  );
+  filteredFirms = [...filteredFirms].sort((a, b) => {
+    let valA, valB;
+    switch (appSortField) {
+      case 'name':
+        valA = a.name.toLowerCase();
+        valB = b.name.toLowerCase();
+        break;
+      case 'status':
+        valA = a.status;
+        valB = b.status;
+        break;
+      case 'deadline':
+      default:
+        valA = a.deadline || '';
+        valB = b.deadline || '';
+        break;
+    }
+    if (appSortOrder === 'asc') return valA.localeCompare(valB);
+    return valB.localeCompare(valA);
+  });
 
   let filteredChats = coffeeChats.filter(chat => {
     const firmMatch = chatFirmFilter === 'all' || chat.firmId === chatFirmFilter
@@ -359,6 +384,47 @@ export default function FirmTracker() {
           transition={{ delay: 0.5 }}
           className="card"
         >
+          {/* Applications Filters */}
+          <div className="flex flex-wrap gap-4 mb-4 items-end">
+            <input
+              type="text"
+              value={appSearch}
+              onChange={e => setAppSearch(e.target.value)}
+              className="input-field w-auto"
+              placeholder="Search firm, division, or location..."
+            />
+            <label className="text-sm font-semibold text-slate-700">Status:</label>
+            <select
+              value={filterStatus}
+              onChange={e => setFilterStatus(e.target.value)}
+              className="input-field w-auto"
+            >
+              <option value="all">All Statuses</option>
+              <option value="Researching">Researching</option>
+              <option value="Applied">Applied</option>
+              <option value="Interviewing">Interviewing</option>
+              <option value="Offer">Offer</option>
+              <option value="Rejected">Rejected</option>
+            </select>
+            <label className="text-sm font-semibold text-slate-700">Sort by:</label>
+            <select
+              value={appSortField}
+              onChange={e => setAppSortField(e.target.value)}
+              className="input-field w-auto"
+            >
+              <option value="deadline">Deadline</option>
+              <option value="name">Name</option>
+              <option value="status">Status</option>
+            </select>
+            <select
+              value={appSortOrder}
+              onChange={e => setAppSortOrder(e.target.value as 'asc' | 'desc')}
+              className="input-field w-auto"
+            >
+              <option value="asc">Asc</option>
+              <option value="desc">Desc</option>
+            </select>
+          </div>
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-2xl font-bold text-slate-900">Applications Tracker</h2>
             <motion.button
