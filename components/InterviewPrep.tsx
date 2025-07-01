@@ -171,12 +171,6 @@ export default function InterviewPrep() {
     return colors[Math.abs(category.length) % colors.length]
   }
 
-  const tabs = [
-    { id: 'behavioral', name: 'Behavioral', icon: ChatBubbleLeftRightIcon, count: behavioralQuestions.length },
-    { id: 'technical', name: 'Technical', icon: DocumentTextIcon, count: technicalQuestions.length },
-    { id: 'mocks', name: 'Mock Interviews', icon: AcademicCapIcon, count: mockInterviews.length }
-  ]
-
   // Filter behavioral questions
   const filteredBehavioralQuestions = React.useMemo(() => {
     let filtered = behavioralQuestions
@@ -226,6 +220,27 @@ export default function InterviewPrep() {
 
     return filtered
   }, [technicalQuestions, technicalSearch, technicalCategoryFilter, showTechnicalPreloadedOnly])
+
+  // Get live counts for tabs
+  const getBehavioralCount = () => {
+    if (activeTab === 'behavioral') {
+      return filteredBehavioralQuestions.length
+    }
+    return behavioralQuestions.length
+  }
+
+  const getTechnicalCount = () => {
+    if (activeTab === 'technical') {
+      return filteredTechnicalQuestions.length
+    }
+    return technicalQuestions.length
+  }
+
+  const tabs = [
+    { id: 'behavioral', name: 'Behavioral', icon: ChatBubbleLeftRightIcon, count: getBehavioralCount() },
+    { id: 'technical', name: 'Technical', icon: DocumentTextIcon, count: getTechnicalCount() },
+    { id: 'mocks', name: 'Mock Interviews', icon: AcademicCapIcon, count: mockInterviews.length }
+  ]
 
   return (
     <motion.div 
