@@ -31,6 +31,7 @@ export default function InterviewPrep() {
     addTechnicalQuestion,
     updateTechnicalQuestion,
     deleteTechnicalQuestion,
+    initializePreloadedTechnicalQuestions,
     addMockInterview,
     updateMockInterview,
     deleteMockInterview
@@ -39,7 +40,8 @@ export default function InterviewPrep() {
   // Initialize pre-loaded questions on component mount
   React.useEffect(() => {
     initializePreloadedQuestions()
-  }, [initializePreloadedQuestions])
+    initializePreloadedTechnicalQuestions()
+  }, [initializePreloadedQuestions, initializePreloadedTechnicalQuestions])
 
   const [activeTab, setActiveTab] = useState<'behavioral' | 'technical' | 'mocks'>('behavioral')
   const [showBehavioralModal, setShowBehavioralModal] = useState(false)
@@ -60,6 +62,10 @@ export default function InterviewPrep() {
   const [behavioralSearch, setBehavioralSearch] = useState('')
   const [behavioralCategoryFilter, setBehavioralCategoryFilter] = useState<string>('all')
   const [showPreloadedOnly, setShowPreloadedOnly] = useState(false)
+
+  const [technicalSearch, setTechnicalSearch] = useState('')
+  const [technicalCategoryFilter, setTechnicalCategoryFilter] = useState<string>('all')
+  const [showTechnicalPreloadedOnly, setShowTechnicalPreloadedOnly] = useState(false)
 
   const [technicalForm, setTechnicalForm] = useState({
     question: '',
@@ -195,6 +201,31 @@ export default function InterviewPrep() {
 
     return filtered
   }, [behavioralQuestions, behavioralSearch, behavioralCategoryFilter, showPreloadedOnly])
+
+  // Filter technical questions
+  const filteredTechnicalQuestions = React.useMemo(() => {
+    let filtered = technicalQuestions
+
+    // Filter by search
+    if (technicalSearch) {
+      filtered = filtered.filter(q =>
+        q.question.toLowerCase().includes(technicalSearch.toLowerCase()) ||
+        q.answer.toLowerCase().includes(technicalSearch.toLowerCase())
+      )
+    }
+
+    // Filter by category
+    if (technicalCategoryFilter !== 'all') {
+      filtered = filtered.filter(q => q.category === technicalCategoryFilter)
+    }
+
+    // Filter by pre-loaded status
+    if (showTechnicalPreloadedOnly) {
+      filtered = filtered.filter(q => q.isPreloaded)
+    }
+
+    return filtered
+  }, [technicalQuestions, technicalSearch, technicalCategoryFilter, showTechnicalPreloadedOnly])
 
   return (
     <motion.div 
@@ -412,18 +443,66 @@ export default function InterviewPrep() {
             </button>
           </div>
 
+          {/* Filters */}
+          <div className="flex flex-col sm:flex-row gap-4 p-4 bg-slate-50 rounded-lg">
+            <div className="flex-1">
+              <input
+                type="text"
+                placeholder="Search questions..."
+                value={technicalSearch}
+                onChange={(e) => setTechnicalSearch(e.target.value)}
+                className="input-field w-full"
+              />
+            </div>
+            <div className="flex gap-2">
+              <select
+                value={technicalCategoryFilter}
+                onChange={(e) => setTechnicalCategoryFilter(e.target.value)}
+                className="input-field"
+              >
+                <option value="all">All Categories</option>
+                <option value="Valuation">Valuation</option>
+                <option value="Financial Modeling">Financial Modeling</option>
+                <option value="Accounting">Accounting</option>
+                <option value="M&A">M&A</option>
+                <option value="LBO">LBO</option>
+                <option value="Market Sizing">Market Sizing</option>
+                <option value="Other">Other</option>
+                <option value="General">General</option>
+              </select>
+              <button
+                onClick={() => setShowTechnicalPreloadedOnly(!showTechnicalPreloadedOnly)}
+                className={`px-4 py-2 rounded-lg text-sm font-semibold transition-colors ${
+                  showTechnicalPreloadedOnly 
+                    ? 'bg-blue-600 text-white' 
+                    : 'bg-white text-slate-700 border border-slate-300 hover:bg-slate-50'
+                }`}
+              >
+                {showTechnicalPreloadedOnly ? 'Show All' : 'Pre-loaded Only'}
+              </button>
+            </div>
+          </div>
+
+          {/* Questions Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {technicalQuestions.map((question, index) => (
+            {filteredTechnicalQuestions.map((question, index) => (
               <motion.div
                 key={question.id}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.1 }}
-                className="card-hover group"
+                className={`card-hover group ${question.isPreloaded ? 'ring-2 ring-blue-200' : ''}`}
               >
                 <div className="flex items-start justify-between mb-4">
-                  <div className={`px-3 py-1 rounded-full text-xs font-semibold bg-gradient-to-r ${getCategoryColor(question.category)} text-white`}>
-                    {question.category}
+                  <div className="flex items-center space-x-2">
+                    <div className={`px-3 py-1 rounded-full text-xs font-semibold bg-gradient-to-r ${getCategoryColor(question.category)} text-white`}>
+                      {question.category}
+                    </div>
+                    {question.isPreloaded && (
+                      <div className="px-2 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-700">
+                        Pre-loaded
+                      </div>
+                    )}
                   </div>
                   <div className="flex items-center space-x-2">
                     <button
@@ -442,12 +521,14 @@ export default function InterviewPrep() {
                     >
                       <PencilIcon className="w-4 h-4" />
                     </button>
-                    <button
-                      onClick={() => deleteTechnicalQuestion(question.id)}
-                      className="p-1 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded transition-colors duration-200"
-                    >
-                      <TrashIcon className="w-4 h-4" />
-                    </button>
+                    {!question.isPreloaded && (
+                      <button
+                        onClick={() => deleteTechnicalQuestion(question.id)}
+                        className="p-1 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded transition-colors duration-200"
+                      >
+                        <TrashIcon className="w-4 h-4" />
+                      </button>
+                    )}
                   </div>
                 </div>
                 
@@ -724,10 +805,14 @@ export default function InterviewPrep() {
                     required
                     value={technicalForm.question}
                     onChange={(e) => setTechnicalForm({ ...technicalForm, question: e.target.value })}
-                    className="input-field"
+                    className={`input-field ${editingTechnical?.isPreloaded ? 'bg-slate-50 cursor-not-allowed' : ''}`}
                     rows={3}
                     placeholder="e.g., Walk me through a DCF valuation"
+                    disabled={editingTechnical?.isPreloaded}
                   />
+                  {editingTechnical?.isPreloaded && (
+                    <p className="text-sm text-slate-500 mt-1">This is a pre-loaded question and cannot be modified</p>
+                  )}
                 </div>
                 
                 <div className="grid grid-cols-2 gap-4">
@@ -736,13 +821,17 @@ export default function InterviewPrep() {
                     <select
                       value={technicalForm.category}
                       onChange={(e) => setTechnicalForm({ ...technicalForm, category: e.target.value as any })}
-                      className="input-field"
+                      className={`input-field ${editingTechnical?.isPreloaded ? 'bg-slate-50 cursor-not-allowed' : ''}`}
+                      disabled={editingTechnical?.isPreloaded}
                     >
                       <option value="Valuation">Valuation</option>
                       <option value="Financial Modeling">Financial Modeling</option>
                       <option value="Accounting">Accounting</option>
                       <option value="M&A">M&A</option>
                       <option value="LBO">LBO</option>
+                      <option value="Market Sizing">Market Sizing</option>
+                      <option value="Other">Other</option>
+                      <option value="General">General</option>
                     </select>
                   </div>
                   <div>
@@ -750,7 +839,8 @@ export default function InterviewPrep() {
                     <select
                       value={technicalForm.difficulty}
                       onChange={(e) => setTechnicalForm({ ...technicalForm, difficulty: e.target.value as any })}
-                      className="input-field"
+                      className={`input-field ${editingTechnical?.isPreloaded ? 'bg-slate-50 cursor-not-allowed' : ''}`}
+                      disabled={editingTechnical?.isPreloaded}
                     >
                       <option value="Easy">Easy</option>
                       <option value="Medium">Medium</option>
