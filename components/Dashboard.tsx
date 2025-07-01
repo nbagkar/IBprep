@@ -29,6 +29,40 @@ export default function Dashboard() {
     setActiveTab
   } = useAppStore()
 
+  // Helper to get date string (YYYY-MM-DD)
+  const getDateString = (date: Date) => date.toISOString().split('T')[0]
+  const todayStr = getDateString(new Date())
+  const yesterdayStr = getDateString(new Date(Date.now() - 86400000))
+
+  // Helper to count items created on a given day
+  const countByDate = (arr: any[], field = 'createdAt') => arr.filter((item: any) => item[field] && getDateString(new Date(item[field])) === todayStr).length
+  const countByDateYesterday = (arr: any[], field = 'createdAt') => arr.filter((item: any) => item[field] && getDateString(new Date(item[field])) === yesterdayStr).length
+
+  // Firms
+  const firmsToday = countByDate(firms, 'lastUpdated')
+  const firmsYesterday = countByDateYesterday(firms, 'lastUpdated')
+  // Coffee chats
+  const chatsToday = countByDate(coffeeChats, 'scheduledDate')
+  const chatsYesterday = countByDateYesterday(coffeeChats, 'scheduledDate')
+  // Questions
+  const questionsToday = countByDate([...behavioralQuestions, ...technicalQuestions], 'lastUpdated')
+  const questionsYesterday = countByDateYesterday([...behavioralQuestions, ...technicalQuestions], 'lastUpdated')
+  // Mocks
+  const mocksToday = countByDate(mockInterviews, 'date')
+  const mocksYesterday = countByDateYesterday(mockInterviews, 'date')
+
+  // Helper for percent change
+  const percentChange = (today: number, yesterday: number) => {
+    if (yesterday === 0 && today === 0) return 0
+    if (yesterday === 0) return 100
+    return Math.round(((today - yesterday) / Math.max(yesterday, 1)) * 100)
+  }
+
+  const firmTrend = percentChange(firmsToday, firmsYesterday)
+  const chatTrend = percentChange(chatsToday, chatsYesterday)
+  const questionTrend = percentChange(questionsToday, questionsYesterday)
+  const mockTrend = percentChange(mocksToday, mocksYesterday)
+
   // Calculate KPIs
   const totalFirms = firms.length
   const researchingFirms = firms.filter(f => f.status === 'Researching').length
@@ -70,11 +104,12 @@ export default function Dashboard() {
   const kpiCards = [
     {
       title: 'Total Firms',
-      value: totalFirms,
+      value: firms.length,
       icon: BuildingOfficeIcon,
       color: 'from-blue-500 to-indigo-600',
       bgColor: 'from-blue-50 to-indigo-50',
-      trend: '+12%'
+      trend: `${firmTrend > 0 ? '+' : ''}${firmTrend}%`,
+      trendColor: firmTrend > 0 ? 'text-emerald-600' : firmTrend < 0 ? 'text-red-600' : 'text-slate-500'
     },
     {
       title: 'Coffee Chats',
@@ -82,7 +117,8 @@ export default function Dashboard() {
       icon: UsersIcon,
       color: 'from-emerald-500 to-teal-600',
       bgColor: 'from-emerald-50 to-teal-50',
-      trend: '+8%'
+      trend: `${chatTrend > 0 ? '+' : ''}${chatTrend}%`,
+      trendColor: chatTrend > 0 ? 'text-emerald-600' : chatTrend < 0 ? 'text-red-600' : 'text-slate-500'
     },
     {
       title: 'Prep Questions',
@@ -90,7 +126,8 @@ export default function Dashboard() {
       icon: AcademicCapIcon,
       color: 'from-purple-500 to-indigo-600',
       bgColor: 'from-purple-50 to-indigo-50',
-      trend: '+15%'
+      trend: `${questionTrend > 0 ? '+' : ''}${questionTrend}%`,
+      trendColor: questionTrend > 0 ? 'text-emerald-600' : questionTrend < 0 ? 'text-red-600' : 'text-slate-500'
     },
     {
       title: 'Mock Interviews',
@@ -98,7 +135,8 @@ export default function Dashboard() {
       icon: FlagIcon,
       color: 'from-amber-500 to-orange-600',
       bgColor: 'from-amber-50 to-orange-50',
-      trend: '+5%'
+      trend: `${mockTrend > 0 ? '+' : ''}${mockTrend}%`,
+      trendColor: mockTrend > 0 ? 'text-emerald-600' : mockTrend < 0 ? 'text-red-600' : 'text-slate-500'
     }
   ]
 
@@ -150,7 +188,7 @@ export default function Dashboard() {
                 </div>
               </div>
               <div className="text-right">
-                <div className="flex items-center text-sm font-semibold text-emerald-600">
+                <div className={`flex items-center text-sm font-semibold ${card.trendColor}`}>
                   <ArrowTrendingUpIcon className="w-4 h-4 mr-1" />
                   {card.trend}
                 </div>

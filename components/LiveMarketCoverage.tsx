@@ -6,6 +6,7 @@ import { PlayIcon, ChartBarIcon } from '@heroicons/react/24/outline'
 
 export default function LiveMarketCoverage() {
   const tradingViewRef = useRef<HTMLDivElement>(null)
+  const cryptoTickerRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     // Load TradingView widget script
@@ -481,6 +482,58 @@ export default function LiveMarketCoverage() {
     }
   }, [])
 
+  useEffect(() => {
+    // Crypto ticker widget
+    const script = document.createElement('script')
+    script.src = 'https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js'
+    script.async = true
+    script.innerHTML = JSON.stringify({
+      "symbols": [
+        { "proName": "BINANCE:BTCUSDT", "title": "Bitcoin" },
+        { "proName": "BINANCE:ETHUSDT", "title": "Ethereum" },
+        { "proName": "BINANCE:SOLUSDT", "title": "Solana" },
+        { "proName": "BINANCE:DOGEUSDT", "title": "Dogecoin" },
+        { "proName": "BINANCE:ADAUSDT", "title": "Cardano" },
+        { "proName": "BINANCE:AVAXUSDT", "title": "Avalanche" },
+        { "proName": "BINANCE:XRPUSDT", "title": "XRP" },
+        { "proName": "BINANCE:BNBUSDT", "title": "BNB" },
+        { "proName": "BINANCE:LINKUSDT", "title": "Chainlink" },
+        { "proName": "BINANCE:MATICUSDT", "title": "Polygon" },
+        { "proName": "BINANCE:SHIBUSDT", "title": "Shiba Inu" },
+        { "proName": "BINANCE:LTCUSDT", "title": "Litecoin" },
+        { "proName": "BINANCE:DOTUSDT", "title": "Polkadot" },
+        { "proName": "BINANCE:TRXUSDT", "title": "TRON" },
+        { "proName": "BINANCE:BCHUSDT", "title": "Bitcoin Cash" },
+        { "proName": "BINANCE:UNIUSDT", "title": "Uniswap" },
+        { "proName": "BINANCE:XLMUSDT", "title": "Stellar" },
+        { "proName": "BINANCE:APTUSDT", "title": "Aptos" },
+        { "proName": "BINANCE:ARBUSDT", "title": "Arbitrum" },
+        { "proName": "BINANCE:OPUSDT", "title": "Optimism" },
+        { "proName": "BINANCE:TONUSDT", "title": "Toncoin" },
+        { "proName": "BINANCE:WBTCUSDT", "title": "Wrapped BTC" },
+        { "proName": "BINANCE:USDTUSDT", "title": "Tether" },
+        { "proName": "BINANCE:USDCUSDT", "title": "USD Coin" },
+        { "proName": "BINANCE:DAIUSDT", "title": "DAI" }
+      ],
+      "showSymbolLogo": true,
+      "colorTheme": "light",
+      "isTransparent": false,
+      "displayMode": "adaptive",
+      "locale": "en"
+    })
+    if (cryptoTickerRef.current) {
+      cryptoTickerRef.current.appendChild(script)
+    }
+    return () => {
+      if (cryptoTickerRef.current) {
+        const existingScript = cryptoTickerRef.current.querySelector('script')
+        if (existingScript) {
+          cryptoTickerRef.current.removeChild(existingScript)
+        }
+      }
+    }
+  }, [])
+
   return (
     <motion.div 
       initial={{ opacity: 0, y: 20 }}
@@ -570,6 +623,37 @@ export default function LiveMarketCoverage() {
         <div className="tradingview-widget-container">
           <div 
             ref={tradingViewRef}
+            className="tradingview-widget-container__widget"
+            style={{ height: '100%', width: '100%' }}
+          />
+        </div>
+      </motion.div>
+
+      {/* Crypto Ticker */}
+      <motion.div 
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.85 }}
+        className="card"
+      >
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center">
+            <div className="w-10 h-10 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-xl flex items-center justify-center mr-3">
+              <ChartBarIcon className="w-6 h-6 text-white" />
+            </div>
+            <div>
+              <h3 className="text-xl font-bold text-slate-900">Crypto Ticker</h3>
+              <p className="text-sm text-slate-600">Real-time crypto prices</p>
+            </div>
+          </div>
+          <div className="flex items-center space-x-2">
+            <div className="w-3 h-3 bg-yellow-400 rounded-full animate-pulse"></div>
+            <span className="text-sm font-semibold text-yellow-600">ACTIVE</span>
+          </div>
+        </div>
+        <div className="tradingview-widget-container">
+          <div 
+            ref={cryptoTickerRef}
             className="tradingview-widget-container__widget"
             style={{ height: '100%', width: '100%' }}
           />
