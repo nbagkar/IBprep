@@ -399,10 +399,10 @@ export default function NewsFeed() {
                   {/* Summary */}
                   <p className="text-slate-600 mb-4 line-clamp-3">{intel.summary}</p>
 
-                  {/* Relevance to IB */}
+                  {/* Importance */}
                   {intel.relevanceToIB && (
                     <div className="mb-4 p-3 bg-blue-50 rounded-lg">
-                      <h4 className="text-sm font-semibold text-blue-800 mb-1">Relevance to IB:</h4>
+                      <h4 className="text-sm font-semibold text-blue-800 mb-1">Importance:</h4>
                       <p className="text-sm text-blue-700">{intel.relevanceToIB}</p>
                     </div>
                   )}
@@ -713,13 +713,13 @@ export default function NewsFeed() {
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-2">Relevance to IB</label>
+                  <label className="block text-sm font-semibold text-slate-700 mb-2">Importance</label>
                   <textarea
                     value={formData.relevanceToIB}
                     onChange={(e) => setFormData({ ...formData, relevanceToIB: e.target.value })}
                     className="input-field"
                     rows={2}
-                    placeholder="How does this impact investment banking or specific firms?"
+                    placeholder="Why is this insight important? (Broader context, impact, or significance)"
                   />
                 </div>
                 
