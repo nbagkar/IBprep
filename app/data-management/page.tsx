@@ -1,3 +1,4 @@
+'use client'
 import DataManagement from '@/components/DataManagement';
 import Sidebar from '@/components/Sidebar';
 import { useAppStore } from '@/lib/store';
