@@ -1397,7 +1397,7 @@ export const technicalQuestionsData = [
     difficulty: "Medium" as const,
     answer: "",
     notes: "",
-    isPreloaded: true
+    isPreloaded: true,
   {
     question: "13 ACCOUNTING QUESTIONS Financial Statements & Accrual Concepts What is the primary purpose of US GAAP?",
     category: "Accounting" as const,
