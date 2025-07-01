@@ -374,10 +374,6 @@ export default function InterviewPrep() {
                   <span className={`px-2 py-1 rounded-full text-xs font-semibold ${getDifficultyColor(question.difficulty)}`}>
                     {question.difficulty}
                   </span>
-                  <div className="flex items-center text-slate-400">
-                    <StarIcon className="w-4 h-4 mr-1" />
-                    <span className="text-sm">4.2</span>
-                  </div>
                 </div>
                 
                 {question.answer && (
@@ -461,10 +457,6 @@ export default function InterviewPrep() {
                   <span className={`px-2 py-1 rounded-full text-xs font-semibold ${getDifficultyColor(question.difficulty)}`}>
                     {question.difficulty}
                   </span>
-                  <div className="flex items-center text-slate-400">
-                    <StarIcon className="w-4 h-4 mr-1" />
-                    <span className="text-sm">4.5</span>
-                  </div>
                 </div>
                 
                 {question.answer && (

@@ -577,17 +577,7 @@ export default function ResourceLibrary() {
                       )}
 
                       {/* Actions */}
-                      <div className="flex items-center justify-between pt-3 border-t border-slate-100">
-                        <div className="flex items-center space-x-4 text-sm text-slate-500">
-                          <div className="flex items-center">
-                            <EyeIcon className="w-4 h-4 mr-1" />
-                            <span>1.2k views</span>
-                          </div>
-                          <div className="flex items-center">
-                            <StarIcon className="w-4 h-4 mr-1" />
-                            <span>4.5</span>
-                          </div>
-                        </div>
+                      <div className="flex items-center justify-end pt-3 border-t border-slate-100">
                         <div className="flex items-center space-x-2">
                           {resource.url && (
                             <>
