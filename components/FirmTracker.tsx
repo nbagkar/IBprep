@@ -805,87 +805,6 @@ export default function FirmTracker() {
               </table>
             </div>
           )}
-          {/* Modal */}
-          <AnimatePresence>
-            {showColdEmailModal && (
-              <motion.div 
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                className="modal-overlay"
-              >
-                <motion.div 
-                  initial={{ scale: 0.8, opacity: 0 }}
-                  animate={{ scale: 1, opacity: 1 }}
-                  exit={{ scale: 0.8, opacity: 0 }}
-                  className="modal-content max-w-2xl"
-                >
-                  <div className="mb-6">
-                    <h3 className="text-2xl font-bold text-slate-900 mb-2">
-                      {editingColdEmail ? 'Edit Cold Email' : 'Add Cold Email'}
-                    </h3>
-                    <p className="text-slate-600">Enter the cold outreach details below</p>
-                  </div>
-                  <form onSubmit={handleColdEmailSubmit} className="space-y-6">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div>
-                        <label className="block text-sm font-semibold text-slate-700 mb-2">Name</label>
-                        <input type="text" required value={coldEmailForm.name} onChange={e => setColdEmailForm({ ...coldEmailForm, name: e.target.value })} className="input-field" placeholder="Contact name" />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-semibold text-slate-700 mb-2">Firm</label>
-                        <input type="text" required value={coldEmailForm.firm} onChange={e => setColdEmailForm({ ...coldEmailForm, firm: e.target.value })} className="input-field" placeholder="Firm name" />
-                      </div>
-                    </div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div>
-                        <label className="block text-sm font-semibold text-slate-700 mb-2">Role</label>
-                        <input type="text" required value={coldEmailForm.role} onChange={e => setColdEmailForm({ ...coldEmailForm, role: e.target.value })} className="input-field" placeholder="Role/title" />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-semibold text-slate-700 mb-2">Email</label>
-                        <input type="email" required value={coldEmailForm.email} onChange={e => setColdEmailForm({ ...coldEmailForm, email: e.target.value })} className="input-field" placeholder="Email address" />
-                      </div>
-                    </div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div>
-                        <label className="block text-sm font-semibold text-slate-700 mb-2">LinkedIn (optional)</label>
-                        <input type="url" value={coldEmailForm.linkedin || ''} onChange={e => setColdEmailForm({ ...coldEmailForm, linkedin: e.target.value })} className="input-field" placeholder="LinkedIn URL" />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-semibold text-slate-700 mb-2">Outreach Date</label>
-                        <input type="date" required value={coldEmailForm.outreachDate} onChange={e => setColdEmailForm({ ...coldEmailForm, outreachDate: e.target.value, followUpDate: getDefaultFollowUpDate(e.target.value) })} className="input-field" />
-                      </div>
-                    </div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div>
-                        <label className="block text-sm font-semibold text-slate-700 mb-2">Follow-Up Date (auto)</label>
-                        <input type="date" value={coldEmailForm.followUpDate || ''} onChange={e => setColdEmailForm({ ...coldEmailForm, followUpDate: e.target.value })} className="input-field" />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-semibold text-slate-700 mb-2">Status</label>
-                        <select value={coldEmailForm.status} onChange={e => setColdEmailForm({ ...coldEmailForm, status: e.target.value as ColdEmailStatus })} className="input-field">
-                          {COLD_EMAIL_STATUS.map(s => <option key={s} value={s}>{s}</option>)}
-                        </select>
-                      </div>
-                    </div>
-                    <div>
-                      <label className="block text-sm font-semibold text-slate-700 mb-2">Tags (comma separated)</label>
-                      <input type="text" value={coldEmailForm.tags.join(', ')} onChange={e => setColdEmailForm({ ...coldEmailForm, tags: e.target.value.split(',').map(t => t.trim()).filter(Boolean) })} className="input-field" placeholder="e.g. alumni, NYC, M&A" />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-semibold text-slate-700 mb-2">Notes</label>
-                      <textarea value={coldEmailForm.notes} onChange={e => setColdEmailForm({ ...coldEmailForm, notes: e.target.value })} className="input-field" rows={3} placeholder="Notes, context, or follow-up details" />
-                    </div>
-                    <div className="flex justify-end space-x-4 pt-6">
-                      <button type="button" onClick={() => { setShowColdEmailModal(false); setEditingColdEmail(null); }} className="btn-secondary">Cancel</button>
-                      <button type="submit" className="btn-primary">{editingColdEmail ? 'Update' : 'Add'} Cold Email</button>
-                    </div>
-                  </form>
-                </motion.div>
-              </motion.div>
-            )}
-          </AnimatePresence>
         </motion.div>
       )}
       {/* Add/Edit Firm Modal */}
@@ -1115,6 +1034,88 @@ export default function FirmTracker() {
                   <button type="submit" className="btn-primary">
                     {editingChat ? 'Update' : 'Add'} Coffee Chat
                   </button>
+                </div>
+              </form>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Cold Email Modal (overlay, not inside card) */}
+      <AnimatePresence>
+        {showColdEmailModal && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="modal-overlay"
+          >
+            <motion.div 
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.8, opacity: 0 }}
+              className="modal-content max-w-2xl"
+            >
+              <div className="mb-6">
+                <h3 className="text-2xl font-bold text-slate-900 mb-2">
+                  {editingColdEmail ? 'Edit Cold Email' : 'Add Cold Email'}
+                </h3>
+                <p className="text-slate-600">Enter the cold outreach details below</p>
+              </div>
+              <form onSubmit={handleColdEmailSubmit} className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-semibold text-slate-700 mb-2">Name</label>
+                    <input type="text" required value={coldEmailForm.name} onChange={e => setColdEmailForm({ ...coldEmailForm, name: e.target.value })} className="input-field" placeholder="Contact name" />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold text-slate-700 mb-2">Firm</label>
+                    <input type="text" required value={coldEmailForm.firm} onChange={e => setColdEmailForm({ ...coldEmailForm, firm: e.target.value })} className="input-field" placeholder="Firm name" />
+                  </div>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-semibold text-slate-700 mb-2">Role</label>
+                    <input type="text" required value={coldEmailForm.role} onChange={e => setColdEmailForm({ ...coldEmailForm, role: e.target.value })} className="input-field" placeholder="Role/title" />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold text-slate-700 mb-2">Email</label>
+                    <input type="email" required value={coldEmailForm.email} onChange={e => setColdEmailForm({ ...coldEmailForm, email: e.target.value })} className="input-field" placeholder="Email address" />
+                  </div>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-semibold text-slate-700 mb-2">LinkedIn (optional)</label>
+                    <input type="url" value={coldEmailForm.linkedin || ''} onChange={e => setColdEmailForm({ ...coldEmailForm, linkedin: e.target.value })} className="input-field" placeholder="LinkedIn URL" />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold text-slate-700 mb-2">Outreach Date</label>
+                    <input type="date" required value={coldEmailForm.outreachDate} onChange={e => setColdEmailForm({ ...coldEmailForm, outreachDate: e.target.value, followUpDate: getDefaultFollowUpDate(e.target.value) })} className="input-field" />
+                  </div>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-semibold text-slate-700 mb-2">Follow-Up Date (auto)</label>
+                    <input type="date" value={coldEmailForm.followUpDate || ''} onChange={e => setColdEmailForm({ ...coldEmailForm, followUpDate: e.target.value })} className="input-field" />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold text-slate-700 mb-2">Status</label>
+                    <select value={coldEmailForm.status} onChange={e => setColdEmailForm({ ...coldEmailForm, status: e.target.value as ColdEmailStatus })} className="input-field">
+                      {COLD_EMAIL_STATUS.map(s => <option key={s} value={s}>{s}</option>)}
+                    </select>
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-slate-700 mb-2">Tags (comma separated)</label>
+                  <input type="text" value={coldEmailForm.tags.join(', ')} onChange={e => setColdEmailForm({ ...coldEmailForm, tags: e.target.value.split(',').map(t => t.trim()).filter(Boolean) })} className="input-field" placeholder="e.g. alumni, NYC, M&A" />
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-slate-700 mb-2">Notes</label>
+                  <textarea value={coldEmailForm.notes} onChange={e => setColdEmailForm({ ...coldEmailForm, notes: e.target.value })} className="input-field" rows={3} placeholder="Notes, context, or follow-up details" />
+                </div>
+                <div className="flex justify-end space-x-4 pt-6">
+                  <button type="button" onClick={() => { setShowColdEmailModal(false); setEditingColdEmail(null); }} className="btn-secondary">Cancel</button>
+                  <button type="submit" className="btn-primary">{editingColdEmail ? 'Update' : 'Add'} Cold Email</button>
                 </div>
               </form>
             </motion.div>
