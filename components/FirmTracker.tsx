@@ -143,7 +143,7 @@ export default function FirmTracker() {
             animate={{ opacity: 1, x: 0 }}
             className="text-4xl font-bold text-gradient"
           >
-            Firm Tracker
+            Trackers
           </motion.h1>
           <motion.p 
             initial={{ opacity: 0 }}
@@ -151,7 +151,7 @@ export default function FirmTracker() {
             transition={{ delay: 0.2 }}
             className="mt-2 text-lg text-slate-600"
           >
-            Track your applications and manage firm relationships
+            Track your applications, firm relationships, and coffee chats
           </motion.p>
         </div>
         <motion.button
@@ -300,6 +300,58 @@ export default function FirmTracker() {
               <p className="text-slate-400 text-sm mt-2">Add your first firm to get started!</p>
             </motion.div>
           )}
+        </div>
+      </motion.div>
+
+      {/* Coffee Chat Tracker Section */}
+      <motion.div 
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.6 }}
+        className="card mt-10"
+      >
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-2xl font-bold text-slate-900">Coffee Chat Tracker</h2>
+          <button
+            onClick={() => setShowChatModal(true)}
+            className="btn-primary flex items-center group"
+          >
+            <PlusIcon className="w-5 h-5 mr-2 group-hover:scale-110 transition-transform duration-200" />
+            Add Coffee Chat
+          </button>
+        </div>
+        <div className="overflow-x-auto">
+          <table className="table-modern">
+            <thead>
+              <tr>
+                <th className="table-header">Name</th>
+                <th className="table-header">What Was Discussed</th>
+                <th className="table-header">Contact Info</th>
+                <th className="table-header">Other Questions</th>
+                <th className="table-header">Date of Chat</th>
+                <th className="table-header">Actions</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-200">
+              {coffeeChats.length === 0 && (
+                <tr>
+                  <td colSpan={6} className="text-center text-slate-500 py-8">
+                    No coffee chats found. Add your first coffee chat!
+                  </td>
+                </tr>
+              )}
+              {coffeeChats.map((chat, idx) => (
+                <tr key={chat.id} className="table-row">
+                  <td className="table-cell">{chat.contactName}</td>
+                  <td className="table-cell">{chat.notes}</td>
+                  <td className="table-cell">{chat.contactTitle}</td>
+                  <td className="table-cell">{chat.outcome}</td>
+                  <td className="table-cell">{chat.scheduledDate ? new Date(chat.scheduledDate).toLocaleDateString() : '-'}</td>
+                  <td className="table-cell">{/* Future: edit/delete actions */}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       </motion.div>
 
