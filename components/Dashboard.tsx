@@ -45,8 +45,8 @@ export default function Dashboard() {
   const chatsToday = countByDate(coffeeChats, 'scheduledDate')
   const chatsYesterday = countByDateYesterday(coffeeChats, 'scheduledDate')
   // Questions
-  const questionsToday = countByDate([...behavioralQuestions, ...technicalQuestions], 'lastUpdated')
-  const questionsYesterday = countByDateYesterday([...behavioralQuestions, ...technicalQuestions], 'lastUpdated')
+  const answeredQuestionsToday = countByDate([...behavioralQuestions.filter(q => q.answer.trim() !== ''), ...technicalQuestions.filter(q => q.answer.trim() !== '')], 'lastUpdated')
+  const answeredQuestionsYesterday = countByDateYesterday([...behavioralQuestions.filter(q => q.answer.trim() !== ''), ...technicalQuestions.filter(q => q.answer.trim() !== '')], 'lastUpdated')
   // Mocks
   const mocksToday = countByDate(mockInterviews, 'date')
   const mocksYesterday = countByDateYesterday(mockInterviews, 'date')
@@ -60,7 +60,7 @@ export default function Dashboard() {
 
   const firmTrend = percentChange(firmsToday, firmsYesterday)
   const chatTrend = percentChange(chatsToday, chatsYesterday)
-  const questionTrend = percentChange(questionsToday, questionsYesterday)
+  const questionTrend = percentChange(answeredQuestionsToday, answeredQuestionsYesterday)
   const mockTrend = percentChange(mocksToday, mocksYesterday)
 
   // Calculate KPIs
@@ -72,7 +72,8 @@ export default function Dashboard() {
   const rejectedFirms = firms.filter(f => f.status === 'Rejected').length
   
   const completedChats = coffeeChats.filter(c => c.completed).length
-  const totalQuestions = behavioralQuestions.length + technicalQuestions.length
+  const answeredQuestions = behavioralQuestions.filter(q => q.answer.trim() !== '').length + 
+                           technicalQuestions.filter(q => q.answer.trim() !== '').length
   const completedMocks = mockInterviews.length
   
   // Upcoming deadlines (next 7 days)
@@ -121,8 +122,8 @@ export default function Dashboard() {
       trendColor: chatTrend > 0 ? 'text-emerald-600' : chatTrend < 0 ? 'text-red-600' : 'text-slate-500'
     },
     {
-      title: 'Prep Questions',
-      value: totalQuestions,
+      title: 'Answered Questions',
+      value: answeredQuestions,
       icon: AcademicCapIcon,
       color: 'from-purple-500 to-indigo-600',
       bgColor: 'from-purple-50 to-indigo-50',
@@ -435,11 +436,11 @@ export default function Dashboard() {
             </div>
             
             <div className="p-4 bg-gradient-to-r from-purple-50 to-indigo-50 rounded-xl border border-purple-200">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-sm font-semibold text-purple-700">Prep Questions</span>
-                <span className="text-xs text-purple-600 bg-purple-100 px-2 py-1 rounded-full">{totalQuestions}</span>
-              </div>
-              <p className="text-sm text-purple-600">Questions prepared</p>
+                              <div className="flex items-center justify-between mb-2">
+                  <span className="text-sm font-semibold text-purple-700">Answered Questions</span>
+                  <span className="text-xs text-purple-600 bg-purple-100 px-2 py-1 rounded-full">{answeredQuestions}</span>
+                </div>
+                <p className="text-sm text-purple-600">Questions with answers</p>
             </div>
           </div>
         </div>
