@@ -1,4 +1,4 @@
-const technicalQuestionsData = [
+export const technicalQuestionsData = [
   {
     question: "If you worked at Goldman Sachs this past summer it’s not hard to convince them you’re serious about finance – but what if you didn’t?",
     category: "General" as const,
