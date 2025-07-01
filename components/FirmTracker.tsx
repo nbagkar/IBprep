@@ -71,15 +71,12 @@ export default function FirmTracker() {
   const handleChatSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     
-    if (selectedFirm) {
-      addCoffeeChat({
-        firmId: selectedFirm.id,
-        ...chatFormData,
-        completed: false
-      })
-      toast.success('Coffee chat scheduled!')
-    }
-    
+    addCoffeeChat({
+      firmId: selectedFirm ? selectedFirm.id : '',
+      ...chatFormData,
+      completed: false
+    })
+    toast.success('Coffee chat added!')
     setShowChatModal(false)
     setSelectedFirm(null)
     setChatFormData({
