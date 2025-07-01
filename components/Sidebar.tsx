@@ -116,6 +116,11 @@ export default function Sidebar() {
                   transition={{ delay: index * 0.1 }}
                   onClick={() => {
                     setActiveTab(item.href)
+                    if (item.href === 'firm-tracker') {
+                      router.push('/')
+                    } else {
+                      router.push(`/${item.href}`)
+                    }
                   }}
                   className={`
                     group flex items-center px-4 py-4 text-sm font-semibold rounded-2xl transition-all duration-300 w-full text-left relative overflow-hidden
