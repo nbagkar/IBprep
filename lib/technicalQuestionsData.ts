@@ -64,39 +64,7 @@ export const technicalQuestionsData = [
     isPreloaded: true
   },
   {
-    question: "What happens when Accrued Compensation goes up by $10?",
-    category: "General" as const,
-    difficulty: "Medium" as const,
-    answer: "",
-    notes: "",
-    isPreloaded: true
-  },
-  {
-    question: "What happens when Inventory goes up by $10, assuming you pay for it with cash?",
-    category: "General" as const,
-    difficulty: "Medium" as const,
-    answer: "",
-    notes: "",
-    isPreloaded: true
-  },
-  {
-    question: "Why is the Income Statement not affected by changes in Inventory?",
-    category: "Accounting" as const,
-    difficulty: "Medium" as const,
-    answer: "",
-    notes: "",
-    isPreloaded: true
-  },
-  {
     question: "How are all 3 statements affected at the start of “Year 1,” before anything else happens?",
-    category: "General" as const,
-    difficulty: "Medium" as const,
-    answer: "",
-    notes: "",
-    isPreloaded: true
-  },
-  {
-    question: "What happens?",
     category: "General" as const,
     difficulty: "Medium" as const,
     answer: "",
@@ -112,38 +80,6 @@ export const technicalQuestionsData = [
     isPreloaded: true
   },
   {
-    question: "Could you ever end up with negative shareholders’ equity?",
-    category: "General" as const,
-    difficulty: "Medium" as const,
-    answer: "",
-    notes: "",
-    isPreloaded: true
-  },
-  {
-    question: "What does it mean?",
-    category: "General" as const,
-    difficulty: "Medium" as const,
-    answer: "",
-    notes: "",
-    isPreloaded: true
-  },
-  {
-    question: "What is Working Capital?",
-    category: "General" as const,
-    difficulty: "Medium" as const,
-    answer: "",
-    notes: "",
-    isPreloaded: true
-  },
-  {
-    question: "How is it used?",
-    category: "General" as const,
-    difficulty: "Medium" as const,
-    answer: "",
-    notes: "",
-    isPreloaded: true
-  },
-  {
     question: "What does negative Working Capital mean?",
     category: "General" as const,
     difficulty: "Medium" as const,
@@ -152,31 +88,7 @@ export const technicalQuestionsData = [
     isPreloaded: true
   },
   {
-    question: "Is that a bad sign?",
-    category: "General" as const,
-    difficulty: "Medium" as const,
-    answer: "",
-    notes: "",
-    isPreloaded: true
-  },
-  {
     question: "First, confirm what type of “bailout” this is – Debt?",
-    category: "General" as const,
-    difficulty: "Medium" as const,
-    answer: "",
-    notes: "",
-    isPreloaded: true
-  },
-  {
-    question: "Equity?",
-    category: "General" as const,
-    difficulty: "Medium" as const,
-    answer: "",
-    notes: "",
-    isPreloaded: true
-  },
-  {
-    question: "A combination?",
     category: "General" as const,
     difficulty: "Medium" as const,
     answer: "",
@@ -234,22 +146,6 @@ export const technicalQuestionsData = [
   {
     question: "How do you decide when to capitalize rather than expense a purchase?",
     category: "Accounting" as const,
-    difficulty: "Medium" as const,
-    answer: "",
-    notes: "",
-    isPreloaded: true
-  },
-  {
-    question: "Why do companies report both GAAP and non-GAAP (or “Pro Forma”) earnings?",
-    category: "General" as const,
-    difficulty: "Medium" as const,
-    answer: "",
-    notes: "",
-    isPreloaded: true
-  },
-  {
-    question: "How could this happen?",
-    category: "General" as const,
     difficulty: "Medium" as const,
     answer: "",
     notes: "",
@@ -360,22 +256,6 @@ export const technicalQuestionsData = [
     isPreloaded: true
   },
   {
-    question: "Why would the Depreciation & Amortization number on the Income Statement be different from what’s on the Cash Flow Statement?",
-    category: "Accounting" as const,
-    difficulty: "Medium" as const,
-    answer: "",
-    notes: "",
-    isPreloaded: true
-  },
-  {
-    question: "Why do we look at both Enterprise Value and Equity Value?",
-    category: "General" as const,
-    difficulty: "Medium" as const,
-    answer: "",
-    notes: "",
-    isPreloaded: true
-  },
-  {
     question: "When looking at an acquisition of a company, do you pay more attention to Enterprise or Equity Value?",
     category: "M&A" as const,
     difficulty: "Medium" as const,
@@ -385,14 +265,6 @@ export const technicalQuestionsData = [
   },
   {
     question: "What’s the formula for Enterprise Value?",
-    category: "General" as const,
-    difficulty: "Medium" as const,
-    answer: "",
-    notes: "",
-    isPreloaded: true
-  },
-  {
-    question: "Why do you need to add the Noncontrolling Interest to Enterprise Value?",
     category: "General" as const,
     difficulty: "Medium" as const,
     answer: "",
@@ -424,22 +296,6 @@ export const technicalQuestionsData = [
     isPreloaded: true
   },
   {
-    question: "Why do you subtract cash in the formula for Enterprise Value?",
-    category: "General" as const,
-    difficulty: "Medium" as const,
-    answer: "",
-    notes: "",
-    isPreloaded: true
-  },
-  {
-    question: "Is that always accurate?",
-    category: "General" as const,
-    difficulty: "Medium" as const,
-    answer: "",
-    notes: "",
-    isPreloaded: true
-  },
-  {
     question: "Is it always accurate to add Debt to Equity Value when calculating Enterprise Value?",
     category: "General" as const,
     difficulty: "Medium" as const,
@@ -456,31 +312,7 @@ export const technicalQuestionsData = [
     isPreloaded: true
   },
   {
-    question: "What would that mean?",
-    category: "General" as const,
-    difficulty: "Medium" as const,
-    answer: "",
-    notes: "",
-    isPreloaded: true
-  },
-  {
     question: "Could a company have a negative Equity Value?",
-    category: "General" as const,
-    difficulty: "Medium" as const,
-    answer: "",
-    notes: "",
-    isPreloaded: true
-  },
-  {
-    question: "What would that mean?",
-    category: "General" as const,
-    difficulty: "Medium" as const,
-    answer: "",
-    notes: "",
-    isPreloaded: true
-  },
-  {
-    question: "Why do we add Preferred Stock to get to Enterprise Value?",
     category: "General" as const,
     difficulty: "Medium" as const,
     answer: "",
@@ -624,23 +456,7 @@ export const technicalQuestionsData = [
     isPreloaded: true
   },
   {
-    question: "Why can’t you use Equity Value / EBITDA as a multiple rather than Enterprise Value / EBITDA?",
-    category: "Valuation" as const,
-    difficulty: "Medium" as const,
-    answer: "",
-    notes: "",
-    isPreloaded: true
-  },
-  {
     question: "When would a Liquidation Valuation produce the highest value?",
-    category: "General" as const,
-    difficulty: "Medium" as const,
-    answer: "",
-    notes: "",
-    isPreloaded: true
-  },
-  {
-    question: "How would you value it?",
     category: "General" as const,
     difficulty: "Medium" as const,
     answer: "",
@@ -682,14 +498,6 @@ export const technicalQuestionsData = [
   {
     question: "What do you actually use a valuation for?",
     category: "General" as const,
-    difficulty: "Medium" as const,
-    answer: "",
-    notes: "",
-    isPreloaded: true
-  },
-  {
-    question: "Why would a company with similar growth and profitability to its Comparable Companies be valued at a premium?",
-    category: "Valuation" as const,
     difficulty: "Medium" as const,
     answer: "",
     notes: "",
@@ -744,14 +552,6 @@ export const technicalQuestionsData = [
     isPreloaded: true
   },
   {
-    question: "Why does Warren Buffett prefer EBIT multiples to EBITDA multiples?",
-    category: "Valuation" as const,
-    difficulty: "Medium" as const,
-    answer: "",
-    notes: "",
-    isPreloaded: true
-  },
-  {
     question: "What’s the difference between them, and when do you use each one?",
     category: "General" as const,
     difficulty: "Medium" as const,
@@ -770,14 +570,6 @@ export const technicalQuestionsData = [
   {
     question: "How do you value a private company?",
     category: "General" as const,
-    difficulty: "Medium" as const,
-    answer: "",
-    notes: "",
-    isPreloaded: true
-  },
-  {
-    question: "Why might we discount the public company comparable multiples but not the precedent transaction multiples?",
-    category: "Valuation" as const,
     difficulty: "Medium" as const,
     answer: "",
     notes: "",
@@ -856,24 +648,8 @@ export const technicalQuestionsData = [
     isPreloaded: true
   },
   {
-    question: "Why do you use 5 or 10 years for DCF projections?",
-    category: "Valuation" as const,
-    difficulty: "Medium" as const,
-    answer: "",
-    notes: "",
-    isPreloaded: true
-  },
-  {
     question: "What do you usually use for the discount rate?",
     category: "Valuation" as const,
-    difficulty: "Medium" as const,
-    answer: "",
-    notes: "",
-    isPreloaded: true
-  },
-  {
-    question: "How do you calculate WACC?",
-    category: "General" as const,
     difficulty: "Medium" as const,
     answer: "",
     notes: "",
@@ -889,14 +665,6 @@ export const technicalQuestionsData = [
   },
   {
     question: "How do you get to Beta in the Cost of Equity calculation?",
-    category: "General" as const,
-    difficulty: "Medium" as const,
-    answer: "",
-    notes: "",
-    isPreloaded: true
-  },
-  {
-    question: "Why do you have to un-lever and re-lever Beta?",
     category: "General" as const,
     difficulty: "Medium" as const,
     answer: "",
@@ -929,14 +697,6 @@ export const technicalQuestionsData = [
   },
   {
     question: "How do you calculate the Terminal Value?",
-    category: "Valuation" as const,
-    difficulty: "Medium" as const,
-    answer: "",
-    notes: "",
-    isPreloaded: true
-  },
-  {
-    question: "Why would you use Gordon Growth rather than the Multiples Method to calculate the Terminal Value?",
     category: "Valuation" as const,
     difficulty: "Medium" as const,
     answer: "",
@@ -992,14 +752,6 @@ export const technicalQuestionsData = [
     isPreloaded: true
   },
   {
-    question: "What about WACC – will it be higher for a $5 billion or $500 million company?",
-    category: "General" as const,
-    difficulty: "Medium" as const,
-    answer: "",
-    notes: "",
-    isPreloaded: true
-  },
-  {
     question: "What’s the relationship between debt and Cost of Equity?",
     category: "General" as const,
     difficulty: "Medium" as const,
@@ -1040,23 +792,7 @@ export const technicalQuestionsData = [
     isPreloaded: true
   },
   {
-    question: "Why?",
-    category: "General" as const,
-    difficulty: "Medium" as const,
-    answer: "",
-    notes: "",
-    isPreloaded: true
-  },
-  {
     question: "Which has a greater impact on a company’s DCF valuation – a 10% change in revenue or a 1% change in the discount rate?",
-    category: "Valuation" as const,
-    difficulty: "Medium" as const,
-    answer: "",
-    notes: "",
-    isPreloaded: true
-  },
-  {
-    question: "What about a 1% change in revenue vs. a 1% change in the discount rate?",
     category: "Valuation" as const,
     difficulty: "Medium" as const,
     answer: "",
@@ -1080,14 +816,6 @@ export const technicalQuestionsData = [
     isPreloaded: true
   },
   {
-    question: "Why would you not use a DCF for a bank or other financial institution?",
-    category: "Valuation" as const,
-    difficulty: "Medium" as const,
-    answer: "",
-    notes: "",
-    isPreloaded: true
-  },
-  {
     question: "What types of sensitivity analyses would we look at in a DCF?",
     category: "Valuation" as const,
     difficulty: "Medium" as const,
@@ -1097,14 +825,6 @@ export const technicalQuestionsData = [
   },
   {
     question: "How do you account for this in a DCF?",
-    category: "Valuation" as const,
-    difficulty: "Medium" as const,
-    answer: "",
-    notes: "",
-    isPreloaded: true
-  },
-  {
-    question: "Q4 of Year 1 – in my DCF?",
     category: "Valuation" as const,
     difficulty: "Medium" as const,
     answer: "",
@@ -1160,22 +880,6 @@ export const technicalQuestionsData = [
     isPreloaded: true
   },
   {
-    question: "Why would a company want to acquire another company?",
-    category: "General" as const,
-    difficulty: "Medium" as const,
-    answer: "",
-    notes: "",
-    isPreloaded: true
-  },
-  {
-    question: "Why would an acquisition be dilutive?",
-    category: "M&A" as const,
-    difficulty: "Medium" as const,
-    answer: "",
-    notes: "",
-    isPreloaded: true
-  },
-  {
     question: "Is there a rule of thumb for calculating whether an acquisition will be accretive or dilutive?",
     category: "M&A" as const,
     difficulty: "Medium" as const,
@@ -1210,22 +914,6 @@ export const technicalQuestionsData = [
   {
     question: "If a company were capable of paying 100% in cash for another company, why would it choose NOT to do so?",
     category: "General" as const,
-    difficulty: "Medium" as const,
-    answer: "",
-    notes: "",
-    isPreloaded: true
-  },
-  {
-    question: "Why would a strategic acquirer typically be willing to pay more for a company than a private equity firm would?",
-    category: "LBO" as const,
-    difficulty: "Medium" as const,
-    answer: "",
-    notes: "",
-    isPreloaded: true
-  },
-  {
-    question: "Why do Goodwill & Other Intangibles get created in an acquisition?",
-    category: "M&A" as const,
     difficulty: "Medium" as const,
     answer: "",
     notes: "",
@@ -1280,14 +968,6 @@ export const technicalQuestionsData = [
     isPreloaded: true
   },
   {
-    question: "Why?",
-    category: "General" as const,
-    difficulty: "Medium" as const,
-    answer: "",
-    notes: "",
-    isPreloaded: true
-  },
-  {
     question: "• It’s hard to compare the “cost” directly to stock, but in general stock is the most “expensive” way to finance a transaction – remember how the Cost of Equity is almost always higher than the Cost of Debt?",
     category: "General" as const,
     difficulty: "Medium" as const,
@@ -1314,22 +994,6 @@ export const technicalQuestionsData = [
   {
     question: "Let’s say a company overpays for another company – what typically happens afterwards and can you give any recent examples?",
     category: "General" as const,
-    difficulty: "Medium" as const,
-    answer: "",
-    notes: "",
-    isPreloaded: true
-  },
-  {
-    question: "What happens?",
-    category: "General" as const,
-    difficulty: "Medium" as const,
-    answer: "",
-    notes: "",
-    isPreloaded: true
-  },
-  {
-    question: "Why do most mergers and acquisitions fail?",
-    category: "M&A" as const,
     difficulty: "Medium" as const,
     answer: "",
     notes: "",
@@ -1376,24 +1040,8 @@ export const technicalQuestionsData = [
     isPreloaded: true
   },
   {
-    question: "Why do deferred tax liabilities (DTLs) and deferred tax assets (DTAs) get created in M&A deals?",
-    category: "M&A" as const,
-    difficulty: "Medium" as const,
-    answer: "",
-    notes: "",
-    isPreloaded: true
-  },
-  {
     question: "How do DTLs and DTAs affect the Balance Sheet Adjustment in an M&A deal?",
     category: "M&A" as const,
-    difficulty: "Medium" as const,
-    answer: "",
-    notes: "",
-    isPreloaded: true
-  },
-  {
-    question: "Could you get DTLs or DTAs in an asset purchase?",
-    category: "General" as const,
     difficulty: "Medium" as const,
     answer: "",
     notes: "",
@@ -1432,31 +1080,7 @@ export const technicalQuestionsData = [
     isPreloaded: true
   },
   {
-    question: "Cashed out?",
-    category: "General" as const,
-    difficulty: "Medium" as const,
-    answer: "",
-    notes: "",
-    isPreloaded: true
-  },
-  {
-    question: "Ignored?",
-    category: "General" as const,
-    difficulty: "Medium" as const,
-    answer: "",
-    notes: "",
-    isPreloaded: true
-  },
-  {
     question: "• Employee Retention: Do employees have to sign non-solicit or non-compete agreements?",
-    category: "General" as const,
-    difficulty: "Medium" as const,
-    answer: "",
-    notes: "",
-    isPreloaded: true
-  },
-  {
-    question: "What about management?",
     category: "General" as const,
     difficulty: "Medium" as const,
     answer: "",
@@ -1536,24 +1160,8 @@ export const technicalQuestionsData = [
     isPreloaded: true
   },
   {
-    question: "What about the buyer?",
-    category: "General" as const,
-    difficulty: "Medium" as const,
-    answer: "",
-    notes: "",
-    isPreloaded: true
-  },
-  {
     question: "How do you account for transaction costs, financing fees, and miscellaneous expenses in a merger model?",
     category: "Financial Modeling" as const,
-    difficulty: "Medium" as const,
-    answer: "",
-    notes: "",
-    isPreloaded: true
-  },
-  {
-    question: "Why would you use leverage when buying a company?",
-    category: "General" as const,
     difficulty: "Medium" as const,
     answer: "",
     notes: "",
@@ -1600,14 +1208,6 @@ export const technicalQuestionsData = [
     isPreloaded: true
   },
   {
-    question: "Why are Goodwill & Other Intangibles created in an LBO?",
-    category: "LBO" as const,
-    difficulty: "Medium" as const,
-    answer: "",
-    notes: "",
-    isPreloaded: true
-  },
-  {
     question: "We saw that a strategic acquirer will usually prefer to pay for another company in cash – if that’s the case, why would a PE firm want to use debt in an LBO?",
     category: "LBO" as const,
     difficulty: "Medium" as const,
@@ -1618,14 +1218,6 @@ export const technicalQuestionsData = [
   {
     question: "Do you need to project all 3 statements in an LBO model?",
     category: "Financial Modeling" as const,
-    difficulty: "Medium" as const,
-    answer: "",
-    notes: "",
-    isPreloaded: true
-  },
-  {
-    question: "Are there any shortcuts?",
-    category: "General" as const,
     difficulty: "Medium" as const,
     answer: "",
     notes: "",
@@ -1656,30 +1248,6 @@ export const technicalQuestionsData = [
     isPreloaded: true
   },
   {
-    question: "Why might you use bank debt rather than high-yield debt in an LBO?",
-    category: "LBO" as const,
-    difficulty: "Medium" as const,
-    answer: "",
-    notes: "",
-    isPreloaded: true
-  },
-  {
-    question: "Why would a PE firm prefer high-yield debt instead?",
-    category: "General" as const,
-    difficulty: "Medium" as const,
-    answer: "",
-    notes: "",
-    isPreloaded: true
-  },
-  {
-    question: "Why would a private equity firm buy a company in a “risky” industry, such as technology?",
-    category: "LBO" as const,
-    difficulty: "Medium" as const,
-    answer: "",
-    notes: "",
-    isPreloaded: true
-  },
-  {
     question: "How could a private equity firm boost its return in an LBO?",
     category: "LBO" as const,
     difficulty: "Medium" as const,
@@ -1704,14 +1272,6 @@ export const technicalQuestionsData = [
     isPreloaded: true
   },
   {
-    question: "Why would a PE firm choose to do a dividend recap of one of its portfolio companies?",
-    category: "General" as const,
-    difficulty: "Medium" as const,
-    answer: "",
-    notes: "",
-    isPreloaded: true
-  },
-  {
     question: "How would a dividend recap impact the 3 financial statements in an LBO?",
     category: "LBO" as const,
     difficulty: "Medium" as const,
@@ -1721,14 +1281,6 @@ export const technicalQuestionsData = [
   },
   {
     question: "Note that this chart does not cover every single feature or every single type of debt in the universe – just the most important ones, and what you’re likely to be asked about in finance interviews: Debt Type Revolver Term Loan A Term Loan B Senior Notes Subordinated Notes Mezzanine Interest Rate: Lowest Low Higher Higher Higher Highest Floating / Fixed?",
-    category: "General" as const,
-    difficulty: "Medium" as const,
-    answer: "",
-    notes: "",
-    isPreloaded: true
-  },
-  {
-    question: "Floating Fixed Cash Pay?",
     category: "General" as const,
     difficulty: "Medium" as const,
     answer: "",
@@ -1784,31 +1336,7 @@ export const technicalQuestionsData = [
     isPreloaded: true
   },
   {
-    question: "Why might a private equity firm allot some of a company’s new equity in an LBO to a management option pool, and how would this affect the model?",
-    category: "Financial Modeling" as const,
-    difficulty: "Medium" as const,
-    answer: "",
-    notes: "",
-    isPreloaded: true
-  },
-  {
-    question: "Why you would you use PIK (Payment In Kind) debt rather than other types of debt, and how does it affect the debt schedules and the other statements?",
-    category: "General" as const,
-    difficulty: "Medium" as const,
-    answer: "",
-    notes: "",
-    isPreloaded: true
-  },
-  {
     question: "What are some examples of incurrence covenants?",
-    category: "General" as const,
-    difficulty: "Medium" as const,
-    answer: "",
-    notes: "",
-    isPreloaded: true
-  },
-  {
-    question: "Maintenance covenants?",
     category: "General" as const,
     difficulty: "Medium" as const,
     answer: "",
@@ -1833,14 +1361,6 @@ export const technicalQuestionsData = [
   },
   {
     question: "In an LBO model, is it possible for debt investors to get a higher return than the PE firm?",
-    category: "Financial Modeling" as const,
-    difficulty: "Medium" as const,
-    answer: "",
-    notes: "",
-    isPreloaded: true
-  },
-  {
-    question: "What does it tell us about the company we’re modeling?",
     category: "Financial Modeling" as const,
     difficulty: "Medium" as const,
     answer: "",
