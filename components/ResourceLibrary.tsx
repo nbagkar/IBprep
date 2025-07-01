@@ -465,36 +465,47 @@ export default function ResourceLibrary() {
                   >
                     {/* Header */}
                     <div className="flex items-start justify-between mb-4">
-                      <div className={`p-3 bg-gradient-to-r ${getTypeColor(resource.type)} rounded-2xl`}>
-                        <TypeIcon className="w-6 h-6 text-white" />
+                      <div className="flex items-center space-x-2">
+                        <div className={`p-3 bg-gradient-to-r ${getTypeColor(resource.type)} rounded-2xl`}>
+                          <TypeIcon className="w-6 h-6 text-white" />
+                        </div>
+                        {resource.createdBy?.uid === user?.uid && (
+                          <div className="px-2 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-700">
+                            Yours
+                          </div>
+                        )}
                       </div>
                       <div className="flex items-center space-x-2">
-                        <button
-                          onClick={() => {
-                            setEditingResource(resource)
-                            setResourceFormData({
-                              title: resource.title,
-                              type: resource.type,
-                              category: resource.category,
-                              url: resource.url || '',
-                              description: resource.description,
-                              tags: resource.tags.join(','),
-                              notes: resource.description
-                            })
-                            setShowResourceModal(true)
-                          }}
-                          className="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all duration-200"
-                          title="Edit Resource"
-                        >
-                          <PencilIcon className="w-4 h-4" />
-                        </button>
-                        <button
-                          onClick={() => deleteResource(resource.id)}
-                          className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all duration-200"
-                          title="Delete Resource"
-                        >
-                          <TrashIcon className="w-4 h-4" />
-                        </button>
+                        {resource.createdBy?.uid === user?.uid && (
+                          <>
+                            <button
+                              onClick={() => {
+                                setEditingResource(resource)
+                                setResourceFormData({
+                                  title: resource.title,
+                                  type: resource.type,
+                                  category: resource.category,
+                                  url: resource.url || '',
+                                  description: resource.description,
+                                  tags: resource.tags.join(','),
+                                  notes: resource.description
+                                })
+                                setShowResourceModal(true)
+                              }}
+                              className="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all duration-200"
+                              title="Edit Resource"
+                            >
+                              <PencilIcon className="w-4 h-4" />
+                            </button>
+                            <button
+                              onClick={() => deleteResource(resource.id)}
+                              className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all duration-200"
+                              title="Delete Resource"
+                            >
+                              <TrashIcon className="w-4 h-4" />
+                            </button>
+                          </>
+                        )}
                       </div>
                     </div>
 
