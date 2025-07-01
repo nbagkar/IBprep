@@ -6,7 +6,7 @@ import { Bars3Icon } from '@heroicons/react/24/outline';
 import React from 'react';
 
 export default function DataManagementPage() {
-  const { sidebarOpen, setSidebarOpen } = useAppStore();
+  const { sidebarOpen, setSidebarOpen, user, userLoading, signIn } = useAppStore();
   return (
     <div className="flex h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
       {/* Sidebar */}
@@ -32,6 +32,13 @@ export default function DataManagementPage() {
         {/* Content Area */}
         <main className="flex-1 overflow-y-auto p-6 lg:p-8">
           <div className="max-w-7xl mx-auto">
+            {/* Sign-in prompt if not signed in */}
+            {!user && !userLoading && (
+              <div className="mb-6 p-4 bg-yellow-50 border border-yellow-200 rounded-xl flex items-center justify-between">
+                <span className="text-yellow-800 font-medium">Sign in with Google to save your information and access all features.</span>
+                <button onClick={signIn} className="btn-primary ml-4">Sign in</button>
+              </div>
+            )}
             <DataManagement />
           </div>
         </main>

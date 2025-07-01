@@ -272,13 +272,19 @@ export const useAppStore = create<AppState>()(
       userLoading: true,
       
       // Firm Actions
-      addFirm: (firm) => set((state) => ({
-        firms: [...state.firms, {
-          ...firm,
-          id: crypto.randomUUID(),
-          lastUpdated: new Date().toISOString(),
-        }]
-      })),
+      addFirm: (firm) => set((state) => {
+        if (!get().user) {
+          alert('You must be signed in to save your information.');
+          return { firms: state.firms };
+        }
+        return {
+          firms: [...state.firms, {
+            ...firm,
+            id: crypto.randomUUID(),
+            lastUpdated: new Date().toISOString(),
+          }]
+        }
+      }),
       
       updateFirm: (id, updates) => set((state) => ({
         firms: state.firms.map(firm => 
@@ -293,12 +299,18 @@ export const useAppStore = create<AppState>()(
       })),
       
       // Coffee Chat Actions
-      addCoffeeChat: (chat) => set((state) => ({
-        coffeeChats: [...state.coffeeChats, {
-          ...chat,
-          id: crypto.randomUUID(),
-        }]
-      })),
+      addCoffeeChat: (chat) => set((state) => {
+        if (!get().user) {
+          alert('You must be signed in to save your information.');
+          return { coffeeChats: state.coffeeChats };
+        }
+        return {
+          coffeeChats: [...state.coffeeChats, {
+            ...chat,
+            id: crypto.randomUUID(),
+          }]
+        }
+      }),
       
       updateCoffeeChat: (id, updates) => set((state) => ({
         coffeeChats: state.coffeeChats.map(chat => 
@@ -311,13 +323,19 @@ export const useAppStore = create<AppState>()(
       })),
       
       // Behavioral Question Actions
-      addBehavioralQuestion: (question) => set((state) => ({
-        behavioralQuestions: [...state.behavioralQuestions, {
-          ...question,
-          id: crypto.randomUUID(),
-          lastUpdated: new Date().toISOString(),
-        }]
-      })),
+      addBehavioralQuestion: (question) => set((state) => {
+        if (!get().user) {
+          alert('You must be signed in to save your information.');
+          return { behavioralQuestions: state.behavioralQuestions };
+        }
+        return {
+          behavioralQuestions: [...state.behavioralQuestions, {
+            ...question,
+            id: crypto.randomUUID(),
+            lastUpdated: new Date().toISOString(),
+          }]
+        }
+      }),
       
       updateBehavioralQuestion: (id, updates) => set((state) => ({
         behavioralQuestions: state.behavioralQuestions.map(q => 
@@ -332,13 +350,19 @@ export const useAppStore = create<AppState>()(
       })),
       
       // Technical Question Actions
-      addTechnicalQuestion: (question) => set((state) => ({
-        technicalQuestions: [...state.technicalQuestions, {
-          ...question,
-          id: crypto.randomUUID(),
-          lastUpdated: new Date().toISOString(),
-        }]
-      })),
+      addTechnicalQuestion: (question) => set((state) => {
+        if (!get().user) {
+          alert('You must be signed in to save your information.');
+          return { technicalQuestions: state.technicalQuestions };
+        }
+        return {
+          technicalQuestions: [...state.technicalQuestions, {
+            ...question,
+            id: crypto.randomUUID(),
+            lastUpdated: new Date().toISOString(),
+          }]
+        }
+      }),
       
       updateTechnicalQuestion: (id, updates) => set((state) => ({
         technicalQuestions: state.technicalQuestions.map(q => 
@@ -353,12 +377,18 @@ export const useAppStore = create<AppState>()(
       })),
       
       // Deal Experience Actions
-      addDealExperience: (deal) => set((state) => ({
-        dealExperiences: [...state.dealExperiences, {
-          ...deal,
-          id: crypto.randomUUID(),
-        }]
-      })),
+      addDealExperience: (deal) => set((state) => {
+        if (!get().user) {
+          alert('You must be signed in to save your information.');
+          return { dealExperiences: state.dealExperiences };
+        }
+        return {
+          dealExperiences: [...state.dealExperiences, {
+            ...deal,
+            id: crypto.randomUUID(),
+          }]
+        }
+      }),
       
       updateDealExperience: (id, updates) => set((state) => ({
         dealExperiences: state.dealExperiences.map(deal => 
@@ -449,12 +479,18 @@ export const useAppStore = create<AppState>()(
       },
       
       // Contact Actions
-      addContact: (contact) => set((state) => ({
-        contacts: [...state.contacts, {
-          ...contact,
-          id: crypto.randomUUID(),
-        }]
-      })),
+      addContact: (contact) => set((state) => {
+        if (!get().user) {
+          alert('You must be signed in to save your information.');
+          return { contacts: state.contacts };
+        }
+        return {
+          contacts: [...state.contacts, {
+            ...contact,
+            id: crypto.randomUUID(),
+          }]
+        }
+      }),
       
       updateContact: (id, updates) => set((state) => ({
         contacts: state.contacts.map(contact => 
@@ -467,12 +503,18 @@ export const useAppStore = create<AppState>()(
       })),
       
       // Networking Event Actions
-      addNetworkingEvent: (event) => set((state) => ({
-        networkingEvents: [...state.networkingEvents, {
-          ...event,
-          id: crypto.randomUUID(),
-        }]
-      })),
+      addNetworkingEvent: (event) => set((state) => {
+        if (!get().user) {
+          alert('You must be signed in to save your information.');
+          return { networkingEvents: state.networkingEvents };
+        }
+        return {
+          networkingEvents: [...state.networkingEvents, {
+            ...event,
+            id: crypto.randomUUID(),
+          }]
+        }
+      }),
       
       updateNetworkingEvent: (id, updates) => set((state) => ({
         networkingEvents: state.networkingEvents.map(event => 
@@ -485,12 +527,18 @@ export const useAppStore = create<AppState>()(
       })),
       
       // Mock Interview Actions
-      addMockInterview: (interview) => set((state) => ({
-        mockInterviews: [...state.mockInterviews, {
-          ...interview,
-          id: crypto.randomUUID(),
-        }]
-      })),
+      addMockInterview: (interview) => set((state) => {
+        if (!get().user) {
+          alert('You must be signed in to save your information.');
+          return { mockInterviews: state.mockInterviews };
+        }
+        return {
+          mockInterviews: [...state.mockInterviews, {
+            ...interview,
+            id: crypto.randomUUID(),
+          }]
+        }
+      }),
       
       updateMockInterview: (id, updates) => set((state) => ({
         mockInterviews: state.mockInterviews.map(interview => 
@@ -503,25 +551,37 @@ export const useAppStore = create<AppState>()(
       })),
       
       // News Actions
-      addNewsItem: (news) => set((state) => ({
-        newsItems: [...state.newsItems, {
-          ...news,
-          id: crypto.randomUUID(),
-        }]
-      })),
+      addNewsItem: (news) => set((state) => {
+        if (!get().user) {
+          alert('You must be signed in to save your information.');
+          return { newsItems: state.newsItems };
+        }
+        return {
+          newsItems: [...state.newsItems, {
+            ...news,
+            id: crypto.randomUUID(),
+          }]
+        }
+      }),
       
       deleteNewsItem: (id) => set((state) => ({
         newsItems: state.newsItems.filter(news => news.id !== id)
       })),
       
       // Market Intelligence Actions
-      addMarketIntel: (marketIntel) => set((state) => ({
-        marketIntel: [...state.marketIntel, {
-          ...marketIntel,
-          id: crypto.randomUUID(),
-          createdAt: new Date().toISOString(),
-        }]
-      })),
+      addMarketIntel: (marketIntel) => set((state) => {
+        if (!get().user) {
+          alert('You must be signed in to save your information.');
+          return { marketIntel: state.marketIntel };
+        }
+        return {
+          marketIntel: [...state.marketIntel, {
+            ...marketIntel,
+            id: crypto.randomUUID(),
+            createdAt: new Date().toISOString(),
+          }]
+        }
+      }),
       
       updateMarketIntel: (id, updates) => set((state) => ({
         marketIntel: state.marketIntel.map(mi => 
