@@ -17,12 +17,18 @@ import toast from 'react-hot-toast'
 import { motion, AnimatePresence } from 'framer-motion'
 
 export default function FirmTracker() {
-  const { firms, coffeeChats, addFirm, updateFirm, deleteFirm, addCoffeeChat } = useAppStore()
+  const { firms, coffeeChats, addFirm, updateFirm, deleteFirm, addCoffeeChat, updateCoffeeChat, deleteCoffeeChat } = useAppStore()
   const [showAddModal, setShowAddModal] = useState(false)
   const [showChatModal, setShowChatModal] = useState(false)
   const [editingFirm, setEditingFirm] = useState<Firm | null>(null)
   const [selectedFirm, setSelectedFirm] = useState<Firm | null>(null)
   const [filterStatus, setFilterStatus] = useState<string>('all')
+  const [editingChat, setEditingChat] = useState<CoffeeChat | null>(null)
+  const [chatFirmFilter, setChatFirmFilter] = useState<string>('all')
+  const [chatNameFilter, setChatNameFilter] = useState('')
+  const [chatDateFilter, setChatDateFilter] = useState('')
+  const [chatSort, setChatSort] = useState('date-desc')
+  const [appSort, setAppSort] = useState('deadline-asc')
 
   const [formData, setFormData] = useState({
     name: '',
@@ -70,14 +76,22 @@ export default function FirmTracker() {
 
   const handleChatSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    
-    addCoffeeChat({
-      firmId: selectedFirm ? selectedFirm.id : '',
-      ...chatFormData,
-      completed: false
-    })
-    toast.success('Coffee chat added!')
+    if (editingChat) {
+      updateCoffeeChat(editingChat.id, {
+        firmId: selectedFirm ? selectedFirm.id : '',
+        ...chatFormData
+      })
+      toast.success('Coffee chat updated!')
+    } else {
+      addCoffeeChat({
+        firmId: selectedFirm ? selectedFirm.id : '',
+        ...chatFormData,
+        completed: false
+      })
+      toast.success('Coffee chat added!')
+    }
     setShowChatModal(false)
+    setEditingChat(null)
     setSelectedFirm(null)
     setChatFormData({
       contactName: '',
@@ -110,9 +124,48 @@ export default function FirmTracker() {
     }
   }
 
-  const filteredFirms = firms.filter(firm => 
+  const handleEditChat = (chat: CoffeeChat) => {
+    setEditingChat(chat)
+    setChatFormData({
+      contactName: chat.contactName,
+      contactTitle: chat.contactTitle,
+      scheduledDate: chat.scheduledDate,
+      notes: chat.notes,
+      outcome: chat.outcome
+    })
+    setSelectedFirm(firms.find(f => f.id === chat.firmId) || null)
+    setShowChatModal(true)
+  }
+
+  const handleDeleteChat = (id: string) => {
+    if (confirm('Are you sure you want to delete this coffee chat?')) {
+      deleteCoffeeChat(id)
+      toast.success('Coffee chat deleted!')
+    }
+  }
+
+  let filteredFirms = firms.filter(firm => 
     filterStatus === 'all' || firm.status === filterStatus
   )
+
+  if (appSort === 'deadline-asc') {
+    filteredFirms = [...filteredFirms].sort((a, b) => (a.deadline || '').localeCompare(b.deadline || ''))
+  } else if (appSort === 'deadline-desc') {
+    filteredFirms = [...filteredFirms].sort((a, b) => (b.deadline || '').localeCompare(a.deadline || ''))
+  }
+
+  let filteredChats = coffeeChats.filter(chat => {
+    const firmMatch = chatFirmFilter === 'all' || chat.firmId === chatFirmFilter
+    const nameMatch = chatNameFilter === '' || chat.contactName.toLowerCase().includes(chatNameFilter.toLowerCase())
+    const dateMatch = chatDateFilter === '' || chat.scheduledDate === chatDateFilter
+    return firmMatch && nameMatch && dateMatch
+  })
+
+  if (chatSort === 'date-desc') {
+    filteredChats = [...filteredChats].sort((a, b) => (b.scheduledDate || '').localeCompare(a.scheduledDate || ''))
+  } else if (chatSort === 'date-asc') {
+    filteredChats = [...filteredChats].sort((a, b) => (a.scheduledDate || '').localeCompare(b.scheduledDate || ''))
+  }
 
   const getStatusColor = (status: Firm['status']) => {
     switch (status) {
@@ -183,6 +236,11 @@ export default function FirmTracker() {
             <option value="Interviewing">Interviewing</option>
             <option value="Offer">Offer</option>
             <option value="Rejected">Rejected</option>
+          </select>
+          <label className="text-sm font-semibold text-slate-700 ml-8">Sort by:</label>
+          <select value={appSort} onChange={e => setAppSort(e.target.value)} className="input-field w-auto">
+            <option value="deadline-asc">Deadline ↑</option>
+            <option value="deadline-desc">Deadline ↓</option>
           </select>
         </div>
       </motion.div>
@@ -323,12 +381,36 @@ export default function FirmTracker() {
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-2xl font-bold text-slate-900">Coffee Chat Tracker</h2>
           <button
-            onClick={() => setShowChatModal(true)}
+            onClick={() => { setShowChatModal(true); setEditingChat(null); setChatFormData({ contactName: '', contactTitle: '', scheduledDate: '', notes: '', outcome: '' }); setSelectedFirm(null); }}
             className="btn-primary flex items-center group"
           >
             <PlusIcon className="w-5 h-5 mr-2 group-hover:scale-110 transition-transform duration-200" />
             Add Coffee Chat
           </button>
+        </div>
+        <div className="flex flex-wrap gap-4 mb-4">
+          <div>
+            <label className="block text-xs font-semibold text-slate-700 mb-1">Firm</label>
+            <select value={chatFirmFilter} onChange={e => setChatFirmFilter(e.target.value)} className="input-field w-auto">
+              <option value="all">All Firms</option>
+              {firms.map(firm => <option key={firm.id} value={firm.id}>{firm.name}</option>)}
+            </select>
+          </div>
+          <div>
+            <label className="block text-xs font-semibold text-slate-700 mb-1">Contact Name</label>
+            <input type="text" value={chatNameFilter} onChange={e => setChatNameFilter(e.target.value)} className="input-field w-auto" placeholder="Search name..." />
+          </div>
+          <div>
+            <label className="block text-xs font-semibold text-slate-700 mb-1">Date</label>
+            <input type="date" value={chatDateFilter} onChange={e => setChatDateFilter(e.target.value)} className="input-field w-auto" />
+          </div>
+          <div>
+            <label className="block text-xs font-semibold text-slate-700 mb-1">Sort by</label>
+            <select value={chatSort} onChange={e => setChatSort(e.target.value)} className="input-field w-auto">
+              <option value="date-desc">Date ↓</option>
+              <option value="date-asc">Date ↑</option>
+            </select>
+          </div>
         </div>
         <div className="overflow-x-auto">
           <table className="table-modern">
@@ -344,14 +426,14 @@ export default function FirmTracker() {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-200">
-              {coffeeChats.length === 0 && (
+              {filteredChats.length === 0 && (
                 <tr>
                   <td colSpan={7} className="text-center text-slate-500 py-8">
                     No coffee chats found. Add your first coffee chat!
                   </td>
                 </tr>
               )}
-              {coffeeChats.map((chat, idx) => {
+              {filteredChats.map((chat, idx) => {
                 const firm = firms.find(f => f.id === chat.firmId)
                 return (
                   <tr key={chat.id} className="table-row">
@@ -361,7 +443,24 @@ export default function FirmTracker() {
                     <td className="table-cell">{chat.contactTitle}</td>
                     <td className="table-cell">{chat.outcome}</td>
                     <td className="table-cell">{chat.scheduledDate ? new Date(chat.scheduledDate).toLocaleDateString() : '-'}</td>
-                    <td className="table-cell">{/* Future: edit/delete actions */}</td>
+                    <td className="table-cell">
+                      <div className="flex items-center space-x-2">
+                        <button
+                          onClick={() => handleEditChat(chat)}
+                          className="p-2 text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded-lg transition-all duration-200"
+                          title="Edit Coffee Chat"
+                        >
+                          <PencilIcon className="w-4 h-4" />
+                        </button>
+                        <button
+                          onClick={() => handleDeleteChat(chat.id)}
+                          className="p-2 text-red-600 hover:text-red-800 hover:bg-red-50 rounded-lg transition-all duration-200"
+                          title="Delete Coffee Chat"
+                        >
+                          <TrashIcon className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </td>
                   </tr>
                 )
               })}
@@ -513,7 +612,7 @@ export default function FirmTracker() {
             >
               <div className="mb-6">
                 <h3 className="text-2xl font-bold text-slate-900 mb-2">
-                  Add Coffee Chat
+                  {editingChat ? 'Edit Coffee Chat' : 'Add Coffee Chat'}
                 </h3>
                 <p className="text-slate-600">Enter the coffee chat details below</p>
               </div>
@@ -589,13 +688,13 @@ export default function FirmTracker() {
                 <div className="flex justify-end space-x-4 pt-6">
                   <button
                     type="button"
-                    onClick={() => setShowChatModal(false)}
+                    onClick={() => { setShowChatModal(false); setEditingChat(null); setSelectedFirm(null); }}
                     className="btn-secondary"
                   >
                     Cancel
                   </button>
                   <button type="submit" className="btn-primary">
-                    Add Coffee Chat
+                    {editingChat ? 'Update' : 'Add'} Coffee Chat
                   </button>
                 </div>
               </form>
