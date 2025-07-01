@@ -496,7 +496,7 @@ export default function FirmTracker() {
 
       {/* Coffee Chat Modal */}
       <AnimatePresence>
-        {showChatModal && selectedFirm && (
+        {showChatModal && (
           <motion.div 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -511,56 +511,63 @@ export default function FirmTracker() {
             >
               <div className="mb-6">
                 <h3 className="text-2xl font-bold text-slate-900 mb-2">
-                  Schedule Coffee Chat
+                  Add Coffee Chat
                 </h3>
-                <p className="text-slate-600">with {selectedFirm.name}</p>
+                <p className="text-slate-600">Enter the coffee chat details below</p>
               </div>
               <form onSubmit={handleChatSubmit} className="space-y-6">
                 <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-2">Contact Name</label>
+                  <label className="block text-sm font-semibold text-slate-700 mb-2">Name</label>
                   <input
                     type="text"
                     required
                     value={chatFormData.contactName}
                     onChange={(e) => setChatFormData({ ...chatFormData, contactName: e.target.value })}
                     className="input-field"
-                    placeholder="e.g., John Smith"
+                    placeholder="e.g., Jane Doe"
                   />
                 </div>
-                
                 <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-2">Contact Title</label>
+                  <label className="block text-sm font-semibold text-slate-700 mb-2">What Was Discussed</label>
+                  <textarea
+                    required
+                    value={chatFormData.notes}
+                    onChange={(e) => setChatFormData({ ...chatFormData, notes: e.target.value })}
+                    className="input-field"
+                    rows={3}
+                    placeholder="Topics, insights, advice, etc."
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-slate-700 mb-2">Contact Info</label>
                   <input
                     type="text"
                     value={chatFormData.contactTitle}
                     onChange={(e) => setChatFormData({ ...chatFormData, contactTitle: e.target.value })}
                     className="input-field"
-                    placeholder="e.g., Vice President"
+                    placeholder="Title, email, LinkedIn, etc."
                   />
                 </div>
-                
                 <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-2">Scheduled Date</label>
+                  <label className="block text-sm font-semibold text-slate-700 mb-2">Other Questions</label>
+                  <textarea
+                    value={chatFormData.outcome}
+                    onChange={(e) => setChatFormData({ ...chatFormData, outcome: e.target.value })}
+                    className="input-field"
+                    rows={2}
+                    placeholder="Follow-ups, next steps, etc."
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-slate-700 mb-2">Date of Chat</label>
                   <input
-                    type="datetime-local"
+                    type="date"
                     required
                     value={chatFormData.scheduledDate}
                     onChange={(e) => setChatFormData({ ...chatFormData, scheduledDate: e.target.value })}
                     className="input-field"
                   />
                 </div>
-                
-                <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-2">Notes</label>
-                  <textarea
-                    value={chatFormData.notes}
-                    onChange={(e) => setChatFormData({ ...chatFormData, notes: e.target.value })}
-                    className="input-field"
-                    rows={3}
-                    placeholder="Topics to discuss, questions to ask"
-                  />
-                </div>
-                
                 <div className="flex justify-end space-x-4 pt-6">
                   <button
                     type="button"
@@ -569,8 +576,8 @@ export default function FirmTracker() {
                   >
                     Cancel
                   </button>
-                  <button type="submit" className="btn-success">
-                    Schedule Chat
+                  <button type="submit" className="btn-primary">
+                    Add Coffee Chat
                   </button>
                 </div>
               </form>
