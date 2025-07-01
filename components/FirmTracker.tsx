@@ -190,13 +190,26 @@ export default function FirmTracker() {
         </div>
       </motion.div>
 
-      {/* Firms Table */}
+      {/* Applications Tracker Section */}
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.5 }}
         className="card"
       >
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-2xl font-bold text-slate-900">Applications Tracker</h2>
+          <motion.button
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.3 }}
+            onClick={() => setShowAddModal(true)}
+            className="btn-primary flex items-center group"
+          >
+            <PlusIcon className="w-5 h-5 mr-2 group-hover:scale-110 transition-transform duration-200" />
+            Add Firm
+          </motion.button>
+        </div>
         <div className="overflow-x-auto">
           <table className="table-modern">
             <thead>

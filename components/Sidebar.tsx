@@ -19,7 +19,7 @@ import { useRouter } from 'next/navigation'
 
 const navigation = [
   { name: 'Dashboard', href: 'dashboard', icon: ChartBarIcon, color: 'from-blue-500 to-indigo-600' },
-  { name: 'Trackers', href: 'firms', icon: BuildingOfficeIcon, color: 'from-emerald-500 to-teal-600' },
+  { name: 'Trackers', href: 'firm-tracker', icon: BuildingOfficeIcon, color: 'from-emerald-500 to-teal-600' },
   { name: 'Interview Prep', href: 'interview-prep', icon: AcademicCapIcon, color: 'from-purple-500 to-indigo-600' },
   { name: 'Resource Library', href: 'resources', icon: BookOpenIcon, color: 'from-amber-500 to-orange-600' },
   { name: 'Live Markets', href: 'live-markets', icon: ChartBarIcon, color: 'from-rose-500 to-pink-600' },
