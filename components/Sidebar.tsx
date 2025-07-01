@@ -15,7 +15,7 @@ import {
   Cog6ToothIcon
 } from '@heroicons/react/24/outline'
 import { motion, AnimatePresence } from 'framer-motion'
-import { useRouter } from 'next/navigation'
+import { useRouter, usePathname } from 'next/navigation'
 
 const navigation = [
   { name: 'Dashboard', href: 'dashboard', icon: ChartBarIcon, color: 'from-blue-500 to-indigo-600' },
@@ -29,6 +29,10 @@ const navigation = [
 export default function Sidebar() {
   const { activeTab, sidebarOpen, setActiveTab, setSidebarOpen, user, userLoading, signIn, signOut } = useAppStore()
   const router = useRouter()
+  const pathname = usePathname()
+
+  // Helper to detect if sidebar is overlay (mobile)
+  const isMobile = typeof window !== 'undefined' && window.innerWidth < 1024
 
   return (
     <>
@@ -115,8 +119,15 @@ export default function Sidebar() {
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: index * 0.1 }}
                   onClick={() => {
+                    // If not on main page, route to main page and set tab
+                    if (pathname !== '/') {
+                      router.push('/')
+                    }
                     setActiveTab(item.href)
-                    setSidebarOpen(false)
+                    // Only close sidebar on mobile (overlay)
+                    if (window.innerWidth < 1024) {
+                      setSidebarOpen(false)
+                    }
                   }}
                   className={`
                     group flex items-center px-4 py-4 text-sm font-semibold rounded-2xl transition-all duration-300 w-full text-left relative overflow-hidden
