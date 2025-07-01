@@ -27,6 +27,7 @@ export default function InterviewPrep() {
     addBehavioralQuestion, 
     updateBehavioralQuestion, 
     deleteBehavioralQuestion,
+    initializePreloadedQuestions,
     addTechnicalQuestion,
     updateTechnicalQuestion,
     deleteTechnicalQuestion,
@@ -34,6 +35,11 @@ export default function InterviewPrep() {
     updateMockInterview,
     deleteMockInterview
   } = useAppStore()
+
+  // Initialize pre-loaded questions on component mount
+  React.useEffect(() => {
+    initializePreloadedQuestions()
+  }, [initializePreloadedQuestions])
 
   const [activeTab, setActiveTab] = useState<'behavioral' | 'technical' | 'mocks'>('behavioral')
   const [showBehavioralModal, setShowBehavioralModal] = useState(false)
@@ -50,6 +56,10 @@ export default function InterviewPrep() {
     answer: '',
     notes: ''
   })
+
+  const [behavioralSearch, setBehavioralSearch] = useState('')
+  const [behavioralCategoryFilter, setBehavioralCategoryFilter] = useState<string>('all')
+  const [showPreloadedOnly, setShowPreloadedOnly] = useState(false)
 
   const [technicalForm, setTechnicalForm] = useState({
     question: '',
@@ -161,6 +171,31 @@ export default function InterviewPrep() {
     { id: 'mocks', name: 'Mock Interviews', icon: AcademicCapIcon, count: mockInterviews.length }
   ]
 
+  // Filter behavioral questions
+  const filteredBehavioralQuestions = React.useMemo(() => {
+    let filtered = behavioralQuestions
+
+    // Filter by search
+    if (behavioralSearch) {
+      filtered = filtered.filter(q =>
+        q.question.toLowerCase().includes(behavioralSearch.toLowerCase()) ||
+        q.answer.toLowerCase().includes(behavioralSearch.toLowerCase())
+      )
+    }
+
+    // Filter by category
+    if (behavioralCategoryFilter !== 'all') {
+      filtered = filtered.filter(q => q.category === behavioralCategoryFilter)
+    }
+
+    // Filter by pre-loaded status
+    if (showPreloadedOnly) {
+      filtered = filtered.filter(q => q.isPreloaded)
+    }
+
+    return filtered
+  }, [behavioralQuestions, behavioralSearch, behavioralCategoryFilter, showPreloadedOnly])
+
   return (
     <motion.div 
       initial={{ opacity: 0, y: 20 }}
@@ -238,18 +273,72 @@ export default function InterviewPrep() {
             </button>
           </div>
 
+          {/* Filters */}
+          <div className="flex flex-col sm:flex-row gap-4 p-4 bg-slate-50 rounded-lg">
+            <div className="flex-1">
+              <input
+                type="text"
+                placeholder="Search questions..."
+                value={behavioralSearch}
+                onChange={(e) => setBehavioralSearch(e.target.value)}
+                className="input-field w-full"
+              />
+            </div>
+            <div className="flex gap-2">
+              <select
+                value={behavioralCategoryFilter}
+                onChange={(e) => setBehavioralCategoryFilter(e.target.value)}
+                className="input-field"
+              >
+                <option value="all">All Categories</option>
+                <option value="Leadership">Leadership</option>
+                <option value="Teamwork">Teamwork</option>
+                <option value="Problem Solving">Problem Solving</option>
+                <option value="Communication">Communication</option>
+                <option value="Conflict Resolution">Conflict Resolution</option>
+                <option value="General">General</option>
+                <option value="Motivation">Motivation</option>
+                <option value="Experience">Experience</option>
+                <option value="Strengths & Weaknesses">Strengths & Weaknesses</option>
+                <option value="Team Dynamics">Team Dynamics</option>
+                <option value="Challenges">Challenges</option>
+                <option value="Goals">Goals</option>
+                <option value="Personal">Personal</option>
+                <option value="Networking">Networking</option>
+              </select>
+              <button
+                onClick={() => setShowPreloadedOnly(!showPreloadedOnly)}
+                className={`px-4 py-2 rounded-lg text-sm font-semibold transition-colors ${
+                  showPreloadedOnly 
+                    ? 'bg-blue-600 text-white' 
+                    : 'bg-white text-slate-700 border border-slate-300 hover:bg-slate-50'
+                }`}
+              >
+                {showPreloadedOnly ? 'Show All' : 'Pre-loaded Only'}
+              </button>
+            </div>
+          </div>
+
+          {/* Questions Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {behavioralQuestions.map((question, index) => (
+            {filteredBehavioralQuestions.map((question, index) => (
               <motion.div
                 key={question.id}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.1 }}
-                className="card-hover group"
+                className={`card-hover group ${question.isPreloaded ? 'ring-2 ring-blue-200' : ''}`}
               >
                 <div className="flex items-start justify-between mb-4">
-                  <div className={`px-3 py-1 rounded-full text-xs font-semibold bg-gradient-to-r ${getCategoryColor(question.category)} text-white`}>
-                    {question.category}
+                  <div className="flex items-center space-x-2">
+                    <div className={`px-3 py-1 rounded-full text-xs font-semibold bg-gradient-to-r ${getCategoryColor(question.category)} text-white`}>
+                      {question.category}
+                    </div>
+                    {question.isPreloaded && (
+                      <div className="px-2 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-700">
+                        Pre-loaded
+                      </div>
+                    )}
                   </div>
                   <div className="flex items-center space-x-2">
                     <button
@@ -268,12 +357,14 @@ export default function InterviewPrep() {
                     >
                       <PencilIcon className="w-4 h-4" />
                     </button>
-                    <button
-                      onClick={() => deleteBehavioralQuestion(question.id)}
-                      className="p-1 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded transition-colors duration-200"
-                    >
-                      <TrashIcon className="w-4 h-4" />
-                    </button>
+                    {!question.isPreloaded && (
+                      <button
+                        onClick={() => deleteBehavioralQuestion(question.id)}
+                        className="p-1 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded transition-colors duration-200"
+                      >
+                        <TrashIcon className="w-4 h-4" />
+                      </button>
+                    )}
                   </div>
                 </div>
                 
@@ -523,10 +614,14 @@ export default function InterviewPrep() {
                     required
                     value={behavioralForm.question}
                     onChange={(e) => setBehavioralForm({ ...behavioralForm, question: e.target.value })}
-                    className="input-field"
+                    className={`input-field ${editingBehavioral?.isPreloaded ? 'bg-slate-50 cursor-not-allowed' : ''}`}
                     rows={3}
                     placeholder="e.g., Tell me about a time when you had to lead a team through a difficult situation"
+                    disabled={editingBehavioral?.isPreloaded}
                   />
+                  {editingBehavioral?.isPreloaded && (
+                    <p className="text-sm text-slate-500 mt-1">This is a pre-loaded question and cannot be modified</p>
+                  )}
                 </div>
                 
                 <div className="grid grid-cols-2 gap-4">
@@ -535,13 +630,23 @@ export default function InterviewPrep() {
                     <select
                       value={behavioralForm.category}
                       onChange={(e) => setBehavioralForm({ ...behavioralForm, category: e.target.value as any })}
-                      className="input-field"
+                      className={`input-field ${editingBehavioral?.isPreloaded ? 'bg-slate-50 cursor-not-allowed' : ''}`}
+                      disabled={editingBehavioral?.isPreloaded}
                     >
                       <option value="Leadership">Leadership</option>
                       <option value="Teamwork">Teamwork</option>
                       <option value="Problem Solving">Problem Solving</option>
                       <option value="Communication">Communication</option>
                       <option value="Conflict Resolution">Conflict Resolution</option>
+                      <option value="General">General</option>
+                      <option value="Motivation">Motivation</option>
+                      <option value="Experience">Experience</option>
+                      <option value="Strengths & Weaknesses">Strengths & Weaknesses</option>
+                      <option value="Team Dynamics">Team Dynamics</option>
+                      <option value="Challenges">Challenges</option>
+                      <option value="Goals">Goals</option>
+                      <option value="Personal">Personal</option>
+                      <option value="Networking">Networking</option>
                     </select>
                   </div>
                   <div>
@@ -549,7 +654,8 @@ export default function InterviewPrep() {
                     <select
                       value={behavioralForm.difficulty}
                       onChange={(e) => setBehavioralForm({ ...behavioralForm, difficulty: e.target.value as any })}
-                      className="input-field"
+                      className={`input-field ${editingBehavioral?.isPreloaded ? 'bg-slate-50 cursor-not-allowed' : ''}`}
+                      disabled={editingBehavioral?.isPreloaded}
                     >
                       <option value="Easy">Easy</option>
                       <option value="Medium">Medium</option>
