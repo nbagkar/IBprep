@@ -335,6 +335,7 @@ export default function FirmTracker() {
             <thead>
               <tr>
                 <th className="table-header">Name</th>
+                <th className="table-header">Firm</th>
                 <th className="table-header">What Was Discussed</th>
                 <th className="table-header">Contact Info</th>
                 <th className="table-header">Other Questions</th>
@@ -345,21 +346,25 @@ export default function FirmTracker() {
             <tbody className="divide-y divide-slate-200">
               {coffeeChats.length === 0 && (
                 <tr>
-                  <td colSpan={6} className="text-center text-slate-500 py-8">
+                  <td colSpan={7} className="text-center text-slate-500 py-8">
                     No coffee chats found. Add your first coffee chat!
                   </td>
                 </tr>
               )}
-              {coffeeChats.map((chat, idx) => (
-                <tr key={chat.id} className="table-row">
-                  <td className="table-cell">{chat.contactName}</td>
-                  <td className="table-cell">{chat.notes}</td>
-                  <td className="table-cell">{chat.contactTitle}</td>
-                  <td className="table-cell">{chat.outcome}</td>
-                  <td className="table-cell">{chat.scheduledDate ? new Date(chat.scheduledDate).toLocaleDateString() : '-'}</td>
-                  <td className="table-cell">{/* Future: edit/delete actions */}</td>
-                </tr>
-              ))}
+              {coffeeChats.map((chat, idx) => {
+                const firm = firms.find(f => f.id === chat.firmId)
+                return (
+                  <tr key={chat.id} className="table-row">
+                    <td className="table-cell">{chat.contactName}</td>
+                    <td className="table-cell">{firm ? firm.name : '—'}</td>
+                    <td className="table-cell">{chat.notes}</td>
+                    <td className="table-cell">{chat.contactTitle}</td>
+                    <td className="table-cell">{chat.outcome}</td>
+                    <td className="table-cell">{chat.scheduledDate ? new Date(chat.scheduledDate).toLocaleDateString() : '-'}</td>
+                    <td className="table-cell">{/* Future: edit/delete actions */}</td>
+                  </tr>
+                )
+              })}
             </tbody>
           </table>
         </div>
@@ -523,6 +528,22 @@ export default function FirmTracker() {
                     className="input-field"
                     placeholder="e.g., Jane Doe"
                   />
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-slate-700 mb-2">Firm</label>
+                  <select
+                    value={selectedFirm ? selectedFirm.id : ''}
+                    onChange={e => {
+                      const firm = firms.find(f => f.id === e.target.value)
+                      setSelectedFirm(firm || null)
+                    }}
+                    className="input-field"
+                  >
+                    <option value="">None</option>
+                    {firms.map(firm => (
+                      <option key={firm.id} value={firm.id}>{firm.name}</option>
+                    ))}
+                  </select>
                 </div>
                 <div>
                   <label className="block text-sm font-semibold text-slate-700 mb-2">What Was Discussed</label>
