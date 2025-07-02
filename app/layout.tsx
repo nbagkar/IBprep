@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
 import { Toaster } from 'react-hot-toast'
+import Script from "next/script";
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -18,6 +19,24 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
+      <head>
+        {/* Google Analytics */}
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-6FQNVYMMMN"
+          strategy="afterInteractive"
+        />
+        <Script id="ga-init" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-6FQNVYMMMN', {
+              page_path: window.location.pathname,
+            });
+          `}
+        </Script>
+        {/* End Google Analytics */}
+      </head>
       <body className={inter.className}>
         {children}
         <Toaster 

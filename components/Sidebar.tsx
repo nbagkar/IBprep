@@ -2,6 +2,7 @@
 
 import React from 'react'
 import { useAppStore } from '@/lib/store'
+import { trackButtonClick } from '@/lib/analytics'
 import { 
   ChartBarIcon, 
   BuildingOfficeIcon, 
@@ -56,7 +57,10 @@ export default function Sidebar() {
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.8 }}
-            onClick={() => setSidebarOpen(true)}
+            onClick={() => {
+              trackButtonClick('sidebar_toggle', 'floating_button')
+              setSidebarOpen(true)
+            }}
             className="fixed top-4 left-4 z-50 p-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-110"
           >
             <Bars3Icon className="w-6 h-6" />
@@ -91,7 +95,10 @@ export default function Sidebar() {
           <div className="flex items-center space-x-2">
             {/* Desktop toggle button */}
             <button
-              onClick={() => setSidebarOpen(!sidebarOpen)}
+              onClick={() => {
+                trackButtonClick('sidebar_toggle', 'header_button')
+                setSidebarOpen(!sidebarOpen)
+              }}
               className="hidden lg:flex p-2 rounded-xl hover:bg-slate-100 transition-colors duration-200"
               title="Toggle Sidebar"
             >
@@ -99,7 +106,10 @@ export default function Sidebar() {
             </button>
             {/* Mobile close button */}
             <button
-              onClick={() => setSidebarOpen(false)}
+              onClick={() => {
+                trackButtonClick('sidebar_close', 'mobile_header')
+                setSidebarOpen(false)
+              }}
               className="lg:hidden p-2 rounded-xl hover:bg-slate-100 transition-colors duration-200"
             >
               <XMarkIcon className="w-6 h-6 text-slate-600" />
@@ -119,6 +129,10 @@ export default function Sidebar() {
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: index * 0.1 }}
                   onClick={() => {
+                    trackButtonClick(`nav_${item.href}`, 'sidebar_navigation', { 
+                      from_tab: activeTab,
+                      to_tab: item.href 
+                    })
                     // If not on main page, route to main page and set tab
                     if (pathname !== '/') {
                       router.push('/')
@@ -178,7 +192,10 @@ export default function Sidebar() {
               )}
               <span className="font-semibold text-slate-900 text-sm">{user.displayName || user.email}</span>
               <button
-                onClick={signOut}
+                onClick={() => {
+                  trackButtonClick('sign_out', 'user_section')
+                  signOut()
+                }}
                 className="btn-secondary w-full mt-2"
                 disabled={userLoading}
               >
@@ -187,7 +204,10 @@ export default function Sidebar() {
             </div>
           ) : (
             <button
-              onClick={signIn}
+              onClick={() => {
+                trackButtonClick('sign_in', 'user_section')
+                signIn()
+              }}
               className="btn-primary w-full"
               disabled={userLoading}
             >
@@ -199,7 +219,10 @@ export default function Sidebar() {
         {/* Settings Icon at the bottom */}
         <div className="p-4 flex flex-col items-center">
           <button
-            onClick={() => router.push('/data-management')}
+            onClick={() => {
+              trackButtonClick('settings', 'bottom_navigation')
+              router.push('/data-management')
+            }}
             className="p-2 rounded-full hover:bg-slate-200 transition"
             title="Settings"
           >

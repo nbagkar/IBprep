@@ -1,0 +1,650 @@
+[
+  {
+    "question": "What is the primary purpose of US GAAP?",
+    "category": "technical",
+    "source": "PDF Document",
+    "importedDate": "2025-07-01",
+    "userAnswer": "",
+    "notes": ""
+  },
+  {
+    "question": "What are the main sections of a 10-K?",
+    "category": "technical",
+    "source": "PDF Document",
+    "importedDate": "2025-07-01",
+    "userAnswer": "",
+    "notes": ""
+  },
+  {
+    "question": "What is the difference between the 10-K and 10-Q?",
+    "category": "technical",
+    "source": "PDF Document",
+    "importedDate": "2025-07-01",
+    "userAnswer": "",
+    "notes": ""
+  },
+  {
+    "question": "What are the typical line items you might find on the balance sheet?",
+    "category": "technical",
+    "source": "PDF Document",
+    "importedDate": "2025-07-01",
+    "userAnswer": "",
+    "notes": ""
+  },
+  {
+    "question": "Could you explain the concept of present value and how it relates to company valuations?",
+    "category": "technical",
+    "source": "PDF Document",
+    "importedDate": "2025-07-01",
+    "userAnswer": "",
+    "notes": ""
+  },
+  {
+    "question": "What is equity value and how is it calculated?",
+    "category": "technical",
+    "source": "PDF Document",
+    "importedDate": "2025-07-01",
+    "userAnswer": "",
+    "notes": ""
+  },
+  {
+    "question": "Which line items are included in the calculation of net debt?",
+    "category": "technical",
+    "source": "PDF Document",
+    "importedDate": "2025-07-01",
+    "userAnswer": "",
+    "notes": ""
+  },
+  {
+    "question": "When calculating enterprise value, why do we add net debt?",
+    "category": "technical",
+    "source": "PDF Document",
+    "importedDate": "2025-07-01",
+    "userAnswer": "",
+    "notes": ""
+  },
+  {
+    "question": "What is the difference between enterprise value and equity value?",
+    "category": "technical",
+    "source": "PDF Document",
+    "importedDate": "2025-07-01",
+    "userAnswer": "",
+    "notes": ""
+  },
+  {
+    "question": "Could a company have a negative net debt balance and have an enterprise value lower than its \nequity value?",
+    "category": "technical",
+    "source": "PDF Document",
+    "importedDate": "2025-07-01",
+    "userAnswer": "",
+    "notes": ""
+  },
+  {
+    "question": "Can the enterprise value of a company turn negative?",
+    "category": "technical",
+    "source": "PDF Document",
+    "importedDate": "2025-07-01",
+    "userAnswer": "",
+    "notes": ""
+  },
+  {
+    "question": "How are convertible bonds and preferred equity with a convertible feature accounted for when \ncalculating enterprise value?",
+    "category": "technical",
+    "source": "PDF Document",
+    "importedDate": "2025-07-01",
+    "userAnswer": "",
+    "notes": ""
+  },
+  {
+    "question": "What are the two main approaches to valuation?",
+    "category": "technical",
+    "source": "PDF Document",
+    "importedDate": "2025-07-01",
+    "userAnswer": "",
+    "notes": ""
+  },
+  {
+    "question": "What are the most common valuation methods used in finance?",
+    "category": "technical",
+    "source": "PDF Document",
+    "importedDate": "2025-07-01",
+    "userAnswer": "",
+    "notes": ""
+  },
+  {
+    "question": "Among the DCF, comparable companies analysis, and transaction comps, which approach yields \nthe highest valuation?",
+    "category": "technical",
+    "source": "PDF Document",
+    "importedDate": "2025-07-01",
+    "userAnswer": "",
+    "notes": ""
+  },
+  {
+    "question": "Which of the valuation methodologies is the most variable in terms of output?",
+    "category": "technical",
+    "source": "PDF Document",
+    "importedDate": "2025-07-01",
+    "userAnswer": "",
+    "notes": ""
+  },
+  {
+    "question": "How can you determine which valuation method to use?",
+    "category": "technical",
+    "source": "PDF Document",
+    "importedDate": "2025-07-01",
+    "userAnswer": "",
+    "notes": ""
+  },
+  {
+    "question": "Would you agree with the statement that relative valuation relies less on the discretionary \nassumptions of individuals?",
+    "category": "technical",
+    "source": "PDF Document",
+    "importedDate": "2025-07-01",
+    "userAnswer": "",
+    "notes": ""
+  },
+  {
+    "question": "What does free cash flow (FCF) represent?",
+    "category": "technical",
+    "source": "PDF Document",
+    "importedDate": "2025-07-01",
+    "userAnswer": "",
+    "notes": ""
+  },
+  {
+    "question": "Can you define M&A and explain the difference between a merger and an acquisition?",
+    "category": "technical",
+    "source": "PDF Document",
+    "importedDate": "2025-07-01",
+    "userAnswer": "",
+    "notes": ""
+  },
+  {
+    "question": "What are some potential reasons that a company might acquire another company?",
+    "category": "technical",
+    "source": "PDF Document",
+    "importedDate": "2025-07-01",
+    "userAnswer": "",
+    "notes": ""
+  },
+  {
+    "question": "Value Creation from Revenue and Cost Synergies \n \nOwnership of Technology Assets (IP, Patents, Proprietary Technology) \n \nTalent Acquisitions (New Skilled Employees)  \n \nExpansion in Geographic Reach or into New Product/Service Markets  \n \nDiversification in Revenue Sources (Less Risk, Lower Cost of Capital) \n \nReduce Time to Market with New Product Launches \n \nIncreased Number of Channels to Sell Products/Services \n \nMarket Leadership and Decreased Competition (if Horizontal Integration) \n \nAchieve Supply Chain Efficiencies (if Vertical Integration) \n \nTax Benefits (if Target has NOLs) \nWhat are the differences among vertical, horizontal, and conglomerate mergers?",
+    "category": "technical",
+    "source": "PDF Document",
+    "importedDate": "2025-07-01",
+    "userAnswer": "",
+    "notes": ""
+  },
+  {
+    "question": "In terms of vertical integration, what is the difference between forward and backward integration?",
+    "category": "technical",
+    "source": "PDF Document",
+    "importedDate": "2025-07-01",
+    "userAnswer": "",
+    "notes": ""
+  },
+  {
+    "question": "What are synergies and why are they important in a deal?",
+    "category": "technical",
+    "source": "PDF Document",
+    "importedDate": "2025-07-01",
+    "userAnswer": "",
+    "notes": ""
+  },
+  {
+    "question": "Cost Synergies: Eliminate overlapping workforces (reduce headcount), closure or consolidation of \nredundant facilities, streamlined processes, purchasing power over suppliers, tax savings (NOLs) \nWhy should companies acquired by strategic acquirers expect to fetch higher premiums than those \nselling to private equity buyers?",
+    "category": "technical",
+    "source": "PDF Document",
+    "importedDate": "2025-07-01",
+    "userAnswer": "",
+    "notes": ""
+  },
+  {
+    "question": "What is a negotiated sale?",
+    "category": "technical",
+    "source": "PDF Document",
+    "importedDate": "2025-07-01",
+    "userAnswer": "",
+    "notes": ""
+  },
+  {
+    "question": "What are some of the most common reasons that M&A deals fail to create value?",
+    "category": "technical",
+    "source": "PDF Document",
+    "importedDate": "2025-07-01",
+    "userAnswer": "",
+    "notes": ""
+  },
+  {
+    "question": "If that's the case, why do companies still engage in M&A?",
+    "category": "technical",
+    "source": "PDF Document",
+    "importedDate": "2025-07-01",
+    "userAnswer": "",
+    "notes": ""
+  },
+  {
+    "question": "What is the purpose of a teaser?",
+    "category": "technical",
+    "source": "PDF Document",
+    "importedDate": "2025-07-01",
+    "userAnswer": "",
+    "notes": ""
+  },
+  {
+    "question": "What does a confidential information memorandum (CIM) consist of?",
+    "category": "technical",
+    "source": "PDF Document",
+    "importedDate": "2025-07-01",
+    "userAnswer": "",
+    "notes": ""
+  },
+  {
+    "question": "What are the typical components found in a letter of intent (LOI)?",
+    "category": "technical",
+    "source": "PDF Document",
+    "importedDate": "2025-07-01",
+    "userAnswer": "",
+    "notes": ""
+  },
+  {
+    "question": "What are no-shop provisions in M&A deals?",
+    "category": "technical",
+    "source": "PDF Document",
+    "importedDate": "2025-07-01",
+    "userAnswer": "",
+    "notes": ""
+  },
+  {
+    "question": "What is a material adverse change (MAC), and could you provide some examples?",
+    "category": "technical",
+    "source": "PDF Document",
+    "importedDate": "2025-07-01",
+    "userAnswer": "",
+    "notes": ""
+  },
+  {
+    "question": "What are the two most common ways that hostile takeovers are pursued?",
+    "category": "technical",
+    "source": "PDF Document",
+    "importedDate": "2025-07-01",
+    "userAnswer": "",
+    "notes": ""
+  },
+  {
+    "question": "What is a leveraged buyout (LBO)?",
+    "category": "technical",
+    "source": "PDF Document",
+    "importedDate": "2025-07-01",
+    "userAnswer": "",
+    "notes": ""
+  },
+  {
+    "question": "Which industry are you most interested in pursuing an investment within?",
+    "category": "technical",
+    "source": "PDF Document",
+    "importedDate": "2025-07-01",
+    "userAnswer": "",
+    "notes": ""
+  },
+  {
+    "question": "Tell me about an investment theme you have in mind and why you think it's an interesting \nopportunity?",
+    "category": "technical",
+    "source": "PDF Document",
+    "importedDate": "2025-07-01",
+    "userAnswer": "",
+    "notes": ""
+  },
+  {
+    "question": "If our firm was looking at a new investment opportunity in [specific sub-industry], how would you \napproach diligence to determine if it's an investment worth looking further into or not?",
+    "category": "technical",
+    "source": "PDF Document",
+    "importedDate": "2025-07-01",
+    "userAnswer": "",
+    "notes": ""
+  },
+  {
+    "question": "What is the intuition underlying the usage of debt in an LBO?",
+    "category": "technical",
+    "source": "PDF Document",
+    "importedDate": "2025-07-01",
+    "userAnswer": "",
+    "notes": ""
+  },
+  {
+    "question": "What is the typical capital structure prevalent in LBO transactions?",
+    "category": "technical",
+    "source": "PDF Document",
+    "importedDate": "2025-07-01",
+    "userAnswer": "",
+    "notes": ""
+  },
+  {
+    "question": "What are the main levers in an LBO that drive returns?",
+    "category": "technical",
+    "source": "PDF Document",
+    "importedDate": "2025-07-01",
+    "userAnswer": "",
+    "notes": ""
+  },
+  {
+    "question": "What attributes make a business an ideal LBO candidate?",
+    "category": "technical",
+    "source": "PDF Document",
+    "importedDate": "2025-07-01",
+    "userAnswer": "",
+    "notes": ""
+  },
+  {
+    "question": "What types of industries attract more deal flow from financial buyers?",
+    "category": "technical",
+    "source": "PDF Document",
+    "importedDate": "2025-07-01",
+    "userAnswer": "",
+    "notes": ""
+  },
+  {
+    "question": "What would be the ideal type of products/services of a potential LBO target?",
+    "category": "technical",
+    "source": "PDF Document",
+    "importedDate": "2025-07-01",
+    "userAnswer": "",
+    "notes": ""
+  },
+  {
+    "question": "What is the relationship between debt and purchase price?",
+    "category": "technical",
+    "source": "PDF Document",
+    "importedDate": "2025-07-01",
+    "userAnswer": "",
+    "notes": ""
+  },
+  {
+    "question": "How is the maximum leverage used in an LBO typically determined?",
+    "category": "technical",
+    "source": "PDF Document",
+    "importedDate": "2025-07-01",
+    "userAnswer": "",
+    "notes": ""
+  },
+  {
+    "question": "What is the difference between a bond and a leveraged loan?",
+    "category": "technical",
+    "source": "PDF Document",
+    "importedDate": "2025-07-01",
+    "userAnswer": "",
+    "notes": ""
+  },
+  {
+    "question": "What is the difference between investment-grade and speculative-grade debt?",
+    "category": "technical",
+    "source": "PDF Document",
+    "importedDate": "2025-07-01",
+    "userAnswer": "",
+    "notes": ""
+  },
+  {
+    "question": "What does it mean when a debt tranche is denoted as 1st lien or 2nd lien?",
+    "category": "technical",
+    "source": "PDF Document",
+    "importedDate": "2025-07-01",
+    "userAnswer": "",
+    "notes": ""
+  },
+  {
+    "question": "What is the difference between a secured and unsecured loan?",
+    "category": "technical",
+    "source": "PDF Document",
+    "importedDate": "2025-07-01",
+    "userAnswer": "",
+    "notes": ""
+  },
+  {
+    "question": "How are leveraged loans usually priced?",
+    "category": "technical",
+    "source": "PDF Document",
+    "importedDate": "2025-07-01",
+    "userAnswer": "",
+    "notes": ""
+  },
+  {
+    "question": "What does LIBOR stand for?",
+    "category": "technical",
+    "source": "PDF Document",
+    "importedDate": "2025-07-01",
+    "userAnswer": "",
+    "notes": ""
+  },
+  {
+    "question": "What is SOFR, the expected replacement of LIBOR?",
+    "category": "technical",
+    "source": "PDF Document",
+    "importedDate": "2025-07-01",
+    "userAnswer": "",
+    "notes": ""
+  },
+  {
+    "question": "In terms of debt terminology, what does the coupon rate mean?",
+    "category": "technical",
+    "source": "PDF Document",
+    "importedDate": "2025-07-01",
+    "userAnswer": "",
+    "notes": ""
+  },
+  {
+    "question": "How does the coupon on a bond differ from the yield?",
+    "category": "technical",
+    "source": "PDF Document",
+    "importedDate": "2025-07-01",
+    "userAnswer": "",
+    "notes": ""
+  },
+  {
+    "question": "What does it mean when a bond is trading at a discount, par, or premium?",
+    "category": "technical",
+    "source": "PDF Document",
+    "importedDate": "2025-07-01",
+    "userAnswer": "",
+    "notes": ""
+  },
+  {
+    "question": "Discount: Price < 100, Yield is Greater than Coupon \n \nPar: Price = 100, Yield is Equal to Coupon \n \nPremium: Price > 100, Yield Less Than Coupon \nWhat is the difference between a fixed and floating interest rate?",
+    "category": "technical",
+    "source": "PDF Document",
+    "importedDate": "2025-07-01",
+    "userAnswer": "",
+    "notes": ""
+  },
+  {
+    "question": "When would an investor prefer fixed rates over floating rates (and vice versa)?",
+    "category": "technical",
+    "source": "PDF Document",
+    "importedDate": "2025-07-01",
+    "userAnswer": "",
+    "notes": ""
+  },
+  {
+    "question": "What are some different debt amortization schedules?",
+    "category": "technical",
+    "source": "PDF Document",
+    "importedDate": "2025-07-01",
+    "userAnswer": "",
+    "notes": ""
+  },
+  {
+    "question": "115 \nCAPITAL \nMARKETS \nQUESTIONS \nWhat is a callable bond and how does it benefit the issuer or borrower?",
+    "category": "technical",
+    "source": "PDF Document",
+    "importedDate": "2025-07-01",
+    "userAnswer": "",
+    "notes": ""
+  },
+  {
+    "question": "When would the prepayment optionality of certain debt tranches be unattractive to lenders?",
+    "category": "technical",
+    "source": "PDF Document",
+    "importedDate": "2025-07-01",
+    "userAnswer": "",
+    "notes": ""
+  },
+  {
+    "question": "What is a revolving credit facility and what purpose does it serve to the borrower?",
+    "category": "technical",
+    "source": "PDF Document",
+    "importedDate": "2025-07-01",
+    "userAnswer": "",
+    "notes": ""
+  },
+  {
+    "question": "What is the undrawn commitment fee associated with revolvers?",
+    "category": "technical",
+    "source": "PDF Document",
+    "importedDate": "2025-07-01",
+    "userAnswer": "",
+    "notes": ""
+  },
+  {
+    "question": "What is the difference between an asset-based loan and a cash flow revolver?",
+    "category": "technical",
+    "source": "PDF Document",
+    "importedDate": "2025-07-01",
+    "userAnswer": "",
+    "notes": ""
+  },
+  {
+    "question": "116 \nCAPITAL \nMARKETS \nQUESTIONS \nWhy do revolvers normally not have a leverage test?",
+    "category": "technical",
+    "source": "PDF Document",
+    "importedDate": "2025-07-01",
+    "userAnswer": "",
+    "notes": ""
+  },
+  {
+    "question": "What is unitranche debt and its benefits?",
+    "category": "technical",
+    "source": "PDF Document",
+    "importedDate": "2025-07-01",
+    "userAnswer": "",
+    "notes": ""
+  },
+  {
+    "question": "What is the difference between a bonds coupon rate and the bonds current yield?",
+    "category": "technical",
+    "source": "PDF Document",
+    "importedDate": "2025-07-01",
+    "userAnswer": "",
+    "notes": ""
+  },
+  {
+    "question": "What is the difference between current yield and yield to maturity?",
+    "category": "technical",
+    "source": "PDF Document",
+    "importedDate": "2025-07-01",
+    "userAnswer": "",
+    "notes": ""
+  },
+  {
+    "question": "Could you define fixed income and name a few examples?",
+    "category": "technical",
+    "source": "PDF Document",
+    "importedDate": "2025-07-01",
+    "userAnswer": "",
+    "notes": ""
+  },
+  {
+    "question": "What does the money market refer to and what is the typical maturity range?",
+    "category": "technical",
+    "source": "PDF Document",
+    "importedDate": "2025-07-01",
+    "userAnswer": "",
+    "notes": ""
+  },
+  {
+    "question": "What are the most common types of business models in the telecom and media industry?",
+    "category": "technical",
+    "source": "PDF Document",
+    "importedDate": "2025-07-01",
+    "userAnswer": "",
+    "notes": ""
+  },
+  {
+    "question": "Which valuation metrics are common to see for traditional telecom companies?",
+    "category": "technical",
+    "source": "PDF Document",
+    "importedDate": "2025-07-01",
+    "userAnswer": "",
+    "notes": ""
+  },
+  {
+    "question": "What metrics would you use to measure user engagement?",
+    "category": "technical",
+    "source": "PDF Document",
+    "importedDate": "2025-07-01",
+    "userAnswer": "",
+    "notes": ""
+  },
+  {
+    "question": "User Engagement KPIs \n \nDaily Active Users (DAU) and Monthly Active Users (MAU) \n \nActive Subscriber Count \n \nTime Spent In-App Per Day or Week \n \nPageviews/Website Hits \n \nChurn Rate (Retention %) \n \nConversion Rate (Free \uf0e0 Paid Plan) \nWhich multiples are most commonly used to value modern media companies?",
+    "category": "technical",
+    "source": "PDF Document",
+    "importedDate": "2025-07-01",
+    "userAnswer": "",
+    "notes": ""
+  },
+  {
+    "question": "For a company with a product meant for high frequency in usage, what is one way to assess user \nengagement?",
+    "category": "technical",
+    "source": "PDF Document",
+    "importedDate": "2025-07-01",
+    "userAnswer": "",
+    "notes": ""
+  },
+  {
+    "question": "What are economies of scale and could you give me an example?",
+    "category": "technical",
+    "source": "PDF Document",
+    "importedDate": "2025-07-01",
+    "userAnswer": "",
+    "notes": ""
+  },
+  {
+    "question": "What effect does having high operating leverage have on the scalability of a business?",
+    "category": "technical",
+    "source": "PDF Document",
+    "importedDate": "2025-07-01",
+    "userAnswer": "",
+    "notes": ""
+  },
+  {
+    "question": "Can you give me an example of a company benefiting from operating leverage?",
+    "category": "technical",
+    "source": "PDF Document",
+    "importedDate": "2025-07-01",
+    "userAnswer": "",
+    "notes": ""
+  },
+  {
+    "question": "Instead, this series of questions is based on two core questions: \n \nHow have your experiences prepared you for this position?",
+    "category": "technical",
+    "source": "PDF Document",
+    "importedDate": "2025-07-01",
+    "userAnswer": "",
+    "notes": ""
+  },
+  {
+    "question": "Do other investment banks even recruit there?",
+    "category": "technical",
+    "source": "PDF Document",
+    "importedDate": "2025-07-01",
+    "userAnswer": "",
+    "notes": ""
+  },
+  {
+    "question": "A few examples of these Mike Tyson Questions are: Why did you not land an internship offer last summer?",
+    "category": "technical",
+    "source": "PDF Document",
+    "importedDate": "2025-07-01",
+    "userAnswer": "",
+    "notes": ""
+  }
+]
