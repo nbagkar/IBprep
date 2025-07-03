@@ -168,4 +168,6 @@ For questions or support:
 
 ---
 
-**IB Prep Hub** - Your comprehensive investment banking recruiting companion. 
+**IB Prep Hub** - Your comprehensive investment banking recruiting companion.
+
+<!-- Updated for Vercel redeployment --> 
