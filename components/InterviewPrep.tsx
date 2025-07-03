@@ -72,6 +72,10 @@ export default function InterviewPrep() {
     notes: ''
   })
 
+  // Add state for questions fetched from Firestore
+  const [behavioralQuestions, setBehavioralQuestions] = useState<BehavioralQuestion[]>([]);
+  const [technicalQuestions, setTechnicalQuestions] = useState<TechnicalQuestion[]>([]);
+
   // Sync form state with editingBehavioral
   useEffect(() => {
     if (editingBehavioral) {
