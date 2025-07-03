@@ -1,0 +1,713 @@
+[
+  {
+    "question": "Walk me through your resume / tell me about yourself",
+    "category": "General",
+    "difficulty": "Easy",
+    "isPreloaded": true,
+    "answer": "",
+    "notes": "",
+    "lastUpdated": "2025-07-03T15:33:16.973Z"
+  },
+  {
+    "question": "Why investment banking/sales and trading?",
+    "category": "Motivation",
+    "difficulty": "Easy",
+    "isPreloaded": true,
+    "answer": "",
+    "notes": "",
+    "lastUpdated": "2025-07-03T15:33:16.973Z"
+  },
+  {
+    "question": "What do investment bankers do?",
+    "category": "General",
+    "difficulty": "Easy",
+    "isPreloaded": true,
+    "answer": "",
+    "notes": "",
+    "lastUpdated": "2025-07-03T15:33:16.973Z"
+  },
+  {
+    "question": "What do you think you will be doing on a day-to-day basis as an analyst?",
+    "category": "Experience",
+    "difficulty": "Medium",
+    "isPreloaded": true,
+    "answer": "",
+    "notes": "",
+    "lastUpdated": "2025-07-03T15:33:16.973Z"
+  },
+  {
+    "question": "Why [insert bank's name here]?",
+    "category": "Motivation",
+    "difficulty": "Medium",
+    "isPreloaded": true,
+    "answer": "",
+    "notes": "",
+    "lastUpdated": "2025-07-03T15:33:16.973Z"
+  },
+  {
+    "question": "What do you know about our firm?",
+    "category": "General",
+    "difficulty": "Medium",
+    "isPreloaded": true,
+    "answer": "",
+    "notes": "",
+    "lastUpdated": "2025-07-03T15:33:16.973Z"
+  },
+  {
+    "question": "Who have you spoken with at our bank?",
+    "category": "Networking",
+    "difficulty": "Easy",
+    "isPreloaded": true,
+    "answer": "",
+    "notes": "",
+    "lastUpdated": "2025-07-03T15:33:16.973Z"
+  },
+  {
+    "question": "Why not firm X rather than our firm?",
+    "category": "Motivation",
+    "difficulty": "Hard",
+    "isPreloaded": true,
+    "answer": "",
+    "notes": "",
+    "lastUpdated": "2025-07-03T15:33:16.973Z"
+  },
+  {
+    "question": "What groups are you interested in?",
+    "category": "Goals",
+    "difficulty": "Medium",
+    "isPreloaded": true,
+    "answer": "",
+    "notes": "",
+    "lastUpdated": "2025-07-03T15:33:16.973Z"
+  },
+  {
+    "question": "Can you handle the grunt work?",
+    "category": "Experience",
+    "difficulty": "Medium",
+    "isPreloaded": true,
+    "answer": "",
+    "notes": "",
+    "lastUpdated": "2025-07-03T15:33:16.973Z"
+  },
+  {
+    "question": "What do you think is the most important characteristic for this job?",
+    "category": "Strengths & Weaknesses",
+    "difficulty": "Medium",
+    "isPreloaded": true,
+    "answer": "",
+    "notes": "",
+    "lastUpdated": "2025-07-03T15:33:16.973Z"
+  },
+  {
+    "question": "If you were running this firm, in what direction would you take it?",
+    "category": "Leadership",
+    "difficulty": "Hard",
+    "isPreloaded": true,
+    "answer": "",
+    "notes": "",
+    "lastUpdated": "2025-07-03T15:33:16.973Z"
+  },
+  {
+    "question": "Can ethical requirements in a firm be too high?",
+    "category": "Personal",
+    "difficulty": "Hard",
+    "isPreloaded": true,
+    "answer": "",
+    "notes": "",
+    "lastUpdated": "2025-07-03T15:33:16.973Z"
+  },
+  {
+    "question": "What are some of your strengths?",
+    "category": "Strengths & Weaknesses",
+    "difficulty": "Easy",
+    "isPreloaded": true,
+    "answer": "",
+    "notes": "",
+    "lastUpdated": "2025-07-03T15:33:16.973Z"
+  },
+  {
+    "question": "Why should we hire you over any of the other candidates we are interviewing? What makes you different or special?",
+    "category": "Strengths & Weaknesses",
+    "difficulty": "Hard",
+    "isPreloaded": true,
+    "answer": "",
+    "notes": "",
+    "lastUpdated": "2025-07-03T15:33:16.973Z"
+  },
+  {
+    "question": "Why do you think you will make a good investment-banking analyst?",
+    "category": "Strengths & Weaknesses",
+    "difficulty": "Medium",
+    "isPreloaded": true,
+    "answer": "",
+    "notes": "",
+    "lastUpdated": "2025-07-03T15:33:16.973Z"
+  },
+  {
+    "question": "What are you looking for in this job?",
+    "category": "Goals",
+    "difficulty": "Medium",
+    "isPreloaded": true,
+    "answer": "",
+    "notes": "",
+    "lastUpdated": "2025-07-03T15:33:16.973Z"
+  },
+  {
+    "question": "What do you consider to be your greatest accomplishment?",
+    "category": "Experience",
+    "difficulty": "Medium",
+    "isPreloaded": true,
+    "answer": "",
+    "notes": "",
+    "lastUpdated": "2025-07-03T15:33:16.973Z"
+  },
+  {
+    "question": "What is the number one thing I should know about you that I cannot learn from your resume?",
+    "category": "Personal",
+    "difficulty": "Hard",
+    "isPreloaded": true,
+    "answer": "",
+    "notes": "",
+    "lastUpdated": "2025-07-03T15:33:16.973Z"
+  },
+  {
+    "question": "Coming out of this interview, what are three things about you that I should take away?",
+    "category": "Personal",
+    "difficulty": "Medium",
+    "isPreloaded": true,
+    "answer": "",
+    "notes": "",
+    "lastUpdated": "2025-07-03T15:33:16.973Z"
+  },
+  {
+    "question": "What serves as your biggest motivation?",
+    "category": "Motivation",
+    "difficulty": "Medium",
+    "isPreloaded": true,
+    "answer": "",
+    "notes": "",
+    "lastUpdated": "2025-07-03T15:33:16.973Z"
+  },
+  {
+    "question": "Why do you feel you can put up with the stress, pressure and long hours that are involved with banking?",
+    "category": "Challenges",
+    "difficulty": "Medium",
+    "isPreloaded": true,
+    "answer": "",
+    "notes": "",
+    "lastUpdated": "2025-07-03T15:33:16.973Z"
+  },
+  {
+    "question": "How hard are you willing to work to achieve a goal?",
+    "category": "Motivation",
+    "difficulty": "Medium",
+    "isPreloaded": true,
+    "answer": "",
+    "notes": "",
+    "lastUpdated": "2025-07-03T15:33:16.973Z"
+  },
+  {
+    "question": "What is the most intellectually challenging thing you have done?",
+    "category": "Challenges",
+    "difficulty": "Hard",
+    "isPreloaded": true,
+    "answer": "",
+    "notes": "",
+    "lastUpdated": "2025-07-03T15:33:16.973Z"
+  },
+  {
+    "question": "Describe your ideal working environment.",
+    "category": "Personal",
+    "difficulty": "Easy",
+    "isPreloaded": true,
+    "answer": "",
+    "notes": "",
+    "lastUpdated": "2025-07-03T15:33:16.973Z"
+  },
+  {
+    "question": "What was the most important thing you got out of your job last summer?",
+    "category": "Experience",
+    "difficulty": "Medium",
+    "isPreloaded": true,
+    "answer": "",
+    "notes": "",
+    "lastUpdated": "2025-07-03T15:33:16.973Z"
+  },
+  {
+    "question": "What would your last boss say about you?",
+    "category": "Strengths & Weaknesses",
+    "difficulty": "Medium",
+    "isPreloaded": true,
+    "answer": "",
+    "notes": "",
+    "lastUpdated": "2025-07-03T15:33:16.973Z"
+  },
+  {
+    "question": "How would your best friends describe you?",
+    "category": "Personal",
+    "difficulty": "Easy",
+    "isPreloaded": true,
+    "answer": "",
+    "notes": "",
+    "lastUpdated": "2025-07-03T15:33:16.973Z"
+  },
+  {
+    "question": "Why did you choose the school you go/went to?",
+    "category": "Personal",
+    "difficulty": "Easy",
+    "isPreloaded": true,
+    "answer": "",
+    "notes": "",
+    "lastUpdated": "2025-07-03T15:33:16.973Z"
+  },
+  {
+    "question": "Why did you choose your major?",
+    "category": "Personal",
+    "difficulty": "Easy",
+    "isPreloaded": true,
+    "answer": "",
+    "notes": "",
+    "lastUpdated": "2025-07-03T15:33:16.973Z"
+  },
+  {
+    "question": "What else do you do at school other than study?",
+    "category": "Personal",
+    "difficulty": "Easy",
+    "isPreloaded": true,
+    "answer": "",
+    "notes": "",
+    "lastUpdated": "2025-07-03T15:33:16.973Z"
+  },
+  {
+    "question": "What has been your favorite class in college and what was your grade?",
+    "category": "Experience",
+    "difficulty": "Medium",
+    "isPreloaded": true,
+    "answer": "",
+    "notes": "",
+    "lastUpdated": "2025-07-03T15:33:16.973Z"
+  },
+  {
+    "question": "What has been your least favorite class in college and what was your grade?",
+    "category": "Experience",
+    "difficulty": "Medium",
+    "isPreloaded": true,
+    "answer": "",
+    "notes": "",
+    "lastUpdated": "2025-07-03T15:33:16.973Z"
+  },
+  {
+    "question": "Tell me about your college experience",
+    "category": "Experience",
+    "difficulty": "Easy",
+    "isPreloaded": true,
+    "answer": "",
+    "notes": "",
+    "lastUpdated": "2025-07-03T15:33:16.973Z"
+  },
+  {
+    "question": "Do you regret choosing the school you chose?",
+    "category": "Personal",
+    "difficulty": "Medium",
+    "isPreloaded": true,
+    "answer": "",
+    "notes": "",
+    "lastUpdated": "2025-07-03T15:33:16.973Z"
+  },
+  {
+    "question": "What is an example of a big risk you have taken in your life?",
+    "category": "Challenges",
+    "difficulty": "Hard",
+    "isPreloaded": true,
+    "answer": "",
+    "notes": "",
+    "lastUpdated": "2025-07-03T15:33:16.973Z"
+  },
+  {
+    "question": "What is the biggest obstacle or challenge you have faced and overcome in your life?",
+    "category": "Challenges",
+    "difficulty": "Hard",
+    "isPreloaded": true,
+    "answer": "",
+    "notes": "",
+    "lastUpdated": "2025-07-03T15:33:16.973Z"
+  },
+  {
+    "question": "What is the toughest decision you have ever had to make?",
+    "category": "Challenges",
+    "difficulty": "Hard",
+    "isPreloaded": true,
+    "answer": "",
+    "notes": "",
+    "lastUpdated": "2025-07-03T15:33:16.973Z"
+  },
+  {
+    "question": "How would you compare your writing skills to you oral skills?",
+    "category": "Strengths & Weaknesses",
+    "difficulty": "Medium",
+    "isPreloaded": true,
+    "answer": "",
+    "notes": "",
+    "lastUpdated": "2025-07-03T15:33:16.973Z"
+  },
+  {
+    "question": "What do you like to do in your free time?",
+    "category": "Personal",
+    "difficulty": "Easy",
+    "isPreloaded": true,
+    "answer": "",
+    "notes": "",
+    "lastUpdated": "2025-07-03T15:33:16.973Z"
+  },
+  {
+    "question": "What competitive activities have you participated in, and have they been worthwhile?",
+    "category": "Experience",
+    "difficulty": "Medium",
+    "isPreloaded": true,
+    "answer": "",
+    "notes": "",
+    "lastUpdated": "2025-07-03T15:33:16.973Z"
+  },
+  {
+    "question": "What would you do for a living if you did not have to worry about money?",
+    "category": "Personal",
+    "difficulty": "Medium",
+    "isPreloaded": true,
+    "answer": "",
+    "notes": "",
+    "lastUpdated": "2025-07-03T15:33:16.973Z"
+  },
+  {
+    "question": "How do you manage stress in your life?",
+    "category": "Challenges",
+    "difficulty": "Medium",
+    "isPreloaded": true,
+    "answer": "",
+    "notes": "",
+    "lastUpdated": "2025-07-03T15:33:16.973Z"
+  },
+  {
+    "question": "What is your favorite website?",
+    "category": "Personal",
+    "difficulty": "Easy",
+    "isPreloaded": true,
+    "answer": "",
+    "notes": "",
+    "lastUpdated": "2025-07-03T15:33:16.973Z"
+  },
+  {
+    "question": "What role do you like to take in a team situation?",
+    "category": "Team Dynamics",
+    "difficulty": "Medium",
+    "isPreloaded": true,
+    "answer": "",
+    "notes": "",
+    "lastUpdated": "2025-07-03T15:33:16.973Z"
+  },
+  {
+    "question": "Do you feel more comfortable working in a group or individually?",
+    "category": "Team Dynamics",
+    "difficulty": "Easy",
+    "isPreloaded": true,
+    "answer": "",
+    "notes": "",
+    "lastUpdated": "2025-07-03T15:33:16.973Z"
+  },
+  {
+    "question": "How did you go about preparing for interviews?",
+    "category": "Experience",
+    "difficulty": "Medium",
+    "isPreloaded": true,
+    "answer": "",
+    "notes": "",
+    "lastUpdated": "2025-07-03T15:33:16.973Z"
+  },
+  {
+    "question": "Give me an example of a time you worked as part of a team.",
+    "category": "Teamwork",
+    "difficulty": "Medium",
+    "isPreloaded": true,
+    "answer": "",
+    "notes": "",
+    "lastUpdated": "2025-07-03T15:33:16.973Z"
+  },
+  {
+    "question": "Give me an example of a time you took a leadership role in a team situation.",
+    "category": "Leadership",
+    "difficulty": "Medium",
+    "isPreloaded": true,
+    "answer": "",
+    "notes": "",
+    "lastUpdated": "2025-07-03T15:33:16.973Z"
+  },
+  {
+    "question": "Give me an example of a time when you had to deal with a conflict in a team situation.",
+    "category": "Conflict Resolution",
+    "difficulty": "Hard",
+    "isPreloaded": true,
+    "answer": "",
+    "notes": "",
+    "lastUpdated": "2025-07-03T15:33:16.973Z"
+  },
+  {
+    "question": "Describe a situation in which you or your group was at risk of missing a deadline. What did you do?",
+    "category": "Problem Solving",
+    "difficulty": "Hard",
+    "isPreloaded": true,
+    "answer": "",
+    "notes": "",
+    "lastUpdated": "2025-07-03T15:33:16.973Z"
+  },
+  {
+    "question": "Tell me about a time when you were in a group in which someone wasn't contributing as they should have been. What did you do?",
+    "category": "Team Dynamics",
+    "difficulty": "Hard",
+    "isPreloaded": true,
+    "answer": "",
+    "notes": "",
+    "lastUpdated": "2025-07-03T15:33:16.973Z"
+  },
+  {
+    "question": "Tell me about a time when you had to deal with a very upset teammate or co-worker?",
+    "category": "Conflict Resolution",
+    "difficulty": "Hard",
+    "isPreloaded": true,
+    "answer": "",
+    "notes": "",
+    "lastUpdated": "2025-07-03T15:33:16.973Z"
+  },
+  {
+    "question": "How do you manage to successfully deal with a difficult boss, co-worker or teammate?",
+    "category": "Conflict Resolution",
+    "difficulty": "Hard",
+    "isPreloaded": true,
+    "answer": "",
+    "notes": "",
+    "lastUpdated": "2025-07-03T15:33:16.973Z"
+  },
+  {
+    "question": "Tell me about a time when you motivated others.",
+    "category": "Leadership",
+    "difficulty": "Medium",
+    "isPreloaded": true,
+    "answer": "",
+    "notes": "",
+    "lastUpdated": "2025-07-03T15:33:16.973Z"
+  },
+  {
+    "question": "Give me an example of a project that has required you to think quantitatively and analytically.",
+    "category": "Problem Solving",
+    "difficulty": "Medium",
+    "isPreloaded": true,
+    "answer": "",
+    "notes": "",
+    "lastUpdated": "2025-07-03T15:33:16.973Z"
+  },
+  {
+    "question": "Give me an example of a project you enjoyed working on.",
+    "category": "Experience",
+    "difficulty": "Medium",
+    "isPreloaded": true,
+    "answer": "",
+    "notes": "",
+    "lastUpdated": "2025-07-03T15:33:16.973Z"
+  },
+  {
+    "question": "Give an example of a time when you set a goal and were able to meet or achieve it.",
+    "category": "Goals",
+    "difficulty": "Medium",
+    "isPreloaded": true,
+    "answer": "",
+    "notes": "",
+    "lastUpdated": "2025-07-03T15:33:16.973Z"
+  },
+  {
+    "question": "Give me an example of a time when you have had to multitask.",
+    "category": "Problem Solving",
+    "difficulty": "Medium",
+    "isPreloaded": true,
+    "answer": "",
+    "notes": "",
+    "lastUpdated": "2025-07-03T15:33:16.973Z"
+  },
+  {
+    "question": "Give me an example of a time when you successfully persuaded others to do something or see your point of view.",
+    "category": "Communication",
+    "difficulty": "Hard",
+    "isPreloaded": true,
+    "answer": "",
+    "notes": "",
+    "lastUpdated": "2025-07-03T15:33:16.973Z"
+  },
+  {
+    "question": "Give an example of a time when you have gone above and beyond what was expected of you.",
+    "category": "Experience",
+    "difficulty": "Medium",
+    "isPreloaded": true,
+    "answer": "",
+    "notes": "",
+    "lastUpdated": "2025-07-03T15:33:16.973Z"
+  },
+  {
+    "question": "Give an example of a time when you were required to pay close attention to details.",
+    "category": "Problem Solving",
+    "difficulty": "Medium",
+    "isPreloaded": true,
+    "answer": "",
+    "notes": "",
+    "lastUpdated": "2025-07-03T15:33:16.973Z"
+  },
+  {
+    "question": "What is the biggest mistake you have ever made in your professional life?",
+    "category": "Challenges",
+    "difficulty": "Hard",
+    "isPreloaded": true,
+    "answer": "",
+    "notes": "",
+    "lastUpdated": "2025-07-03T15:33:16.973Z"
+  },
+  {
+    "question": "Tell me about your previous work experiences and walk me through a sample project from your work.",
+    "category": "Experience",
+    "difficulty": "Medium",
+    "isPreloaded": true,
+    "answer": "",
+    "notes": "",
+    "lastUpdated": "2025-07-03T15:33:16.973Z"
+  },
+  {
+    "question": "You are supposed to be meeting a close friend for dinner but something comes up and you have to stay late. What would you do, and can you tell me about a similar experience you have had in your life?",
+    "category": "Challenges",
+    "difficulty": "Hard",
+    "isPreloaded": true,
+    "answer": "",
+    "notes": "",
+    "lastUpdated": "2025-07-03T15:33:16.973Z"
+  },
+  {
+    "question": "Give me an example of a time when you had to make a split-second decision.",
+    "category": "Problem Solving",
+    "difficulty": "Hard",
+    "isPreloaded": true,
+    "answer": "",
+    "notes": "",
+    "lastUpdated": "2025-07-03T15:33:16.973Z"
+  },
+  {
+    "question": "Tell me about a time when you anticipated potential problems and took measures to prevent them.",
+    "category": "Problem Solving",
+    "difficulty": "Medium",
+    "isPreloaded": true,
+    "answer": "",
+    "notes": "",
+    "lastUpdated": "2025-07-03T15:33:16.973Z"
+  },
+  {
+    "question": "Tell me about a time when you learned something new in a short amount of time.",
+    "category": "Experience",
+    "difficulty": "Medium",
+    "isPreloaded": true,
+    "answer": "",
+    "notes": "",
+    "lastUpdated": "2025-07-03T15:33:16.973Z"
+  },
+  {
+    "question": "Tell me about a time you dealt with a major disappointment and turned it into a learning experience.",
+    "category": "Challenges",
+    "difficulty": "Hard",
+    "isPreloaded": true,
+    "answer": "",
+    "notes": "",
+    "lastUpdated": "2025-07-03T15:33:16.973Z"
+  },
+  {
+    "question": "What is your biggest weakness?",
+    "category": "Strengths & Weaknesses",
+    "difficulty": "Hard",
+    "isPreloaded": true,
+    "answer": "",
+    "notes": "",
+    "lastUpdated": "2025-07-03T15:33:16.973Z"
+  },
+  {
+    "question": "What do you consider to be your greatest failure?",
+    "category": "Challenges",
+    "difficulty": "Hard",
+    "isPreloaded": true,
+    "answer": "",
+    "notes": "",
+    "lastUpdated": "2025-07-03T15:33:16.973Z"
+  },
+  {
+    "question": "What do you consider to be the biggest negative about this job?",
+    "category": "Personal",
+    "difficulty": "Hard",
+    "isPreloaded": true,
+    "answer": "",
+    "notes": "",
+    "lastUpdated": "2025-07-03T15:33:16.973Z"
+  },
+  {
+    "question": "Why is your GPA so low?",
+    "category": "Strengths & Weaknesses",
+    "difficulty": "Hard",
+    "isPreloaded": true,
+    "answer": "",
+    "notes": "",
+    "lastUpdated": "2025-07-03T15:33:16.973Z"
+  },
+  {
+    "question": "At the end of the summer internship, you don't get a full time offer. What could cause this to happen?",
+    "category": "Challenges",
+    "difficulty": "Hard",
+    "isPreloaded": true,
+    "answer": "",
+    "notes": "",
+    "lastUpdated": "2025-07-03T15:33:16.973Z"
+  },
+  {
+    "question": "Where else are you applying/interviewing?",
+    "category": "Goals",
+    "difficulty": "Medium",
+    "isPreloaded": true,
+    "answer": "",
+    "notes": "",
+    "lastUpdated": "2025-07-03T15:33:16.973Z"
+  },
+  {
+    "question": "Where do you see yourself in five/ten years?",
+    "category": "Goals",
+    "difficulty": "Medium",
+    "isPreloaded": true,
+    "answer": "",
+    "notes": "",
+    "lastUpdated": "2025-07-03T15:33:16.973Z"
+  },
+  {
+    "question": "Tell me a (clean) joke.",
+    "category": "Personal",
+    "difficulty": "Easy",
+    "isPreloaded": true,
+    "answer": "",
+    "notes": "",
+    "lastUpdated": "2025-07-03T15:33:16.973Z"
+  },
+  {
+    "question": "What is the most interesting thing you have read in the Wall Street Journal lately?",
+    "category": "General",
+    "difficulty": "Medium",
+    "isPreloaded": true,
+    "answer": "",
+    "notes": "",
+    "lastUpdated": "2025-07-03T15:33:16.973Z"
+  },
+  {
+    "question": "Tell me the full names of the people who've interviewed you before me.",
+    "category": "General",
+    "difficulty": "Easy",
+    "isPreloaded": true,
+    "answer": "",
+    "notes": "",
+    "lastUpdated": "2025-07-03T15:33:16.973Z"
+  }
+]

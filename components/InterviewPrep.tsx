@@ -390,29 +390,31 @@ export default function InterviewPrep() {
                     )}
                   </div>
                   <div className="flex items-center space-x-2">
-                    <button
-                      onClick={() => {
-                        setEditingBehavioral(question)
-                        setBehavioralForm({
-                          question: question.question,
-                          category: question.category,
-                          difficulty: question.difficulty,
-                          answer: question.answer,
-                          notes: question.notes
-                        })
-                        setShowBehavioralModal(true)
-                      }}
-                      className="p-1 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded transition-colors duration-200"
-                    >
-                      <PencilIcon className="w-4 h-4" />
-                    </button>
-                    {!question.isPreloaded && (
-                      <button
-                        onClick={() => deleteBehavioralQuestion(question.id)}
-                        className="p-1 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded transition-colors duration-200"
-                      >
-                        <TrashIcon className="w-4 h-4" />
-                      </button>
+                    {question.isPreloaded && isAdmin && (
+                      <>
+                        <button
+                          onClick={() => {
+                            setEditingBehavioral(question)
+                            setBehavioralForm({
+                              question: question.question,
+                              category: question.category,
+                              difficulty: question.difficulty,
+                              answer: question.answer,
+                              notes: question.notes
+                            })
+                            setShowBehavioralModal(true)
+                          }}
+                          className="p-1 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded transition-colors duration-200"
+                        >
+                          <PencilIcon className="w-4 h-4" />
+                        </button>
+                        <button
+                          onClick={() => deleteBehavioralQuestion(question.id)}
+                          className="p-1 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded transition-colors duration-200"
+                        >
+                          <TrashIcon className="w-4 h-4" />
+                        </button>
+                      </>
                     )}
                   </div>
                 </div>

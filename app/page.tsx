@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useAppStore } from '@/lib/store'
 import Sidebar from '@/components/Sidebar'
 import Dashboard from '@/components/Dashboard'
@@ -11,16 +11,30 @@ import LiveMarketCoverage from '@/components/LiveMarketCoverage'
 import DataManagement from '@/components/DataManagement'
 import NewsFeed from '@/components/NewsFeed'
 import { Bars3Icon, BellIcon } from '@heroicons/react/24/outline'
+import { FirebaseService, Notification } from '../lib/firebaseService'
 
 export default function Home() {
   const { activeTab, sidebarOpen, setSidebarOpen, user, userLoading, signIn } = useAppStore()
   const [showNotifications, setShowNotifications] = useState(false);
-  // Example updates
-  const updates = [
-    { id: 1, text: 'Notification Center added' },
-    { id: 2, text: 'Resource Library now includes 2024 guides.' },
-    { id: 3, text: 'Firm Tracker performance improved.' },
-  ];
+  const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [newNotification, setNewNotification] = useState('');
+  const userEmail = user?.email;
+  const isAdmin = userEmail === 'nihar.bagkar@gmail.com';
+
+  useEffect(() => {
+    if (showNotifications) {
+      FirebaseService.getNotifications(10).then(setNotifications);
+    }
+  }, [showNotifications]);
+
+  const handleAddNotification = async () => {
+    if (newNotification.trim()) {
+      await FirebaseService.addNotification({ text: newNotification.trim() });
+      setNewNotification('');
+      const updated = await FirebaseService.getNotifications(10);
+      setNotifications(updated);
+    }
+  };
 
   const renderContent = () => {
     switch (activeTab) {
@@ -110,13 +124,30 @@ export default function Home() {
       </div>
       {/* Notification Popover rendered at root, fixed position */}
       {showNotifications && (
-        <div className="fixed top-20 right-8 z-[9999] w-80 bg-white rounded-xl shadow-lg border border-slate-200 p-4 animate-fade-in">
+        <div className="fixed right-8 top-20 z-[9999] w-72 bg-white rounded-xl shadow-lg border border-slate-200 p-4 animate-fade-in">
           <div className="font-semibold mb-2 text-slate-800">Recent Updates</div>
-          <ul className="space-y-2 text-sm">
-            {updates.map(update => (
-              <li key={update.id} className="text-slate-700">{update.text}</li>
+          <ul className="space-y-2 text-sm max-h-60 overflow-y-auto">
+            {notifications.map(n => (
+              <li key={n.id} className="text-slate-700">{n.text}</li>
             ))}
           </ul>
+          {isAdmin && (
+            <div className="mt-4">
+              <input
+                type="text"
+                className="w-full border rounded px-2 py-1 mb-2"
+                placeholder="Add notification..."
+                value={newNotification}
+                onChange={e => setNewNotification(e.target.value)}
+              />
+              <button
+                className="w-full btn-primary"
+                onClick={handleAddNotification}
+              >
+                Add Notification
+              </button>
+            </div>
+          )}
           <button className="mt-4 w-full btn-secondary" onClick={() => setShowNotifications(false)}>Close</button>
         </div>
       )}

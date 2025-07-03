@@ -10,7 +10,7 @@ export default function DataManagementPage() {
   const [showNotifications, setShowNotifications] = useState(false);
   // Example updates
   const updates = [
-    { id: 1, text: 'Notification Center added' },
+    { id: 1, text: 'Migrated questions to Firestore and included admin access' },
     { id: 2, text: 'Resource Library now includes 2024 guides.' },
     { id: 3, text: 'Firm Tracker performance improved.' },
   ];

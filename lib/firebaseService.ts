@@ -16,8 +16,15 @@ import {
   where,
   orderBy
 } from 'firebase/firestore'
-import { storage, db } from './firebase'
-import type { Resource } from './store'
+import { storage, db } from './firebase.ts'
+import type { Resource, TechnicalQuestion } from './store'
+
+// Notification type for Firestore
+export interface Notification {
+  id?: string;
+  text: string;
+  createdAt: string;
+}
 
 export class FirebaseService {
   // Upload file to Firebase Storage
@@ -116,5 +123,50 @@ export class FirebaseService {
     const randomString = Math.random().toString(36).substring(2, 15)
     const extension = originalName.split('.').pop()
     return `${timestamp}_${randomString}.${extension}`
+  }
+
+  // --- Technical Questions (Firestore, global) ---
+  static async getAllTechnicalQuestions(): Promise<TechnicalQuestion[]> {
+    const q = query(collection(db, 'technicalQuestions'), orderBy('createdAt', 'desc'));
+    const querySnapshot = await getDocs(q);
+    return querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })) as TechnicalQuestion[];
+  }
+
+  static async addTechnicalQuestion(question: Omit<TechnicalQuestion, 'id'>): Promise<string> {
+    const docRef = await addDoc(collection(db, 'technicalQuestions'), {
+      ...question,
+      createdAt: new Date().toISOString(),
+    });
+    return docRef.id;
+  }
+
+  static async updateTechnicalQuestion(id: string, updates: Partial<TechnicalQuestion>): Promise<void> {
+    const docRef = doc(db, 'technicalQuestions', id);
+    await updateDoc(docRef, { ...updates, lastUpdated: new Date().toISOString() });
+  }
+
+  static async deleteTechnicalQuestion(id: string): Promise<void> {
+    const docRef = doc(db, 'technicalQuestions', id);
+    await deleteDoc(docRef);
+  }
+
+  // --- Notifications (Firestore, global) ---
+  static async getNotifications(limitCount = 10): Promise<Notification[]> {
+    const q = query(collection(db, 'notifications'), orderBy('createdAt', 'desc'));
+    const querySnapshot = await getDocs(q);
+    return querySnapshot.docs.slice(0, limitCount).map(doc => ({ id: doc.id, ...doc.data() })) as Notification[];
+  }
+
+  static async addNotification(notification: Omit<Notification, 'id' | 'createdAt'>): Promise<string> {
+    const docRef = await addDoc(collection(db, 'notifications'), {
+      ...notification,
+      createdAt: new Date().toISOString(),
+    });
+    return docRef.id;
+  }
+
+  static async deleteNotification(id: string): Promise<void> {
+    const docRef = doc(db, 'notifications', id);
+    await deleteDoc(docRef);
   }
 } 
