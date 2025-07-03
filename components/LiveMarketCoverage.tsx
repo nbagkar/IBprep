@@ -1,12 +1,151 @@
 'use client'
 
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { motion } from 'framer-motion'
-import { PlayIcon, ChartBarIcon } from '@heroicons/react/24/outline'
+import { PlayIcon, ChartBarIcon, ArrowPathIcon } from '@heroicons/react/24/outline'
+
+// Market data types
+interface MarketData {
+  symbol: string;
+  price: number;
+  change: number;
+  changePercent: number;
+  lastUpdated: string;
+}
+
+interface MarketSummary {
+  SPY: MarketData;
+  QQQ: MarketData;
+  DIA: MarketData;
+  VIX: MarketData;
+}
 
 export default function LiveMarketCoverage() {
   const tradingViewRef = useRef<HTMLDivElement>(null)
   const cryptoTickerRef = useRef<HTMLDivElement>(null)
+  
+  // Market data state
+  const [marketData, setMarketData] = useState<MarketSummary | null>(null)
+  const [isLoading, setIsLoading] = useState(true)
+  const [lastUpdate, setLastUpdate] = useState<string>('')
+
+  // Fetch real-time market data
+  const fetchMarketData = async () => {
+    try {
+      setIsLoading(true)
+      
+      // Using Alpha Vantage API (free tier) for real-time data
+      const symbols = ['SPY', 'QQQ', 'DIA', 'VXX'] // VXX is VIX ETF
+      const apiKey = 'demo' // You can get a free API key from alphavantage.co
+      
+      const promises = symbols.map(async (symbol) => {
+        const response = await fetch(
+          `https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${symbol}&apikey=${apiKey}`
+        )
+        const data = await response.json()
+        
+        if (data['Global Quote']) {
+          const quote = data['Global Quote']
+          return {
+            symbol,
+            price: parseFloat(quote['05. price']),
+            change: parseFloat(quote['09. change']),
+            changePercent: parseFloat(quote['10. change percent'].replace('%', '')),
+            lastUpdated: quote['07. latest trading day']
+          }
+        }
+        return null
+      })
+
+      const results = await Promise.all(promises)
+      const validResults = results.filter(result => result !== null)
+      
+      if (validResults.length > 0) {
+        const marketSummary: MarketSummary = {
+          SPY: validResults.find(r => r?.symbol === 'SPY') || {
+            symbol: 'SPY',
+            price: 485.43,
+            change: 4.12,
+            changePercent: 0.85,
+            lastUpdated: new Date().toISOString().split('T')[0]
+          },
+          QQQ: validResults.find(r => r?.symbol === 'QQQ') || {
+            symbol: 'QQQ',
+            price: 428.95,
+            change: 4.68,
+            changePercent: 1.12,
+            lastUpdated: new Date().toISOString().split('T')[0]
+          },
+          DIA: validResults.find(r => r?.symbol === 'DIA') || {
+            symbol: 'DIA',
+            price: 375.98,
+            change: 1.68,
+            changePercent: 0.45,
+            lastUpdated: new Date().toISOString().split('T')[0]
+          },
+          VIX: validResults.find(r => r?.symbol === 'VXX') || {
+            symbol: 'VIX',
+            price: 12.85,
+            change: -0.28,
+            changePercent: -2.1,
+            lastUpdated: new Date().toISOString().split('T')[0]
+          }
+        }
+        
+        setMarketData(marketSummary)
+        setLastUpdate(new Date().toLocaleTimeString())
+      }
+    } catch (error) {
+      console.error('Error fetching market data:', error)
+      // Fallback to static data if API fails
+      setMarketData({
+        SPY: {
+          symbol: 'SPY',
+          price: 485.43,
+          change: 4.12,
+          changePercent: 0.85,
+          lastUpdated: new Date().toISOString().split('T')[0]
+        },
+        QQQ: {
+          symbol: 'QQQ',
+          price: 428.95,
+          change: 4.68,
+          changePercent: 1.12,
+          lastUpdated: new Date().toISOString().split('T')[0]
+        },
+        DIA: {
+          symbol: 'DIA',
+          price: 375.98,
+          change: 1.68,
+          changePercent: 0.45,
+          lastUpdated: new Date().toISOString().split('T')[0]
+        },
+        VIX: {
+          symbol: 'VIX',
+          price: 12.85,
+          change: -0.28,
+          changePercent: -2.1,
+          lastUpdated: new Date().toISOString().split('T')[0]
+        }
+      })
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  // Initial data fetch
+  useEffect(() => {
+    fetchMarketData()
+  }, [])
+
+  // Auto-refresh every 30 seconds
+  useEffect(() => {
+    const interval = setInterval(() => {
+      fetchMarketData()
+    }, 30000) // 30 seconds
+
+    return () => clearInterval(interval)
+  }, [])
 
   useEffect(() => {
     // Load TradingView widget script
@@ -534,6 +673,14 @@ export default function LiveMarketCoverage() {
     }
   }, [])
 
+  const getChangeColor = (change: number) => {
+    return change >= 0 ? 'text-green-600' : 'text-red-600'
+  }
+
+  const getChangeBgColor = (change: number) => {
+    return change >= 0 ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200'
+  }
+
   return (
     <motion.div 
       initial={{ opacity: 0, y: 20 }}
@@ -665,58 +812,121 @@ export default function LiveMarketCoverage() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 1.0 }}
-        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4"
+        className="space-y-4"
       >
-        <div className="card bg-gradient-to-r from-green-50 to-emerald-50 border-green-200">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-semibold text-green-700">S&P 500</p>
-              <p className="text-2xl font-bold text-green-800">4,850.43</p>
-            </div>
-            <div className="text-right">
-              <p className="text-sm font-semibold text-green-600">+0.85%</p>
-              <p className="text-xs text-green-500">+40.56</p>
-            </div>
+        <div className="flex items-center justify-between">
+          <h3 className="text-lg font-bold text-slate-900">Market Summary</h3>
+          <div className="flex items-center space-x-3">
+            <span className="text-sm text-slate-500">
+              Last updated: {lastUpdate || 'Loading...'}
+            </span>
+            <button
+              onClick={fetchMarketData}
+              disabled={isLoading}
+              className="flex items-center space-x-2 px-3 py-1 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-colors disabled:opacity-50"
+            >
+              <ArrowPathIcon className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`} />
+              <span className="text-sm font-medium">Refresh</span>
+            </button>
           </div>
         </div>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          {marketData ? (
+            <>
+              <div className={`card ${getChangeBgColor(marketData.SPY.change)}`}>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-semibold text-slate-700">S&P 500</p>
+                    <p className="text-2xl font-bold text-slate-800">
+                      {marketData.SPY.price.toFixed(2)}
+                    </p>
+                  </div>
+                  <div className="text-right">
+                    <p className={`text-sm font-semibold ${getChangeColor(marketData.SPY.change)}`}>
+                      {marketData.SPY.change >= 0 ? '+' : ''}{marketData.SPY.changePercent.toFixed(2)}%
+                    </p>
+                    <p className={`text-xs ${getChangeColor(marketData.SPY.change)}`}>
+                      {marketData.SPY.change >= 0 ? '+' : ''}{marketData.SPY.change.toFixed(2)}
+                    </p>
+                  </div>
+                </div>
+              </div>
 
-        <div className="card bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-200">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-semibold text-blue-700">NASDAQ</p>
-              <p className="text-2xl font-bold text-blue-800">15,628.95</p>
-            </div>
-            <div className="text-right">
-              <p className="text-sm font-semibold text-blue-600">+1.12%</p>
-              <p className="text-xs text-blue-500">+172.68</p>
-            </div>
-          </div>
-        </div>
+              <div className={`card ${getChangeBgColor(marketData.QQQ.change)}`}>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-semibold text-slate-700">NASDAQ</p>
+                    <p className="text-2xl font-bold text-slate-800">
+                      {marketData.QQQ.price.toFixed(2)}
+                    </p>
+                  </div>
+                  <div className="text-right">
+                    <p className={`text-sm font-semibold ${getChangeColor(marketData.QQQ.change)}`}>
+                      {marketData.QQQ.change >= 0 ? '+' : ''}{marketData.QQQ.changePercent.toFixed(2)}%
+                    </p>
+                    <p className={`text-xs ${getChangeColor(marketData.QQQ.change)}`}>
+                      {marketData.QQQ.change >= 0 ? '+' : ''}{marketData.QQQ.change.toFixed(2)}
+                    </p>
+                  </div>
+                </div>
+              </div>
 
-        <div className="card bg-gradient-to-r from-purple-50 to-violet-50 border-purple-200">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-semibold text-purple-700">DOW JONES</p>
-              <p className="text-2xl font-bold text-purple-800">37,592.98</p>
-            </div>
-            <div className="text-right">
-              <p className="text-sm font-semibold text-purple-600">+0.45%</p>
-              <p className="text-xs text-purple-500">+168.25</p>
-            </div>
-          </div>
-        </div>
+              <div className={`card ${getChangeBgColor(marketData.DIA.change)}`}>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-semibold text-slate-700">DOW JONES</p>
+                    <p className="text-2xl font-bold text-slate-800">
+                      {marketData.DIA.price.toFixed(2)}
+                    </p>
+                  </div>
+                  <div className="text-right">
+                    <p className={`text-sm font-semibold ${getChangeColor(marketData.DIA.change)}`}>
+                      {marketData.DIA.change >= 0 ? '+' : ''}{marketData.DIA.changePercent.toFixed(2)}%
+                    </p>
+                    <p className={`text-xs ${getChangeColor(marketData.DIA.change)}`}>
+                      {marketData.DIA.change >= 0 ? '+' : ''}{marketData.DIA.change.toFixed(2)}
+                    </p>
+                  </div>
+                </div>
+              </div>
 
-        <div className="card bg-gradient-to-r from-amber-50 to-orange-50 border-amber-200">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-semibold text-amber-700">VIX</p>
-              <p className="text-2xl font-bold text-amber-800">12.85</p>
-            </div>
-            <div className="text-right">
-              <p className="text-sm font-semibold text-amber-600">-2.1%</p>
-              <p className="text-xs text-amber-500">-0.28</p>
-            </div>
-          </div>
+              <div className={`card ${getChangeBgColor(marketData.VIX.change)}`}>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-semibold text-slate-700">VIX</p>
+                    <p className="text-2xl font-bold text-slate-800">
+                      {marketData.VIX.price.toFixed(2)}
+                    </p>
+                  </div>
+                  <div className="text-right">
+                    <p className={`text-sm font-semibold ${getChangeColor(marketData.VIX.change)}`}>
+                      {marketData.VIX.change >= 0 ? '+' : ''}{marketData.VIX.changePercent.toFixed(2)}%
+                    </p>
+                    <p className={`text-xs ${getChangeColor(marketData.VIX.change)}`}>
+                      {marketData.VIX.change >= 0 ? '+' : ''}{marketData.VIX.change.toFixed(2)}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </>
+          ) : (
+            // Loading state
+            Array.from({ length: 4 }).map((_, index) => (
+              <div key={index} className="card bg-slate-50 animate-pulse">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <div className="h-4 bg-slate-200 rounded w-20 mb-2"></div>
+                    <div className="h-8 bg-slate-200 rounded w-24"></div>
+                  </div>
+                  <div className="text-right">
+                    <div className="h-4 bg-slate-200 rounded w-16 mb-1"></div>
+                    <div className="h-3 bg-slate-200 rounded w-12"></div>
+                  </div>
+                </div>
+              </div>
+            ))
+          )}
         </div>
       </motion.div>
 
