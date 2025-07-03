@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useAppStore, type BehavioralQuestion, type TechnicalQuestion, type MockInterview } from '@/lib/store'
 import { 
   PlusIcon, 
@@ -22,17 +22,7 @@ import { FirebaseService } from '../lib/firebaseService'
 
 export default function InterviewPrep() {
   const { 
-    behavioralQuestions, 
-    technicalQuestions, 
     mockInterviews,
-    addBehavioralQuestion, 
-    updateBehavioralQuestion, 
-    deleteBehavioralQuestion,
-    initializePreloadedQuestions,
-    addTechnicalQuestion,
-    updateTechnicalQuestion,
-    deleteTechnicalQuestion,
-    initializePreloadedTechnicalQuestions,
     addMockInterview,
     updateMockInterview,
     deleteMockInterview,
@@ -40,12 +30,6 @@ export default function InterviewPrep() {
   } = useAppStore()
 
   const isAdmin = user?.email === 'nihar.bagkar@gmail.com';
-
-  // Initialize pre-loaded questions on component mount
-  React.useEffect(() => {
-    initializePreloadedQuestions()
-    initializePreloadedTechnicalQuestions()
-  }, [initializePreloadedQuestions, initializePreloadedTechnicalQuestions])
 
   const [activeTab, setActiveTab] = useState<'behavioral' | 'technical' | 'mocks'>('behavioral')
   const [showBehavioralModal, setShowBehavioralModal] = useState(false)
@@ -89,7 +73,7 @@ export default function InterviewPrep() {
   })
 
   // Sync form state with editingBehavioral
-  React.useEffect(() => {
+  useEffect(() => {
     if (editingBehavioral) {
       setBehavioralForm({
         question: editingBehavioral.question,
@@ -102,7 +86,7 @@ export default function InterviewPrep() {
   }, [editingBehavioral]);
 
   // Sync form state with editingTechnical
-  React.useEffect(() => {
+  useEffect(() => {
     if (editingTechnical) {
       setTechnicalForm({
         question: editingTechnical.question,
@@ -122,11 +106,11 @@ export default function InterviewPrep() {
         await FirebaseService.updateBehavioralQuestion(editingBehavioral.id, behavioralForm)
         toast.success('Preloaded question updated globally!')
       } else {
-        updateBehavioralQuestion(editingBehavioral.id, behavioralForm)
+        await FirebaseService.updateBehavioralQuestion(editingBehavioral.id, behavioralForm)
         toast.success('Question updated successfully!')
       }
     } else {
-      addBehavioralQuestion(behavioralForm)
+      await FirebaseService.addBehavioralQuestion({ ...behavioralForm, lastUpdated: new Date().toISOString() })
       toast.success('Question added successfully!')
     }
     
@@ -149,11 +133,11 @@ export default function InterviewPrep() {
         await FirebaseService.updateTechnicalQuestion(editingTechnical.id, technicalForm)
         toast.success('Preloaded question updated globally!')
       } else {
-        updateTechnicalQuestion(editingTechnical.id, technicalForm)
+        await FirebaseService.updateTechnicalQuestion(editingTechnical.id, technicalForm)
         toast.success('Question updated successfully!')
       }
     } else {
-      addTechnicalQuestion(technicalForm)
+      await FirebaseService.addTechnicalQuestion({ ...technicalForm, lastUpdated: new Date().toISOString() })
       toast.success('Question added successfully!')
     }
     
@@ -281,6 +265,55 @@ export default function InterviewPrep() {
     { id: 'technical', name: 'Technical', icon: DocumentTextIcon, count: getTechnicalCount() },
     { id: 'mocks', name: 'Mock Interviews', icon: AcademicCapIcon, count: mockInterviews.length }
   ]
+
+  // Local answers/notes state, keyed by question ID
+  const [userBehavioralAnswers, setUserBehavioralAnswers] = useState<Record<string, { answer: string; notes: string }>>({});
+  const [userTechnicalAnswers, setUserTechnicalAnswers] = useState<Record<string, { answer: string; notes: string }>>({});
+
+  // Load questions from Firestore on mount
+  useEffect(() => {
+    FirebaseService.getAllBehavioralQuestions().then(setBehavioralQuestions);
+    FirebaseService.getAllTechnicalQuestions().then(setTechnicalQuestions);
+    // Load user answers/notes from localStorage
+    const ba = localStorage.getItem('userBehavioralAnswers');
+    if (ba) setUserBehavioralAnswers(JSON.parse(ba));
+    const ta = localStorage.getItem('userTechnicalAnswers');
+    if (ta) setUserTechnicalAnswers(JSON.parse(ta));
+  }, []);
+
+  // Save user answers/notes to localStorage when they change
+  useEffect(() => {
+    localStorage.setItem('userBehavioralAnswers', JSON.stringify(userBehavioralAnswers));
+  }, [userBehavioralAnswers]);
+  useEffect(() => {
+    localStorage.setItem('userTechnicalAnswers', JSON.stringify(userTechnicalAnswers));
+  }, [userTechnicalAnswers]);
+
+  // Firestore-backed question methods
+  const addBehavioralQuestion = async (q: Omit<BehavioralQuestion, 'id'>) => {
+    await FirebaseService.addBehavioralQuestion(q);
+    setBehavioralQuestions(await FirebaseService.getAllBehavioralQuestions());
+  };
+  const updateBehavioralQuestion = async (id: string, updates: Partial<BehavioralQuestion>) => {
+    await FirebaseService.updateBehavioralQuestion(id, updates);
+    setBehavioralQuestions(await FirebaseService.getAllBehavioralQuestions());
+  };
+  const deleteBehavioralQuestion = async (id: string) => {
+    await FirebaseService.deleteBehavioralQuestion(id);
+    setBehavioralQuestions(await FirebaseService.getAllBehavioralQuestions());
+  };
+  const addTechnicalQuestion = async (q: Omit<TechnicalQuestion, 'id'>) => {
+    await FirebaseService.addTechnicalQuestion(q);
+    setTechnicalQuestions(await FirebaseService.getAllTechnicalQuestions());
+  };
+  const updateTechnicalQuestion = async (id: string, updates: Partial<TechnicalQuestion>) => {
+    await FirebaseService.updateTechnicalQuestion(id, updates);
+    setTechnicalQuestions(await FirebaseService.getAllTechnicalQuestions());
+  };
+  const deleteTechnicalQuestion = async (id: string) => {
+    await FirebaseService.deleteTechnicalQuestion(id);
+    setTechnicalQuestions(await FirebaseService.getAllTechnicalQuestions());
+  };
 
   return (
     <motion.div 
