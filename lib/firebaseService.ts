@@ -17,7 +17,7 @@ import {
   orderBy
 } from 'firebase/firestore'
 import { storage, db } from './firebase.ts'
-import type { Resource, TechnicalQuestion } from './store'
+import type { Resource, TechnicalQuestion, BehavioralQuestion } from './store'
 
 // Notification type for Firestore
 export interface Notification {
@@ -147,6 +147,31 @@ export class FirebaseService {
 
   static async deleteTechnicalQuestion(id: string): Promise<void> {
     const docRef = doc(db, 'technicalQuestions', id);
+    await deleteDoc(docRef);
+  }
+
+  // --- Behavioral Questions (Firestore, global) ---
+  static async getAllBehavioralQuestions(): Promise<BehavioralQuestion[]> {
+    const q = query(collection(db, 'behavioralQuestions'), orderBy('createdAt', 'desc'));
+    const querySnapshot = await getDocs(q);
+    return querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })) as BehavioralQuestion[];
+  }
+
+  static async addBehavioralQuestion(question: Omit<BehavioralQuestion, 'id'>): Promise<string> {
+    const docRef = await addDoc(collection(db, 'behavioralQuestions'), {
+      ...question,
+      createdAt: new Date().toISOString(),
+    });
+    return docRef.id;
+  }
+
+  static async updateBehavioralQuestion(id: string, updates: Partial<BehavioralQuestion>): Promise<void> {
+    const docRef = doc(db, 'behavioralQuestions', id);
+    await updateDoc(docRef, { ...updates, lastUpdated: new Date().toISOString() });
+  }
+
+  static async deleteBehavioralQuestion(id: string): Promise<void> {
+    const docRef = doc(db, 'behavioralQuestions', id);
     await deleteDoc(docRef);
   }
 

@@ -18,6 +18,7 @@ import {
 } from '@heroicons/react/24/outline'
 import toast from 'react-hot-toast'
 import { motion, AnimatePresence } from 'framer-motion'
+import { FirebaseService } from '../lib/firebaseService'
 
 export default function InterviewPrep() {
   const { 
@@ -87,12 +88,17 @@ export default function InterviewPrep() {
     notes: ''
   })
 
-  const handleBehavioralSubmit = (e: React.FormEvent) => {
+  const handleBehavioralSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     
     if (editingBehavioral) {
-      updateBehavioralQuestion(editingBehavioral.id, behavioralForm)
-      toast.success('Question updated successfully!')
+      if (editingBehavioral.isPreloaded && isAdmin) {
+        await FirebaseService.updateBehavioralQuestion(editingBehavioral.id, behavioralForm)
+        toast.success('Preloaded question updated globally!')
+      } else {
+        updateBehavioralQuestion(editingBehavioral.id, behavioralForm)
+        toast.success('Question updated successfully!')
+      }
     } else {
       addBehavioralQuestion(behavioralForm)
       toast.success('Question added successfully!')
@@ -109,12 +115,17 @@ export default function InterviewPrep() {
     })
   }
 
-  const handleTechnicalSubmit = (e: React.FormEvent) => {
+  const handleTechnicalSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     
     if (editingTechnical) {
-      updateTechnicalQuestion(editingTechnical.id, technicalForm)
-      toast.success('Question updated successfully!')
+      if (editingTechnical.isPreloaded && isAdmin) {
+        await FirebaseService.updateTechnicalQuestion(editingTechnical.id, technicalForm)
+        toast.success('Preloaded question updated globally!')
+      } else {
+        updateTechnicalQuestion(editingTechnical.id, technicalForm)
+        toast.success('Question updated successfully!')
+      }
     } else {
       addTechnicalQuestion(technicalForm)
       toast.success('Question added successfully!')
@@ -709,12 +720,12 @@ export default function InterviewPrep() {
                     required
                     value={behavioralForm.question}
                     onChange={(e) => setBehavioralForm({ ...behavioralForm, question: e.target.value })}
-                    className={`input-field ${editingBehavioral?.isPreloaded ? 'bg-slate-50 cursor-not-allowed' : ''}`}
+                    className={`input-field ${(editingBehavioral?.isPreloaded && !isAdmin) ? 'bg-slate-50 cursor-not-allowed' : ''}`}
                     rows={3}
                     placeholder="e.g., Tell me about a time when you had to lead a team through a difficult situation"
-                    disabled={editingBehavioral?.isPreloaded}
+                    disabled={editingBehavioral?.isPreloaded && !isAdmin}
                   />
-                  {editingBehavioral?.isPreloaded && (
+                  {(editingBehavioral?.isPreloaded && !isAdmin) && (
                     <p className="text-sm text-slate-500 mt-1">This is a pre-loaded question and cannot be modified</p>
                   )}
                 </div>
@@ -725,8 +736,8 @@ export default function InterviewPrep() {
                     <select
                       value={behavioralForm.category}
                       onChange={(e) => setBehavioralForm({ ...behavioralForm, category: e.target.value as any })}
-                      className={`input-field ${editingBehavioral?.isPreloaded ? 'bg-slate-50 cursor-not-allowed' : ''}`}
-                      disabled={editingBehavioral?.isPreloaded}
+                      className={`input-field ${(editingBehavioral?.isPreloaded && !isAdmin) ? 'bg-slate-50 cursor-not-allowed' : ''}`}
+                      disabled={editingBehavioral?.isPreloaded && !isAdmin}
                     >
                       <option value="Leadership">Leadership</option>
                       <option value="Teamwork">Teamwork</option>
@@ -749,8 +760,8 @@ export default function InterviewPrep() {
                     <select
                       value={behavioralForm.difficulty}
                       onChange={(e) => setBehavioralForm({ ...behavioralForm, difficulty: e.target.value as any })}
-                      className={`input-field ${editingBehavioral?.isPreloaded ? 'bg-slate-50 cursor-not-allowed' : ''}`}
-                      disabled={editingBehavioral?.isPreloaded}
+                      className={`input-field ${(editingBehavioral?.isPreloaded && !isAdmin) ? 'bg-slate-50 cursor-not-allowed' : ''}`}
+                      disabled={editingBehavioral?.isPreloaded && !isAdmin}
                     >
                       <option value="Easy">Easy</option>
                       <option value="Medium">Medium</option>
@@ -827,12 +838,12 @@ export default function InterviewPrep() {
                     required
                     value={technicalForm.question}
                     onChange={(e) => setTechnicalForm({ ...technicalForm, question: e.target.value })}
-                    className={`input-field ${editingTechnical?.isPreloaded ? 'bg-slate-50 cursor-not-allowed' : ''}`}
+                    className={`input-field ${(editingTechnical?.isPreloaded && !isAdmin) ? 'bg-slate-50 cursor-not-allowed' : ''}`}
                     rows={3}
                     placeholder="e.g., Walk me through a DCF valuation"
-                    disabled={editingTechnical?.isPreloaded}
+                    disabled={editingTechnical?.isPreloaded && !isAdmin}
                   />
-                  {editingTechnical?.isPreloaded && (
+                  {(editingTechnical?.isPreloaded && !isAdmin) && (
                     <p className="text-sm text-slate-500 mt-1">This is a pre-loaded question and cannot be modified</p>
                   )}
                 </div>
@@ -843,8 +854,8 @@ export default function InterviewPrep() {
                     <select
                       value={technicalForm.category}
                       onChange={(e) => setTechnicalForm({ ...technicalForm, category: e.target.value as any })}
-                      className={`input-field ${editingTechnical?.isPreloaded ? 'bg-slate-50 cursor-not-allowed' : ''}`}
-                      disabled={editingTechnical?.isPreloaded}
+                      className={`input-field ${(editingTechnical?.isPreloaded && !isAdmin) ? 'bg-slate-50 cursor-not-allowed' : ''}`}
+                      disabled={editingTechnical?.isPreloaded && !isAdmin}
                     >
                       <option value="Valuation">Valuation</option>
                       <option value="Financial Modeling">Financial Modeling</option>
@@ -861,8 +872,8 @@ export default function InterviewPrep() {
                     <select
                       value={technicalForm.difficulty}
                       onChange={(e) => setTechnicalForm({ ...technicalForm, difficulty: e.target.value as any })}
-                      className={`input-field ${editingTechnical?.isPreloaded ? 'bg-slate-50 cursor-not-allowed' : ''}`}
-                      disabled={editingTechnical?.isPreloaded}
+                      className={`input-field ${(editingTechnical?.isPreloaded && !isAdmin) ? 'bg-slate-50 cursor-not-allowed' : ''}`}
+                      disabled={editingTechnical?.isPreloaded && !isAdmin}
                     >
                       <option value="Easy">Easy</option>
                       <option value="Medium">Medium</option>
