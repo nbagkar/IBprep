@@ -88,6 +88,32 @@ export default function InterviewPrep() {
     notes: ''
   })
 
+  // Sync form state with editingBehavioral
+  React.useEffect(() => {
+    if (editingBehavioral) {
+      setBehavioralForm({
+        question: editingBehavioral.question,
+        category: editingBehavioral.category,
+        difficulty: editingBehavioral.difficulty,
+        answer: editingBehavioral.answer,
+        notes: editingBehavioral.notes
+      });
+    }
+  }, [editingBehavioral]);
+
+  // Sync form state with editingTechnical
+  React.useEffect(() => {
+    if (editingTechnical) {
+      setTechnicalForm({
+        question: editingTechnical.question,
+        category: editingTechnical.category,
+        difficulty: editingTechnical.difficulty,
+        answer: editingTechnical.answer,
+        notes: editingTechnical.notes
+      });
+    }
+  }, [editingTechnical]);
+
   const handleBehavioralSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     
