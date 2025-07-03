@@ -34,8 +34,11 @@ export default function InterviewPrep() {
     initializePreloadedTechnicalQuestions,
     addMockInterview,
     updateMockInterview,
-    deleteMockInterview
+    deleteMockInterview,
+    user
   } = useAppStore()
+
+  const isAdmin = user?.email === 'nihar.bagkar@gmail.com';
 
   // Initialize pre-loaded questions on component mount
   React.useEffect(() => {
@@ -533,13 +536,15 @@ export default function InterviewPrep() {
                         setShowTechnicalModal(true)
                       }}
                       className="p-1 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded transition-colors duration-200"
+                      disabled={question.isPreloaded && !isAdmin}
                     >
                       <PencilIcon className="w-4 h-4" />
                     </button>
-                    {!question.isPreloaded && (
+                    {(isAdmin ? question.isPreloaded : !question.isPreloaded) && (
                       <button
                         onClick={() => deleteTechnicalQuestion(question.id)}
                         className="p-1 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded transition-colors duration-200"
+                        disabled={question.isPreloaded && !isAdmin}
                       >
                         <TrashIcon className="w-4 h-4" />
                       </button>

@@ -111,6 +111,8 @@ export default function ResourceLibrary() {
     'Other'
   ]
 
+  const isAdmin = user?.email === 'nihar.bagkar@gmail.com';
+
   const handleResourceSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     const resourceData = {
@@ -476,7 +478,7 @@ export default function ResourceLibrary() {
                         )}
                       </div>
                       <div className="flex items-center space-x-2">
-                        {resource.createdBy?.uid === user?.uid && (
+                        {isAdmin || resource.createdBy?.uid === user?.uid ? (
                           <>
                             <button
                               onClick={() => {
@@ -505,7 +507,7 @@ export default function ResourceLibrary() {
                               <TrashIcon className="w-4 h-4" />
                             </button>
                           </>
-                        )}
+                        ) : null}
                       </div>
                     </div>
 
