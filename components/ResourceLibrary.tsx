@@ -69,7 +69,7 @@ export default function ResourceLibrary() {
   const [filterType, setFilterType] = useState<string>('all')
   const [searchTerm, setSearchTerm] = useState('')
   // Add sort state at the top of the component
-  const [sortBy, setSortBy] = useState<'title' | 'type' | 'category' | 'tags'>('title');
+  const [sortBy, setSortBy] = useState<'title' | 'type' | 'tags'>('title');
 
   const [resourceFormData, setResourceFormData] = useState({
     title: '',
@@ -254,12 +254,17 @@ export default function ResourceLibrary() {
     }
   }
 
+  // Compute unique categories from resources
+  const uniqueCategories = Array.from(new Set(resources.map(r => r.category))).sort();
+
+  // Update filteredResources to include category filtering
   const filteredResources = resources.filter(resource => {
-    const matchesType = filterType === 'all' || resource.type === filterType
+    const matchesType = filterType === 'all' || resource.type === filterType;
+    const matchesCategory = filterCategory === 'all' || resource.category === filterCategory;
     const matchesSearch = resource.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         resource.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         resource.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()))
-    return matchesType && matchesSearch
+                       resource.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                       resource.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()));
+    return matchesType && matchesCategory && matchesSearch;
   })
 
   const tabs = [
@@ -336,8 +341,6 @@ export default function ResourceLibrary() {
       return a.title.localeCompare(b.title);
     } else if (sortBy === 'type') {
       return a.type.localeCompare(b.type);
-    } else if (sortBy === 'category') {
-      return a.category.localeCompare(b.category);
     } else if (sortBy === 'tags') {
       return (a.tags[0] || '').localeCompare(b.tags[0] || '');
     }
@@ -433,6 +436,19 @@ export default function ResourceLibrary() {
             </select>
           </div>
           <div className="lg:w-64">
+            <label className="block text-sm font-semibold text-slate-700 mb-2">Filter by Category</label>
+            <select
+              value={filterCategory}
+              onChange={e => setFilterCategory(e.target.value)}
+              className="input-field"
+            >
+              <option value="all">All Categories</option>
+              {uniqueCategories.map(cat => (
+                <option key={cat} value={cat}>{cat}</option>
+              ))}
+            </select>
+          </div>
+          <div className="lg:w-64">
             <label className="block text-sm font-semibold text-slate-700 mb-2">Sort By</label>
             <select
               value={sortBy}
@@ -441,7 +457,6 @@ export default function ResourceLibrary() {
             >
               <option value="title">Title</option>
               <option value="type">Type</option>
-              <option value="category">Category</option>
               <option value="tags">Tags</option>
             </select>
           </div>
