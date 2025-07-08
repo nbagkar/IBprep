@@ -68,6 +68,8 @@ export default function ResourceLibrary() {
   const [filterCategory, setFilterCategory] = useState('all')
   const [filterType, setFilterType] = useState<string>('all')
   const [searchTerm, setSearchTerm] = useState('')
+  // Add sort state at the top of the component
+  const [sortBy, setSortBy] = useState<'title' | 'type' | 'category' | 'tags'>('title');
 
   const [resourceFormData, setResourceFormData] = useState({
     title: '',
@@ -328,6 +330,20 @@ export default function ResourceLibrary() {
     { id: 'Link', name: 'Links', count: resources.filter(r => r.type === 'Link').length }
   ]
 
+  // Update filteredResources to sortedResources before rendering
+  const sortedResources = [...filteredResources].sort((a, b) => {
+    if (sortBy === 'title') {
+      return a.title.localeCompare(b.title);
+    } else if (sortBy === 'type') {
+      return a.type.localeCompare(b.type);
+    } else if (sortBy === 'category') {
+      return a.category.localeCompare(b.category);
+    } else if (sortBy === 'tags') {
+      return (a.tags[0] || '').localeCompare(b.tags[0] || '');
+    }
+    return 0;
+  });
+
   return (
     <motion.div 
       initial={{ opacity: 0, y: 20 }}
@@ -416,6 +432,19 @@ export default function ResourceLibrary() {
               ))}
             </select>
           </div>
+          <div className="lg:w-64">
+            <label className="block text-sm font-semibold text-slate-700 mb-2">Sort By</label>
+            <select
+              value={sortBy}
+              onChange={e => setSortBy(e.target.value as any)}
+              className="input-field"
+            >
+              <option value="title">Title</option>
+              <option value="type">Type</option>
+              <option value="category">Category</option>
+              <option value="tags">Tags</option>
+            </select>
+          </div>
         </div>
       </motion.div>
 
@@ -455,7 +484,7 @@ export default function ResourceLibrary() {
           {/* Resources Grid */}
           {!resourcesLoading && (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {filteredResources.map((resource) => {
+              {sortedResources.map((resource) => {
                 const TypeIcon = getTypeIcon(resource.type)
                 return (
                   <motion.div
