@@ -319,6 +319,59 @@ export default function InterviewPrep() {
     setTechnicalQuestions(await FirebaseService.getAllTechnicalQuestions());
   };
 
+  // 1. Add category explanations
+  const defaultBehavioralCategories = [
+    "Leadership", "Teamwork", "Problem Solving", "Communication", "Conflict Resolution", "General", "Motivation", "Experience", "Strengths & Weaknesses", "Team Dynamics", "Challenges", "Goals", "Personal", "Networking"
+  ];
+  const defaultTechnicalCategories = [
+    "Valuation", "Financial Modeling", "Accounting", "M&A", "LBO", "Market Sizing", "Other", "General"
+  ];
+  const categoryExplanations: Record<string, string> = {
+    Leadership: "Demonstrating initiative, guiding others, and making decisions.",
+    Teamwork: "Working effectively and collaboratively with others.",
+    "Problem Solving": "Identifying issues and finding effective solutions.",
+    Communication: "Clearly conveying ideas and information.",
+    "Conflict Resolution": "Managing and resolving disagreements constructively.",
+    General: "General questions that don't fit other categories.",
+    Motivation: "Understanding your drive and reasons for pursuing this field.",
+    Experience: "Discussing your past roles, projects, and what you've learned.",
+    "Strengths & Weaknesses": "Reflecting on your personal strengths and areas for improvement.",
+    "Team Dynamics": "How you interact and function within a group.",
+    Challenges: "Overcoming obstacles and difficult situations.",
+    Goals: "Your ambitions and future plans.",
+    Personal: "Questions about your background, interests, and personality.",
+    Networking: "Building and leveraging professional relationships.",
+    Valuation: "Assessing the worth of companies or assets.",
+    "Financial Modeling": "Building quantitative models to forecast financial performance.",
+    Accounting: "Understanding financial statements and accounting principles.",
+    "M&A": "Mergers and Acquisitions: combining companies or assets.",
+    LBO: "Leveraged Buyouts: acquiring companies using borrowed funds.",
+    "Market Sizing": "Estimating the size of a market or opportunity.",
+    Other: "Technical questions that don't fit other categories."
+  };
+  const [userBehavioralCategories, setUserBehavioralCategories] = useState<string[]>(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('userBehavioralCategories');
+      return saved ? JSON.parse(saved) : [];
+    }
+    return [];
+  });
+  const [userTechnicalCategories, setUserTechnicalCategories] = useState<string[]>(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('userTechnicalCategories');
+      return saved ? JSON.parse(saved) : [];
+    }
+    return [];
+  });
+  useEffect(() => {
+    localStorage.setItem('userBehavioralCategories', JSON.stringify(userBehavioralCategories));
+  }, [userBehavioralCategories]);
+  useEffect(() => {
+    localStorage.setItem('userTechnicalCategories', JSON.stringify(userTechnicalCategories));
+  }, [userTechnicalCategories]);
+  const [newBehavioralCategory, setNewBehavioralCategory] = useState('');
+  const [newTechnicalCategory, setNewTechnicalCategory] = useState('');
+
   return (
     <motion.div 
       initial={{ opacity: 0, y: 20 }}
@@ -793,31 +846,48 @@ export default function InterviewPrep() {
                   )}
                 </div>
                 
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-semibold text-slate-700 mb-2">Category</label>
+                <div>
+                  <label className="block text-sm font-semibold text-slate-700 mb-2">Category</label>
+                  <div className="flex gap-2 items-center">
                     <select
                       value={behavioralForm.category}
                       onChange={(e) => setBehavioralForm({ ...behavioralForm, category: e.target.value as any })}
                       className={`input-field ${(editingBehavioral?.isPreloaded && !isAdmin) ? 'bg-slate-50 cursor-not-allowed' : ''}`}
                       disabled={editingBehavioral?.isPreloaded && !isAdmin}
                     >
-                      <option value="Leadership">Leadership</option>
-                      <option value="Teamwork">Teamwork</option>
-                      <option value="Problem Solving">Problem Solving</option>
-                      <option value="Communication">Communication</option>
-                      <option value="Conflict Resolution">Conflict Resolution</option>
-                      <option value="General">General</option>
-                      <option value="Motivation">Motivation</option>
-                      <option value="Experience">Experience</option>
-                      <option value="Strengths & Weaknesses">Strengths & Weaknesses</option>
-                      <option value="Team Dynamics">Team Dynamics</option>
-                      <option value="Challenges">Challenges</option>
-                      <option value="Goals">Goals</option>
-                      <option value="Personal">Personal</option>
-                      <option value="Networking">Networking</option>
+                      {[...defaultBehavioralCategories, ...userBehavioralCategories].map(cat => (
+                        <option key={cat} value={cat}>{cat}</option>
+                      ))}
                     </select>
+                    <input
+                      type="text"
+                      placeholder="New category"
+                      value={newBehavioralCategory}
+                      onChange={e => setNewBehavioralCategory(e.target.value)}
+                      className="input-field w-32"
+                      disabled={editingBehavioral?.isPreloaded && !isAdmin}
+                    />
+                    <button
+                      type="button"
+                      className="btn-secondary px-2 py-1"
+                      disabled={!newBehavioralCategory.trim() || [...defaultBehavioralCategories, ...userBehavioralCategories].includes(newBehavioralCategory.trim())}
+                      onClick={() => {
+                        if (newBehavioralCategory.trim() && ![...defaultBehavioralCategories, ...userBehavioralCategories].includes(newBehavioralCategory.trim())) {
+                          setUserBehavioralCategories([...userBehavioralCategories, newBehavioralCategory.trim()]);
+                          setBehavioralForm({ ...behavioralForm, category: newBehavioralCategory.trim() });
+                          setNewBehavioralCategory('');
+                        }
+                      }}
+                    >
+                      Add
+                    </button>
                   </div>
+                  {behavioralForm.category && categoryExplanations[behavioralForm.category] && (
+                    <div className="text-xs text-slate-500 mt-1">{categoryExplanations[behavioralForm.category]}</div>
+                  )}
+                </div>
+                
+                <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-semibold text-slate-700 mb-2">Difficulty</label>
                     <select
@@ -911,25 +981,48 @@ export default function InterviewPrep() {
                   )}
                 </div>
                 
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-semibold text-slate-700 mb-2">Category</label>
+                <div>
+                  <label className="block text-sm font-semibold text-slate-700 mb-2">Category</label>
+                  <div className="flex gap-2 items-center">
                     <select
                       value={technicalForm.category}
                       onChange={(e) => setTechnicalForm({ ...technicalForm, category: e.target.value as any })}
                       className={`input-field ${(editingTechnical?.isPreloaded && !isAdmin) ? 'bg-slate-50 cursor-not-allowed' : ''}`}
                       disabled={editingTechnical?.isPreloaded && !isAdmin}
                     >
-                      <option value="Valuation">Valuation</option>
-                      <option value="Financial Modeling">Financial Modeling</option>
-                      <option value="Accounting">Accounting</option>
-                      <option value="M&A">M&A</option>
-                      <option value="LBO">LBO</option>
-                      <option value="Market Sizing">Market Sizing</option>
-                      <option value="Other">Other</option>
-                      <option value="General">General</option>
+                      {[...defaultTechnicalCategories, ...userTechnicalCategories].map(cat => (
+                        <option key={cat} value={cat}>{cat}</option>
+                      ))}
                     </select>
+                    <input
+                      type="text"
+                      placeholder="New category"
+                      value={newTechnicalCategory}
+                      onChange={e => setNewTechnicalCategory(e.target.value)}
+                      className="input-field w-32"
+                      disabled={editingTechnical?.isPreloaded && !isAdmin}
+                    />
+                    <button
+                      type="button"
+                      className="btn-secondary px-2 py-1"
+                      disabled={!newTechnicalCategory.trim() || [...defaultTechnicalCategories, ...userTechnicalCategories].includes(newTechnicalCategory.trim())}
+                      onClick={() => {
+                        if (newTechnicalCategory.trim() && ![...defaultTechnicalCategories, ...userTechnicalCategories].includes(newTechnicalCategory.trim())) {
+                          setUserTechnicalCategories([...userTechnicalCategories, newTechnicalCategory.trim()]);
+                          setTechnicalForm({ ...technicalForm, category: newTechnicalCategory.trim() });
+                          setNewTechnicalCategory('');
+                        }
+                      }}
+                    >
+                      Add
+                    </button>
                   </div>
+                  {technicalForm.category && categoryExplanations[technicalForm.category] && (
+                    <div className="text-xs text-slate-500 mt-1">{categoryExplanations[technicalForm.category]}</div>
+                  )}
+                </div>
+                
+                <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-semibold text-slate-700 mb-2">Difficulty</label>
                     <select

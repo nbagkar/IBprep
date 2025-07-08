@@ -33,7 +33,7 @@ export interface CoffeeChat {
 export interface BehavioralQuestion {
   id: string
   question: string
-  category: 'Leadership' | 'Teamwork' | 'Problem Solving' | 'Communication' | 'Conflict Resolution' | 'General' | 'Motivation' | 'Experience' | 'Strengths & Weaknesses' | 'Team Dynamics' | 'Challenges' | 'Goals' | 'Personal' | 'Networking'
+  category: string
   difficulty: 'Easy' | 'Medium' | 'Hard'
   answer: string
   notes: string
@@ -45,7 +45,7 @@ export interface TechnicalQuestion {
   id: string
   question: string
   answer: string
-  category: 'Valuation' | 'Financial Modeling' | 'Accounting' | 'M&A' | 'LBO' | 'Market Sizing' | 'Other' | 'General'
+  category: string
   difficulty: 'Easy' | 'Medium' | 'Hard'
   notes: string
   lastUpdated: string
