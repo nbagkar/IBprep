@@ -564,7 +564,7 @@ export default function NewsFeed() {
 
             {/* Flashcards Grid */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              {filteredIntel.filter(intel => intel.isFlashcard).map((intel, index) => (
+              {marketIntel.filter(intel => intel.isFlashcard).map((intel, index) => (
                 <motion.div
                   key={intel.id}
                   initial={{ opacity: 0, y: 20 }}
@@ -620,7 +620,7 @@ export default function NewsFeed() {
               ))}
             </div>
 
-            {filteredIntel.filter(intel => intel.isFlashcard).length === 0 && (
+            {marketIntel.filter(intel => intel.isFlashcard).length === 0 && (
               <div className="text-center py-12">
                 <AcademicCapIcon className="w-16 h-16 text-slate-300 mx-auto mb-4" />
                 <p className="text-slate-500">No flashcards created yet. Convert insights to flashcards to test your knowledge!</p>
