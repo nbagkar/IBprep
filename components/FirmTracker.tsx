@@ -76,7 +76,8 @@ export default function FirmTracker() {
     deadline: '',
     keyContacts: '',
     notes: '',
-    appliedDate: ''
+    appliedDate: '',
+    applicationLink: ''
   })
 
   const [chatFormData, setChatFormData] = useState({
@@ -136,7 +137,8 @@ export default function FirmTracker() {
       deadline: '',
       keyContacts: '',
       notes: '',
-      appliedDate: ''
+      appliedDate: '',
+      applicationLink: ''
     })
   }
 
@@ -178,7 +180,8 @@ export default function FirmTracker() {
       deadline: firm.deadline || '',
       keyContacts: firm.keyContacts,
       notes: firm.notes,
-      appliedDate: firm.appliedDate || ''
+      appliedDate: firm.appliedDate || '',
+      applicationLink: firm.applicationLink || ''
     })
     setShowAddModal(true)
   }
@@ -447,6 +450,7 @@ export default function FirmTracker() {
                   <th className="table-header">Location</th>
                   <th className="table-header">Status</th>
                   <th className="table-header">Deadline</th>
+                  <th className="table-header">App Link</th>
                   <th className="table-header">Actions</th>
                 </tr>
               </thead>
@@ -494,6 +498,13 @@ export default function FirmTracker() {
                           {firm.deadline ? new Date(firm.deadline).toLocaleDateString() : '-'}
                         </span>
                       </div>
+                    </td>
+                    <td className="table-cell">
+                      {firm.applicationLink ? (
+                        <a href={firm.applicationLink} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">Link</a>
+                      ) : (
+                        <span className="text-slate-400">-</span>
+                      )}
                     </td>
                     <td className="table-cell">
                       <div className="flex items-center space-x-2">
@@ -898,6 +909,17 @@ export default function FirmTracker() {
                     onChange={(e) => setFormData({ ...formData, keyContacts: e.target.value })}
                     className="input-field"
                     placeholder="Names, titles, emails"
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-semibold text-slate-700 mb-2">Application Link (optional)</label>
+                  <input
+                    type="url"
+                    value={formData.applicationLink}
+                    onChange={e => setFormData({ ...formData, applicationLink: e.target.value })}
+                    className="input-field"
+                    placeholder="https://..."
                   />
                 </div>
                 

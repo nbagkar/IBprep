@@ -17,6 +17,7 @@ export interface Firm {
   notes: string
   appliedDate?: string
   lastUpdated: string
+  applicationLink?: string // Optional link to the application
 }
 
 export interface CoffeeChat {
